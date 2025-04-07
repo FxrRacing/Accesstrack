@@ -1,4 +1,4 @@
-import { PrismaClient} from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
@@ -6,8 +6,8 @@ async function main() {
   const user1 = await prisma.user.create({
     data: {
       email: 'dmonarch134@gmail.com',
-      name: 'Derek Monarch',
-      active: true,
+      name: 'Derek Fodeke',
+      status: 'active',
       department: 'Engineering',
       jobTitle: 'Software Engineer',
       location: 'Remote',
@@ -20,7 +20,7 @@ async function main() {
     data: {
       email: 'mjohnson@example.com',
       name: 'Mike Johnson',
-      active: true,
+      status: 'active',
       department: 'Product',
       jobTitle: 'Product Manager',
       location: 'Austin',
@@ -32,7 +32,7 @@ async function main() {
     },
   });
 
-  //💾 Seed Software
+  // 💾 Seed Software
   const software1 = await prisma.software.create({
     data: {
       name: 'Tableau',
@@ -41,12 +41,13 @@ async function main() {
       status: 'active',
       updatedBy: user1.email,
       userCount: 1,
-      notes: "Hi there",
+      notes: 'Hi there',
       notesLastUpdatedBy: {
         connect: { id: user1.id },
       },
     },
   });
+
   const software2 = await prisma.software.create({
     data: {
       name: 'Slack',
@@ -55,16 +56,13 @@ async function main() {
       status: 'active',
       updatedBy: user1.email,
       userCount: 1,
-      notes: JSON.stringify({
-        editedBy: 'Current User',
-        lastEdited: new Date('2024-09-06T09:30:33.881Z'),
-        note: 'sdfsd',
-      }),
+      notes: 'Hi there',
       notesLastUpdatedBy: {
         connect: { id: user1.id },
       },
     },
   });
+
   const software3 = await prisma.software.create({
     data: {
       name: 'Zoom',
@@ -84,10 +82,36 @@ async function main() {
     },
   });
 
-  console.log('✅ Seed completed!' ,{
+  // 🔗 Seed UserSoftware relationships
+  await prisma.userSoftware.createMany({
+    data: [
+      {
+        userId: user1.id,
+        softwareId: software1.id,
+        grantedById: user1.id,
+        accessLevel: 'admin',
+        role: 'owner',
+      },
+      {
+        userId: user1.id,
+        softwareId: software2.id,
+        grantedById: user1.id,
+        accessLevel: 'admin',
+        role: 'admin',
+      },
+      {
+        userId: user2.id,
+        softwareId: software1.id,
+        grantedById: user1.id,
+        accessLevel: 'read',
+        role: 'viewer',
+      },
+    ],
+  });
+
+  console.log('✅ Seed completed!', {
     user1,
     user2,
-
     software1,
     software2,
     software3,

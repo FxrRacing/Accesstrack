@@ -24,7 +24,7 @@ model User {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   department     String    @default("unassigned")
-  active         String    @default("active")
+  status         String    @default("active")
   email          String    @unique
   name           String    @unique
   jobTitle       String?
@@ -39,6 +39,11 @@ model User {
   softwareNotes  Software[] @relation("NotesLastUpdatedBy")
 
   // For reverse lookups, like softwareUser relations if you add a join table
+
+  
+
+  software       UserSoftware[]  // list of software they're assigned to
+  grantedAccess  UserSoftware[]  @relation("GrantedAccess") 
 }
 
 model Software {
@@ -55,4 +60,23 @@ model Software {
   notesLastUpdatedById  String
 
   notesLastUpdatedBy    User     @relation("NotesLastUpdatedBy", fields: [notesLastUpdatedById], references: [id])
+
+  UserSoftware UserSoftware[]
+}
+
+
+model UserSoftware {
+  id           String   @id @default(uuid())
+  userId       String
+  softwareId   String
+  grantedById  String
+  accessLevel  String   // you could turn this into an enum if the values are predictable
+  role         String
+  assignedAt   DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+  software     Software @relation(fields: [softwareId], references: [id])
+  grantedBy    User     @relation("GrantedAccess", fields: [grantedById], references: [id])
+
+  @@unique([userId, softwareId]) // still important
 }
