@@ -19,6 +19,27 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum PaymentFrequency {
+  WEEKLY
+  BIWEEKLY
+  SEMIMONTHLY
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
+}
+
+// Define the PaymentMethod enum
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  BANK_TRANSFER
+  PAYPAL
+  CASH
+  CHECK
+  OTHER
+}
+
+
 model User {
   id             String    @id @default(uuid())
   createdAt      DateTime  @default(now())
@@ -44,8 +65,38 @@ model User {
 
   software       UserSoftware[]  // list of software they're assigned to
   grantedAccess  UserSoftware[]  @relation("GrantedAccess") 
+
+  Software Software[]
+
+  SharedAccount SharedAccount[] @relation("UpdatedSharedAccounts")
+ 
+  histories UserHistory[]
 }
 
+model UserHistory {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  field     String
+  newValue  String?
+  oldValue  String?
+  updatedBy String
+  updatedOn DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AccountRep {
+  id         String   @id @default(uuid())
+  softwareId String   // Foreign key to associate with Software
+  email      String
+  name       String
+  phone      String
+
+  software   Software @relation(fields: [softwareId], references: [id])
+}
 model Software {
   id                    String   @id @default(uuid())
   name                  String
@@ -54,16 +105,45 @@ model Software {
   status               String?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
-  updatedBy             String?
+  updatedBy             User?   @relation(fields: [updatedById], references: [id])
+  updatedById           String?
   userCount             Int?
   notes                 String?
   notesLastUpdatedById  String
+  
 
   notesLastUpdatedBy    User     @relation("NotesLastUpdatedBy", fields: [notesLastUpdatedById], references: [id])
 
   UserSoftware UserSoftware[]
-}
+//billing
+  accountRep            String?
+  accountReps           AccountRep[] 
+  amount                Float?     // Total amount billed
+  currency              String?    // e.g., USD, EUR
+  licenseType           String?    // e.g., "Seat-based", "Enterprise"
+  paymentFrequency PaymentFrequency  @default(MONTHLY) // e.g., "Monthly", "Yearly"
+  paymentDueDate       DateTime? // Date when the next payment is due
+  paymentMethod    PaymentMethod  @default(CREDIT_CARD)     // e.g., "Bank Transfer", "Credit Card"
+  
+  pricePerUser          Float? 
 
+  SoftwareAccess SoftwareAccess[]
+   histories SoftwareHistory[]
+}
+model SoftwareHistory {
+  id          String   @id @default(uuid())
+  softwareId  String
+  action      String
+  field       String
+  newValue    String?
+  oldValue    String?
+  updatedBy   String
+  updatedOn   DateTime @default(now())
+
+  software    Software @relation(fields: [softwareId], references: [id], onDelete: Cascade)
+
+  @@index([softwareId])
+}
 
 model UserSoftware {
   id           String   @id @default(uuid())
@@ -79,4 +159,63 @@ model UserSoftware {
   grantedBy    User     @relation("GrantedAccess", fields: [grantedById], references: [id])
 
   @@unique([userId, softwareId]) // still important
+}
+
+
+// SharedAccount model
+model SharedAccount {
+  id             String          @id @default(uuid())
+  email          String          @unique
+  name           String
+  normalizedName String
+  location       String?
+  type           String?
+  active         Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  updatedById    String
+  userCount      Int             @default(0)
+
+  // Relations
+  updatedBy      User            @relation("UpdatedSharedAccounts", fields: [updatedById], references: [id])
+ histories SharedAccountHistory[]
+  softwareAccesses SoftwareAccess[]
+}
+model SharedAccountHistory {
+  id              String        @id @default(uuid())
+  sharedAccountId String
+  action          String
+  field           String
+  newValue        String?
+  oldValue        String?
+  updatedBy       String
+  updatedOn       DateTime      @default(now())
+
+  sharedAccount   SharedAccount @relation(fields: [sharedAccountId], references: [id], onDelete: Cascade)
+
+  @@index([sharedAccountId])
+}
+
+model SoftwareAccess {
+  id            String         @id @default(uuid())
+  sharedAccountId String
+  softwareId    String
+  access        Boolean
+  lastEdited    DateTime       @default(now())
+  lastEditedBy  String
+  permissions   String[]
+  uid           String
+
+  // Relations
+  sharedAccount SharedAccount  @relation(fields: [sharedAccountId], references: [id])
+  software      Software       @relation(fields: [softwareId], references: [id])
+}
+
+// History model
+
+
+enum EntityType {
+  USER
+  SOFTWARE
+  SHARED_ACCOUNT
 }

@@ -125,16 +125,21 @@ export async function assignSoftware(formData: FormData) {
     }
 }
 
-export async function removeAssignedSoftware(id: string) {
-    'use server'
-    //we are not logged in so we will use a default user id
+export async function removeAssignedSoftware(userId: string, softwareId: string) {
+    'use server';
     try {
-        const userSoftware = await prisma.userSoftware.delete({
-            where: { id: id },
-        });
-        console.log('User Software deleted:', userSoftware);
+      const userSoftware = await prisma.userSoftware.delete({
+        where: {
+          userId_softwareId: {
+            userId: userId,
+            softwareId: softwareId,
+          },
+        },
+      });
+      console.log('User Software deleted:', userSoftware);
     } catch (error) {
-        console.error('Error deleting User Software:', error);
-        throw new Error('Failed to delete User Software.');
+      console.error('Error deleting User Software:', error);
+      throw new Error('Failed to delete User Software.');
     }
-}
+  }
+  
