@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
 
 export default async function Page({
@@ -85,7 +86,8 @@ export default async function Page({
     <h3> Softwares Users</h3>
         {users.map((user) => (
             <div key={user.id}>
-            <h2>Name: {`--->`}{user.user.name}</h2>
+            <Link href={`/users/${user.user.id}`}><h2>{`--->`}{user.user.name}</h2></Link>
+          
             <p className="text-green-700">Description: {user.software.description}</p>
             <p className="text-green-700">Granted By : {user.grantedBy.name}</p>
             <p className="text-green-700">Status : {user.user.jobTitle}</p>
