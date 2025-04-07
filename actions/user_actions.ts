@@ -1,6 +1,7 @@
 'use server'
 import { prisma } from '@/lib/prisma';
 
+
 export async function editUser(formData: FormData, id: string) {
   
     // Mutate data
@@ -77,5 +78,63 @@ export async function deleteUser(id: string) {
     } catch (error) {
         console.error('Error deleting user:', error);
         throw new Error('Failed to delete user.');
+    }
+}
+
+export async function assignSoftware(formData: FormData) {
+   
+    //we are not logged in so we will use a default user id
+    const softwareId = formData.get('softwareId') as string | null;
+    const grantedById = formData.get('grantedById') as string| null;
+    const accessLevel = formData.get('accessLevel') as string | null;
+    const role = formData.get('role') as string | null;
+    const userId = formData.get('userId') as string | null;
+    if (!softwareId || !grantedById || !accessLevel || !role || !userId)  {
+        throw new Error('All fields are required.');
+    }
+
+  console.table({
+    softwareId,
+    grantedById,
+    accessLevel,
+    role,
+    userId,
+  });
+
+  const alreadyAssigned = await prisma.userSoftware.findFirst({
+    where: { userId, softwareId },
+  });
+  
+  if (alreadyAssigned) {
+    throw new Error('This user already has access to this software.');
+  }
+    try {
+        const userSoftware = await prisma.userSoftware.create({
+            data: {
+                userId: userId,
+                softwareId: softwareId,
+                grantedById: grantedById,
+                accessLevel: accessLevel, // Replace 'default' with the appropriate value
+                role: role, // Replace 'user' with the appropriate value
+            },
+        });
+        console.log('User Software created:', userSoftware);
+    } catch (error) {
+        console.error('Error creating User Software:', error);
+        throw new Error('Failed to create User Software.');
+    }
+}
+
+export async function removeAssignedSoftware(id: string) {
+    'use server'
+    //we are not logged in so we will use a default user id
+    try {
+        const userSoftware = await prisma.userSoftware.delete({
+            where: { id: id },
+        });
+        console.log('User Software deleted:', userSoftware);
+    } catch (error) {
+        console.error('Error deleting User Software:', error);
+        throw new Error('Failed to delete User Software.');
     }
 }

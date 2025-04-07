@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import { assignSoftware } from '@/actions/user_actions'
 
 export default async function Page({
     params,
@@ -49,5 +50,22 @@ export default async function Page({
                
             </div>
         ))}
+        ============================
+        {/* Assign software */}
+        <h2>Assign Software</h2>
+        <form action={assignSoftware} className='flex flex-col gap-4'>
+            <input type="text" name="softwareId" placeholder="Software Id*" />
+            <input type="text" name="grantedById" placeholder="Granted By Id*" />
+            <input type="text" name="accessLevel" placeholder="Access Level*" />
+            <input type="text" name="role" placeholder="Role*" />
+            <input type="text" name="userId" defaultValue={id} hidden />
+            <button type="submit">Assign Software +</button>
+        </form>
+        ============================
+
     </>
   }
+
+
+  //tablou fe769674-65d0-4528-92af-2f2df451164e
+  //derek 50313f26-7397-4d88-9e37-937c212d8eb2

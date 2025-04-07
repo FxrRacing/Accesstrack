@@ -39,7 +39,7 @@ export default async function Page({
     // Mutate data
     const name = formData.get('name') as string;
 
-    const notes = formData.get('notes')    as string;
+    const description = formData.get('description') as string;
       // Perform the edit user action here
       console.log('Editing user:', formData);
       //we are not logged in so we will use a default user id
@@ -47,8 +47,8 @@ export default async function Page({
             where: {id: id,},
             data: {
             name: name,
-            notes: notes,
-            notesLastUpdatedById: '50313f26-7397-4d88-9e37-937c212d8eb2',
+           description: description,
+
             },
         });
         console.log('User updated:', software);
@@ -71,7 +71,7 @@ export default async function Page({
       <h2>Edit Software</h2>
        <form action={editSoftware} className='flex flex-col gap-4'>
       <input type="text" name="name"  defaultValue={software.name}/>
-      <input type="text" name="notes" defaultValue={software.notes|| ""} />
+    
         <input type="text" name="description" defaultValue={software.description|| ""}/>
         <input type="text" name="status" defaultValue={software.status||""}/>
 
@@ -94,6 +94,8 @@ export default async function Page({
             <p className="text-green-700">Category : {user.software.category}</p>
             </div>
         ))}
+        =========================================
+{/* Assign software */}
     </>
   );
 }
