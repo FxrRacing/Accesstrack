@@ -11,7 +11,7 @@ export default async function SoftwarePage() {
             {software.map((software) => (
                
                 <div key={software.id}>
-                     <Link  href={`/software/${software.id}`}><h2>{`--->`}{software.name}</h2></Link>
+                     <Link  href={`/dashboard/software/${software.id}`}><h2>{`--->`}{software.name}</h2></Link>
                     
                     <p className="text-green-700">{software.description}</p>
                 </div>

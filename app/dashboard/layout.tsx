@@ -1,6 +1,9 @@
+
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+
+import Nav from "@/components/nav";
 
 
 
@@ -27,13 +30,17 @@ export default async function RootLayout({
   
 
   return (
-    <html lang="en">
-      <body
+    <>
+    <Nav />
+
+      <div
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
 
+
         {children}
-      </body>
-    </html>
+      </div>
+      </>
   );
 }
+
