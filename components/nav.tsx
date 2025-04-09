@@ -1,3 +1,5 @@
+'use'
+import { logout } from "@/app/login/actions";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -32,6 +34,12 @@ export default async function Nav() {
             </li>
             <li>
                 <p>Logged in as : {data.user.email}</p>
+            </li>
+            <li>
+                <form action={logout}>
+                <button className="text-red-500" type="submit">Logout</button>
+                </form>
+              
             </li>
             </ul>
         </nav>

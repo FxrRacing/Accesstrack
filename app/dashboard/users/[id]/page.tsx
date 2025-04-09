@@ -54,7 +54,11 @@ export default async function Page({
          },
  
       });
+     
 
+      //have software.grantedBy
+      //if we have that we want to search our list of auth users for a match and show their details not current user
+    
     
     return <>
         <div>
@@ -69,16 +73,17 @@ export default async function Page({
         <h1>Software</h1>
 
         <div>
-      {software.map((software) => {
+      {software.map(async (software) => {
         const removeAssignedSoftwareWithIds = removeAssignedSoftware.bind(null, id, software.software.id);
-
+        const grantedBy= await findRealUser(software.grantedById);
+        
         return (
           <div key={software.id}>
             <Link href={`/software/${software.software.id}`}>
               <h2>{`---> ${software.software.name}`}</h2>
             </Link>
             <p className="text-green-700">{software.software.description}</p>
-            <p className="text-green-700">Granted By: {software.grantedBy.name}</p>
+            <p className="text-green-700">Granted By: {grantedBy.email}</p>
             <p className="text-green-700">Access Level: {software.accessLevel}</p>
             <p className="text-green-700">Role: {software.role}</p>
            
@@ -122,3 +127,18 @@ export default async function Page({
 
   //tablou fe769674-65d0-4528-92af-2f2df451164e
   //derek 50313f26-7397-4d88-9e37-937c212d8eb2
+
+
+
+  async function findRealUser(id:string){
+    const realUser = await prisma.users.findUnique({
+        where: {
+          id: id,
+        },
+      })
+      if (!realUser) {
+        //this should never happen
+        return notFound()
+      }
+      return realUser
+  }
