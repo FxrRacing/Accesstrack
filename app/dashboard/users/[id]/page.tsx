@@ -1,5 +1,6 @@
 import { notFound, redirect } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
+import {prisma} from '@/lib/prisma'
+
 import Link from 'next/link'
 import { assignSoftware, removeAssignedSoftware } from '@/actions/user_actions'
 import { createClient } from '@/utils/supabase/server'
@@ -18,6 +19,7 @@ export default async function Page({
     redirect('/login')
   }
     const { id } = await params
+
     const user = await prisma.user.findUnique({
       where: {
         id: id,
@@ -79,7 +81,7 @@ export default async function Page({
         
         return (
           <div key={software.id}>
-            <Link href={`/software/${software.software.id}`}>
+            <Link href={`/dashboard/software/${software.software.id}`} prefetch={true}>
               <h2>{`---> ${software.software.name}`}</h2>
             </Link>
             <p className="text-green-700">{software.software.description}</p>

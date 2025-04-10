@@ -11,6 +11,29 @@ datasource db {
   schemas   = ["auth", "public", "storage"]
 }
 
+
+
+//===================Public===================
+model UserProfiles {
+    id        String   @id @db.Uuid
+    username  String?  @unique
+    fullName  String?  @map("full_name")
+    email     String?
+    phone     String?
+    avatarUrl String?  @map("avatar_url")
+    website   String?
+    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+    updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+    @@map("user_profiles")
+    @@schema("public")
+    UserSoftware UserSoftware[] @relation("GrantedAccess")
+    Software Software[] @relation("AuthUserToSoftware")
+}
+
+//user profiles is different from the users table -userprofiles is related to auth users 
+//other users are just staff and cannot login 
+
 model User {
   id            String          @id @default(uuid())
   createdAt     DateTime        @default(now())
@@ -34,7 +57,6 @@ model User {
 
   @@schema("public")
 }
-
 model UserHistory {
   id        String   @id @default(uuid())
   userId    String
@@ -60,7 +82,6 @@ model AccountRep {
 
   @@schema("public")
 }
-
 model Software {
   id                   String            @id @default(uuid())
   name                 String
@@ -88,11 +109,10 @@ model Software {
   SoftwareAccess       SoftwareAccess[]
   histories            SoftwareHistory[]
   UserSoftware         UserSoftware[]
-  AuthUser             AuthUser[]        @relation("AuthUserToSoftware")
+  Assigned             UserProfiles[]        @relation("AuthUserToSoftware")
 
   @@schema("public")
 }
-
 model SoftwareHistory {
   id         String   @id @default(uuid())
   softwareId String
@@ -107,23 +127,22 @@ model SoftwareHistory {
   @@index([softwareId])
   @@schema("public")
 }
-
 model UserSoftware {
   id          String   @id @default(uuid())
-  userId      String
-  softwareId  String
-  grantedById String
+  userId      String 
+  softwareId  String 
+  grantedById String   @db.Uuid
   accessLevel String
   role        String
   assignedAt  DateTime @default(now())
-  grantedBy   profiles @relation("GrantedAccess", fields: [grantedById], references: [id])
+
+  grantedBy   UserProfiles @relation("GrantedAccess", fields: [grantedById], references: [id])
   software    Software @relation(fields: [softwareId], references: [id])
   user        User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, softwareId])
   @@schema("public")
 }
-
 model SharedAccount {
   id               String                 @id @default(uuid())
   email            String                 @unique
@@ -157,7 +176,6 @@ model SharedAccountHistory {
   @@index([sharedAccountId])
   @@schema("public")
 }
-
 model SoftwareAccess {
   id              String        @id @default(uuid())
   sharedAccountId String
@@ -173,20 +191,37 @@ model SoftwareAccess {
   @@schema("public")
 }
 
-model UserProfiles {
-  id        String   @id @db.Uuid
-  username  String?  @unique
-  fullName  String?  @map("full_name")
-  email     String?
-  phone     String?
-  avatarUrl String?  @map("avatar_url")
-  website   String?
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+enum PaymentFrequency {
+  WEEKLY
+  BIWEEKLY
+  SEMIMONTHLY
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
 
-  @@map("user_profiles")
   @@schema("public")
 }
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  BANK_TRANSFER
+  PAYPAL
+  CASH
+  CHECK
+  OTHER
+
+  @@schema("public")
+}
+
+enum EntityType {
+  USER
+  SOFTWARE
+  SHARED_ACCOUNT
+
+  @@schema("public")
+}
+
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -498,33 +533,10 @@ model users {
   mfa_factors                 mfa_factors[]
   one_time_tokens             one_time_tokens[]
   sessions                    sessions[]
-  profiles                    profiles?
 
   @@index([instance_id])
   @@index([is_anonymous])
   @@schema("auth")
-}
-
-model AuthUser {
-  id            String         @id
-  email         String         @unique
-  name          String?
-  updatedAt     DateTime
-  
-  Software      Software[]     @relation("AuthUserToSoftware")
-
-  @@schema("public")
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model profiles {
-  id         String  @id @db.Uuid
-  first_name String?
-  last_name  String?
-  users      users   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@schema("public")
-  UserSoftware UserSoftware[] @relation("GrantedAccess")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -616,37 +628,6 @@ model s3_multipart_uploads_parts {
   @@schema("storage")
 }
 
-enum PaymentFrequency {
-  WEEKLY
-  BIWEEKLY
-  SEMIMONTHLY
-  MONTHLY
-  QUARTERLY
-  ANNUALLY
-
-  @@schema("public")
-}
-
-enum PaymentMethod {
-  CREDIT_CARD
-  DEBIT_CARD
-  BANK_TRANSFER
-  PAYPAL
-  CASH
-  CHECK
-  OTHER
-
-  @@schema("public")
-}
-
-enum EntityType {
-  USER
-  SOFTWARE
-  SHARED_ACCOUNT
-
-  @@schema("public")
-}
-
 enum aal_level {
   aal1
   aal2
@@ -687,6 +668,3 @@ enum one_time_token_type {
 
   @@schema("auth")
 }
-
-
-
