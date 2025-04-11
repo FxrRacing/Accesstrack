@@ -1,5 +1,6 @@
 'use server'
 import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 
 export async function editUser(formData: FormData, id: string) {
@@ -62,6 +63,8 @@ export async function createUser(formData: FormData) {
             },
         });
         console.log('User created:', user);
+        //you will want to revalidate to the new user page
+        revalidatePath(`/dashboard/users/${user.id}`);
     } catch (error) {
         console.error('Error creating user:', error);
         throw new Error('Failed to create user.');
@@ -75,6 +78,7 @@ export async function deleteUser(id: string) {
             where: { id: id },
         });
         console.log('User deleted:', user);
+        revalidatePath(`/dashboard/users`);
     } catch (error) {
         console.error('Error deleting user:', error);
         throw new Error('Failed to delete user.');
@@ -118,7 +122,20 @@ export async function assignSoftware(formData: FormData) {
                 role: role, // Replace 'user' with the appropriate value
             },
         });
+        //valudate the current userCount is correct,  count it 
+        const userCount = await prisma.userSoftware.count({
+            where: { softwareId: softwareId }
+        });
+        
+  
+        await prisma.software.update({
+            where: { id: softwareId },
+            data: { userCount: userCount },
+        });
+        //increment the userCount of the software
+      
         console.log('User Software created:', userSoftware);
+        revalidatePath(`/dashboard/users/${softwareId}`);
     } catch (error) {
         console.error('Error creating User Software:', error);
         throw new Error('Failed to create User Software.');
@@ -128,7 +145,7 @@ export async function assignSoftware(formData: FormData) {
 export async function removeAssignedSoftware(userId: string, softwareId: string) {
     'use server';
     try {
-      const userSoftware = await prisma.userSoftware.delete({
+       await prisma.userSoftware.delete({
         where: {
           userId_softwareId: {
             userId: userId,
@@ -136,7 +153,8 @@ export async function removeAssignedSoftware(userId: string, softwareId: string)
           },
         },
       });
-      console.log('User Software deleted:', userSoftware);
+      
+      revalidatePath(`/dashboard/software/${softwareId}`);  
     } catch (error) {
       console.error('Error deleting User Software:', error);
       throw new Error('Failed to delete User Software.');

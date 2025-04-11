@@ -11,28 +11,23 @@ datasource db {
   schemas   = ["auth", "public", "storage"]
 }
 
-
-
-//===================Public===================
 model UserProfiles {
-    id        String   @id @db.Uuid
-    username  String?  @unique
-    fullName  String?  @map("full_name")
-    email     String?
-    phone     String?
-    avatarUrl String?  @map("avatar_url")
-    website   String?
-    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id           String         @id @db.Uuid
+  username     String?        @unique
+  fullName     String?        @map("full_name")
+  email        String?
+  phone        String?
+  avatarUrl    String?        @map("avatar_url")
+  website      String?
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  UserSoftware UserSoftware[] @relation("GrantedAccess")
+  Assigned     Software[]     @relation("AuthUserToSoftware")
 
-    @@map("user_profiles")
-    @@schema("public")
-    UserSoftware UserSoftware[] @relation("GrantedAccess")
-    Software Software[] @relation("AuthUserToSoftware")
+  @@map("user_profiles")
+  @@schema("public")
+  SharedAccount SharedAccount[] @relation("UpdatedSharedAccounts")
 }
-
-//user profiles is different from the users table -userprofiles is related to auth users 
-//other users are just staff and cannot login 
 
 model User {
   id            String          @id @default(uuid())
@@ -46,9 +41,9 @@ model User {
   personalEmail String?         @unique
   reportsToId   String?
   type          String?
-  status        String          @default("active")
-  SharedAccount SharedAccount[] @relation("UpdatedSharedAccounts")
-  softwareNotes Software[]      @relation("NotesLastUpdatedBy")
+  status        String          @default("ACTIVE")
+  
+  SoftwareNotes Software[]      @relation("NotesLastUpdatedBy")
   Software      Software[]
   reportsTo     User?           @relation("ManagerSubordinates", fields: [reportsToId], references: [id], onDelete: Cascade)
   subordinates  User[]          @relation("ManagerSubordinates")
@@ -57,6 +52,7 @@ model User {
 
   @@schema("public")
 }
+
 model UserHistory {
   id        String   @id @default(uuid())
   userId    String
@@ -82,12 +78,13 @@ model AccountRep {
 
   @@schema("public")
 }
+
 model Software {
   id                   String            @id @default(uuid())
   name                 String
   description          String?
   category             String?
-  status               String?
+  status               String?           @default("ACTIVE")
   createdAt            DateTime          @default(now())
   updatedAt            DateTime          @updatedAt
   userCount            Int?
@@ -109,10 +106,11 @@ model Software {
   SoftwareAccess       SoftwareAccess[]
   histories            SoftwareHistory[]
   UserSoftware         UserSoftware[]
-  Assigned             UserProfiles[]        @relation("AuthUserToSoftware")
+  Assigned             UserProfiles[]    @relation("AuthUserToSoftware")
 
   @@schema("public")
 }
+
 model SoftwareHistory {
   id         String   @id @default(uuid())
   softwareId String
@@ -127,22 +125,23 @@ model SoftwareHistory {
   @@index([softwareId])
   @@schema("public")
 }
+
 model UserSoftware {
-  id          String   @id @default(uuid())
-  userId      String 
-  softwareId  String 
-  grantedById String   @db.Uuid
+  id          String       @id @default(uuid())
+  userId      String
+  softwareId  String
+  grantedById String       @db.Uuid
   accessLevel String
   role        String
-  assignedAt  DateTime @default(now())
-
+  assignedAt  DateTime     @default(now())
   grantedBy   UserProfiles @relation("GrantedAccess", fields: [grantedById], references: [id])
-  software    Software @relation(fields: [softwareId], references: [id])
-  user        User     @relation(fields: [userId], references: [id])
+  software    Software     @relation(fields: [softwareId], references: [id])
+  user        User         @relation(fields: [userId], references: [id])
 
   @@unique([userId, softwareId])
   @@schema("public")
 }
+
 model SharedAccount {
   id               String                 @id @default(uuid())
   email            String                 @unique
@@ -150,12 +149,13 @@ model SharedAccount {
   normalizedName   String
   location         String?
   type             String?
-  active           Boolean                @default(true)
+  
   createdAt        DateTime               @default(now())
   updatedAt        DateTime               @updatedAt
   updatedById      String
   userCount        Int                    @default(0)
-  updatedBy        User                   @relation("UpdatedSharedAccounts", fields: [updatedById], references: [id])
+  status           String                 @default("Active")
+  updatedBy        UserProfiles                   @relation("UpdatedSharedAccounts", fields: [updatedById], references: [id])
   histories        SharedAccountHistory[]
   softwareAccesses SoftwareAccess[]
 
@@ -176,6 +176,7 @@ model SharedAccountHistory {
   @@index([sharedAccountId])
   @@schema("public")
 }
+
 model SoftwareAccess {
   id              String        @id @default(uuid())
   sharedAccountId String
@@ -190,38 +191,6 @@ model SoftwareAccess {
 
   @@schema("public")
 }
-
-enum PaymentFrequency {
-  WEEKLY
-  BIWEEKLY
-  SEMIMONTHLY
-  MONTHLY
-  QUARTERLY
-  ANNUALLY
-
-  @@schema("public")
-}
-
-enum PaymentMethod {
-  CREDIT_CARD
-  DEBIT_CARD
-  BANK_TRANSFER
-  PAYPAL
-  CASH
-  CHECK
-  OTHER
-
-  @@schema("public")
-}
-
-enum EntityType {
-  USER
-  SOFTWARE
-  SHARED_ACCOUNT
-
-  @@schema("public")
-}
-
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -626,6 +595,37 @@ model s3_multipart_uploads_parts {
   s3_multipart_uploads s3_multipart_uploads @relation(fields: [upload_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@schema("storage")
+}
+
+enum PaymentFrequency {
+  WEEKLY
+  BIWEEKLY
+  SEMIMONTHLY
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
+
+  @@schema("public")
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  BANK_TRANSFER
+  PAYPAL
+  CASH
+  CHECK
+  OTHER
+
+  @@schema("public")
+}
+
+enum EntityType {
+  USER
+  SOFTWARE
+  SHARED_ACCOUNT
+
+  @@schema("public")
 }
 
 enum aal_level {

@@ -3,12 +3,13 @@ import { logout } from "@/app/login/actions";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ModeToggle } from "./theme-mode";
 
 export default async function Nav() {
     const supabase = await createClient()
 
   const { data, error } = await supabase.auth.getUser()
-  console.log('User data:', data)
+ 
   if (error || !data?.user) {
     redirect('/login')
   }
@@ -40,6 +41,9 @@ export default async function Nav() {
                 <button className="text-red-500" type="submit">Logout</button>
                 </form>
               
+            </li>
+            <li>
+               <ModeToggle />
             </li>
             </ul>
         </nav>

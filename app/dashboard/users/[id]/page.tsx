@@ -4,7 +4,7 @@ import {prisma} from '@/lib/prisma'
 import Link from 'next/link'
 import { assignSoftware, removeAssignedSoftware } from '@/actions/user_actions'
 import { createClient } from '@/utils/supabase/server'
-
+import { findRealUser } from '@/lib/queries'
 
 export default async function Page({
     params,
@@ -14,7 +14,7 @@ export default async function Page({
     const supabase = await createClient()
 
   const { data, error } = await supabase.auth.getUser()
-  console.log('User data:', data)
+  
   if (error || !data?.user) {
     redirect('/login')
   }
@@ -64,7 +64,8 @@ export default async function Page({
     
     return <>
         <div>
-            <h1>{user.name}</h1>
+        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            <h1 className='text-2xl font-bold'>{user.name}</h1>
             <p className="text-green-700">Department: {user.department}</p>
             <p className="text-green-700">Job Title: {user.jobTitle}</p>
             <p className="text-green-700">Email: {user.email}</p>
@@ -132,15 +133,3 @@ export default async function Page({
 
 
 
-  async function findRealUser(id:string){
-    const realUser = await prisma.users.findUnique({
-        where: {
-          id: id,
-        },
-      })
-      if (!realUser) {
-        //this should never happen
-        return notFound()
-      }
-      return realUser
-  }
