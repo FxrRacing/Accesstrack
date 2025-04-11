@@ -60,7 +60,7 @@ CREATE TABLE "auth"."identities" (
     "last_sign_in_at" TIMESTAMPTZ(6),
     "created_at" TIMESTAMPTZ(6),
     "updated_at" TIMESTAMPTZ(6),
-   "email" TEXT GENERATED ALWAYS AS (lower((identity_data->>'email'::text))) STORED,
+    "email" TEXT GENERATED ALWAYS AS (lower((identity_data->>'email'::text))) STORED,
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
 
     CONSTRAINT "identities_pkey" PRIMARY KEY ("id")
@@ -298,7 +298,7 @@ CREATE TABLE "storage"."objects" (
     "updated_at" TIMESTAMPTZ(6) DEFAULT CURRENT_TIMESTAMP,
     "last_accessed_at" TIMESTAMPTZ(6) DEFAULT CURRENT_TIMESTAMP,
     "metadata" JSONB,
-     "path_tokens" TEXT[] GENERATED ALWAYS AS (string_to_array(name, '/'::text)) STORED,
+    "path_tokens" TEXT[] GENERATED ALWAYS AS (string_to_array(name, '/'::text)) STORED,
     "version" TEXT,
     "owner_id" TEXT,
     "user_metadata" JSONB,
@@ -336,6 +336,7 @@ CREATE TABLE "storage"."s3_multipart_uploads_parts" (
 
     CONSTRAINT "s3_multipart_uploads_parts_pkey" PRIMARY KEY ("id")
 );
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 
