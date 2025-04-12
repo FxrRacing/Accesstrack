@@ -13,25 +13,30 @@ datasource db {
 
 //public
 model UserProfiles {
-  id         String   @id @db.Uuid
-  username   String?  @unique
-  fullName   String?  @map("full_name")
-  email      String?
-  phone      String?
-  avatarUrl  String?  @map("avatar_url")
-  website    String?
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id                   String                 @id @db.Uuid
+  username             String?                @unique
+  fullName             String?                @map("full_name")
+  email                String?
+  phone                String?
+  avatarUrl            String?                @map("avatar_url")
+  website              String?
+  createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("user_profiles")
   @@schema("public")
 
-  // Intended relations:
-  AssignedSoftware Software[]    @relation("AuthUserToSoftware")  // Software for which this auth user is the assigned point
-  SoftwareNotes    Software[]    @relation("NotesLastUpdatedBy")   // Software for which this user updated the notes
-  UserSoftware     UserSoftware[] @relation("GrantedAccess")      // As the grantor of a software assignment
-  Software Software[]
+  // Relations to Software assignments and history:
+  AssignedSoftware     Software[]             @relation("AuthUserToSoftware")   // Software for which this auth user is assigned as primary contact
+  SoftwareNotes        Software[]             @relation("NotesLastUpdatedBy")    // Software for which this user updated the notes
+  UserSoftware         UserSoftware[]         @relation("GrantedAccess")         // Grants for software assignments
+  updatedSoftwares Software[] @relation("SoftwareUpdateRelation")
+  // Join table relations for Shared Accounts assignments:
+  SharedAccountSoftware SharedAccountSoftware[] // Records shared account assignments to software
+  SharedAccountUser     SharedAccountUser[]     // Records shared account assignments to users
+  updatedSharedAccounts     SharedAccount[]        @relation("SharedAccountUpdate")
 }
+
 
 
 model User {
@@ -54,6 +59,7 @@ model User {
   software      UserSoftware[]
 
   @@schema("public")
+  SharedAccountUser SharedAccountUser[]
 }
 
 model UserHistory {
@@ -92,7 +98,7 @@ model Software {
   updatedAt            DateTime          @updatedAt
   userCount            Int?
   notes                String?
-  notesLastUpdatedById String            @db.Uuid
+  notesLastUpdatedById String?           @db.Uuid
   accountRep           String?
   amount               Float?
   currency             String?
@@ -108,7 +114,7 @@ model Software {
   // Relation to the auth user who last updated the notes:
   notesLastUpdatedBy   UserProfiles? @relation("NotesLastUpdatedBy", fields: [notesLastUpdatedById], references: [id])
   // Relation to the auth user who last updated the software:
-  updatedBy            UserProfiles? @relation(fields: [updatedById], references: [id])
+  updatedBy    UserProfiles? @relation("SoftwareUpdateRelation", fields: [updatedById], references: [id])
   
   SoftwareAccess       SoftwareAccess[]
   histories            SoftwareHistory[] @relation("SoftwareHistory")
@@ -118,6 +124,7 @@ model Software {
 
   @@schema("public")
   SoftwareHistory SoftwareHistory[]
+  SharedAccountSoftware SharedAccountSoftware[]
 }
 
 model SoftwareAccess {
@@ -199,6 +206,75 @@ enum EntityType {
   @@schema("public")
 }
 
+model SharedAccount {
+  id               String                  @id @default(uuid())
+  email            String                  @unique
+  name             String
+  normalizedName   String
+  location         String?
+  type             String?
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+  updatedById      String                  @db.Uuid
+  userCount        Int                     @default(0)
+  status           String                  @default("Active")
+  
+  // Relation to the auth user who last updated this shared account
+ updatedBy          UserProfiles?            @relation("SharedAccountUpdate", fields: [updatedById], references: [id])
+  // History of shared account changes
+  histories        SharedAccountHistory[]
+  // Assignments of this shared account to Software (via join table)
+  assignmentsSoftware SharedAccountSoftware[]
+  // Assignments of this shared account to Users (via join table)
+  assignmentsUser     SharedAccountUser[]
+
+  @@schema("public")
+}
+
+model SharedAccountHistory {
+  id              String         @id @default(uuid())
+  sharedAccountId String
+  action          String
+  field           String
+  newValue        String?
+  oldValue        String?
+  updatedBy       String
+  updatedOn       DateTime       @default(now())
+  
+  sharedAccount   SharedAccount  @relation(fields: [sharedAccountId], references: [id], onDelete: Cascade)
+
+  @@index([sharedAccountId])
+  @@schema("public")
+}
+
+model SharedAccountSoftware {
+  id              String        @id @default(uuid())
+  sharedAccountId String
+  softwareId      String
+  createdById     String        @db.Uuid
+  assignedAt      DateTime      @default(now())
+
+  sharedAccount   SharedAccount @relation(fields: [sharedAccountId], references: [id])
+  software        Software      @relation(fields: [softwareId], references: [id])
+  createdBy       UserProfiles  @relation(fields: [createdById], references: [id])
+
+  @@unique([sharedAccountId, softwareId])
+  @@schema("public")
+}
+model SharedAccountUser {
+  id              String        @id @default(uuid())
+  sharedAccountId String
+  userId          String
+  createdById     String        @db.Uuid
+  assignedAt      DateTime      @default(now())
+
+  sharedAccount   SharedAccount @relation(fields: [sharedAccountId], references: [id])
+  user            User          @relation(fields: [userId], references: [id])
+  createdBy       UserProfiles  @relation(fields: [createdById], references: [id])
+
+  @@unique([sharedAccountId, userId])
+  @@schema("public")
+}
 
 
 

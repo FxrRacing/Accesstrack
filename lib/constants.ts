@@ -5,10 +5,11 @@ export const PaymentFrequency = {
     MONTHLY: "MONTHLY",
     QUARTERLY: "QUARTERLY",
     ANNUALLY: "ANNUALLY",
-  } as const
+  } 
   
   export const PaymentMethod = {
     CREDIT_CARD: "CREDIT_CARD",
+    DEBIT_CARD: "DEBIT_CARD",
     BANK_TRANSFER: "BANK_TRANSFER",
     CHECK: "CHECK",
     PAYPAL: "PAYPAL",

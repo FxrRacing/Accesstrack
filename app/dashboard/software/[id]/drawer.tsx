@@ -18,8 +18,7 @@ import {
 
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
-import { Calendar } from "@/components/ui/calendar"
-import { CalendarIcon } from "lucide-react"
+
 
 import { Button } from "@/components/ui/button"
 import {
@@ -42,50 +41,65 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 import { Check, ChevronsUpDown } from "lucide-react";
-import { statusOptions, paymentFrequencyOptions, paymentMethodOptions ,licenseTypeOptions, currencyOptions, categoryOptions} from "@/lib/constants";
+import { statusOptions, PaymentFrequency, licenseTypeOptions, currencyOptions, categoryOptions} from "@/lib/constants";
 
 const FormSchema = z.object({
   
     id: z.string(),
     name: z.string().min(1, "Name is required"),
-    description: z.string().optional(),
+    description: z.string().nullable(),
     category: z.string(
       {
         required_error: "Please select a category.",
       }
-    ),
+    ).nullable(),
     status: z.string(
       {
         required_error: "Please select a status.",
       }
     ),
    
-    notes: z.string().optional(),
+    notes: z.string().nullable(),
    
    
-    amount: z.number().optional(),
-    currency: z.string().optional(),
+    amount: z.number().nullable(),
+    currency: z.string().nullable(),
     licenseType: z.string().optional(),
    
     paymentFrequency: z
       .enum(["WEEKLY", "BIWEEKLY", "SEMIMONTHLY", "MONTHLY", "QUARTERLY", "ANNUALLY"])
-      .default("MONTHLY"),
-    paymentMethod: z.enum(["CREDIT_CARD", "BANK_TRANSFER", "CHECK", "PAYPAL", "OTHER"]).default("CREDIT_CARD"),
-    pricePerUser: z.number().optional(),
+      .nullable(),
+    paymentMethod: z
+      .enum(["CREDIT_CARD", "DEBIT_CARD", "BANK_TRANSFER", "CHECK", "PAYPAL", "OTHER", "CASH"])
+      .nullable(),
+    pricePerUser: z.number().nullable(),
     updatedById: z.string().optional(),
-    website: z.string().url().optional(),
+    website: z.string().url().nullable(),
 })
+// Type '"WEEKLY" | "BIWEEKLY" | "SEMIMONTHLY" | "MONTHLY" | "QUARTERLY" | "ANNUALLY" | null | undefined' is not assignable to type '"WEEKLY" | "BIWEEKLY" | "SEMIMONTHLY" | "MONTHLY" | "QUARTERLY" | "ANNUALLY" | null'.
+//Type 'undefined' is not assignable to type '"WEEKLY" | "BIWEEKLY" | "SEMIMONTHLY" | "MONTHLY" | "QUARTERLY" | "ANNUALLY" | null'.ts(2719)
+
+
 
 export function SoftwareForm({ software }: { software: Software }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-     
-      category: software.category!,
-      status: software.status!,
-      paymentFrequency: "MONTHLY",
-      paymentMethod: "CREDIT_CARD",
-    },
+      id: software.id,
+      name: software.name,
+      description: software.description || null,
+      category: software.category,
+      status: software.status || "ACTIVE",
+      notes: software.notes || null,
+      paymentFrequency: software.paymentFrequency || null,
+      paymentMethod: software.paymentMethod || null,
+      website: software.website || null,
+      amount: software.amount || null,
+      currency: software.currency || null,
+      licenseType: software.licenseType || undefined,
+      pricePerUser: software.pricePerUser || null,
+    
+    }
   })
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -123,8 +137,7 @@ export function SoftwareForm({ software }: { software: Software }) {
               <FormLabel>Category</FormLabel>
               <Select 
                 onValueChange={field.onChange} 
-               
-                value={field.value}
+                value={field.value || ""}
               >
                 <FormControl>
                   <SelectTrigger>
@@ -266,7 +279,7 @@ export function SoftwareForm({ software }: { software: Software }) {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>License Type</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value || ""}>
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Select license type" />
@@ -298,9 +311,9 @@ export function SoftwareForm({ software }: { software: Software }) {
                                 {...field}
                                 onChange={(e) => {
                                   const value = e.target.value
-                                  field.onChange(value === "" ? undefined : Number.parseFloat(value))
+                                  field.onChange(value === "" ? null : Number.parseFloat(value))
                                 }}
-                                value={field.value === undefined ? "" : field.value}
+                                value={field.value === null ? "" : field.value}
                               />
                             </FormControl>
                             <FormMessage />
@@ -323,9 +336,9 @@ export function SoftwareForm({ software }: { software: Software }) {
                                 {...field}
                                 onChange={(e) => {
                                   const value = e.target.value
-                                  field.onChange(value === "" ? undefined : Number.parseFloat(value))
+                                  field.onChange(value === "" ? null : Number.parseFloat(value))
                                 }}
-                                value={field.value === undefined ? "" : field.value}
+                                value={field.value === null ? "" : field.value}
                               />
                             </FormControl>
                             <FormMessage />
@@ -338,7 +351,7 @@ export function SoftwareForm({ software }: { software: Software }) {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Currency</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value || ""}>
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Select currency" />
@@ -356,7 +369,7 @@ export function SoftwareForm({ software }: { software: Software }) {
                           </FormItem>
                         )}
                       />
-                      <FormField
+                      {/* <FormField
                         control={form.control}
                         name="paymentDueDate"
                         render={({ field }) => (
@@ -384,7 +397,9 @@ export function SoftwareForm({ software }: { software: Software }) {
                           </FormItem>
                         )}
                       />
-                    </div>
+                     */}
+
+</div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
@@ -392,19 +407,22 @@ export function SoftwareForm({ software }: { software: Software }) {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Payment Frequency</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              value={field.value || ""}
+                            >
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Select frequency" />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="WEEKLY">Weekly</SelectItem>
-                                <SelectItem value="BIWEEKLY">Biweekly</SelectItem>
-                                <SelectItem value="SEMIMONTHLY">Semi-monthly</SelectItem>
-                                <SelectItem value="MONTHLY">Monthly</SelectItem>
-                                <SelectItem value="QUARTERLY">Quarterly</SelectItem>
-                                <SelectItem value="ANNUALLY">Annually</SelectItem>
+                                  {Object.values(PaymentFrequency).map((option) => (
+                                    <SelectItem key={option} value={option}>
+                                      {option}
+                                    </SelectItem>
+                                ))}
+                               
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -417,7 +435,10 @@ export function SoftwareForm({ software }: { software: Software }) {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Payment Method</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              value={field.value || ""}
+                            >
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Select method" />

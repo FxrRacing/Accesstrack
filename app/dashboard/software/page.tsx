@@ -5,7 +5,7 @@ import Link from "next/link";
 export default async function SoftwarePage() {  
    const software= await prisma.software.findMany({});
     return (
-        <div>
+        <div className="flex flex-col gap-4">
             <h1>Software</h1>
             <p>Software page content goes here.</p>
             {software.map((software) => (

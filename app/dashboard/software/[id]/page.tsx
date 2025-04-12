@@ -30,11 +30,14 @@ export default async function Page({
   if (!software) {
     return notFound();
   }
-  const editedBy = await prisma.user.findUnique({
-    where: {
-      id: software.notesLastUpdatedById,
-    },
-  });
+  let editedBy;
+  if (software.updatedById) {  
+    editedBy = await prisma.user.findUnique({
+      where: {
+        id: software.updatedById,
+      },
+    });
+  }
   const users = await prisma.userSoftware.findMany({
     where: {
       softwareId: id,
@@ -107,7 +110,7 @@ const availableUsers = await prisma.user.findMany({
       =========================================
       {/* Assign software */}
       <p>Assign Software</p>
-      
+
       {availableUsers.length > 0 ? <form action={assignUsers} className='flex flex-col gap-4'>
             <select name="userId">
                 {availableUsers.map((user) => (
