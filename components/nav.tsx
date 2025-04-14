@@ -34,6 +34,10 @@ export default async function Nav() {
                 <Link href="/dashboard/users">Users</Link>
             </li>
             <li>
+                <Link href="/dashboard/staff">Staff</Link>
+            </li>
+            
+            <li>
                 <p>Logged in as : {data.user.email}</p>
             </li>
             <li>

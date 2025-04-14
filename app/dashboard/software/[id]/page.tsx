@@ -7,6 +7,8 @@ import { removeAssignedUser } from "@/actions/software_actions";
 import { Button } from "@/components/ui/button";
 import { createClient } from '@/utils/supabase/server'
 import { assignUsers } from "@/actions/software_actions";
+import UserManagement from "@/components/access-list";
+import UserList from "@/hooks/user-management";
 
 export default async function Page({
   params,
@@ -82,6 +84,13 @@ const availableUsers = await prisma.user.findMany({
       <br />
       =============================================
       <h3> Softwares Users</h3>
+
+      <UserManagement />
+      <br />
+      =============================================
+      <UserList />
+
+
       {users.map(async (user) => {
         const removeAssignedUserWithIds = removeAssignedUser.bind(null,  user.user.id,id);
        
