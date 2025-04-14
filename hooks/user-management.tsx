@@ -4,31 +4,31 @@ import { useState } from "react"
 import { Search, UserPlus, Filter, MoreHorizontal, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  DropdownMenuCheckboxItem,
-  DropdownMenuGroup,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuPortal,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-} from "@/components/ui/dropdown-menu"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
+// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuLabel,
+//   DropdownMenuSeparator,
+//   DropdownMenuTrigger,
+//   DropdownMenuCheckboxItem,
+//   DropdownMenuGroup,
+//   DropdownMenuSub,
+//   DropdownMenuSubContent,
+//   DropdownMenuSubTrigger,
+//   DropdownMenuPortal,
+//   DropdownMenuRadioGroup,
+//   DropdownMenuRadioItem,
+// } from "@/components/ui/dropdown-menu"
+// import {
+//   Pagination,
+//   PaginationContent,
+//   PaginationItem,
+//   PaginationLink,
+//   PaginationNext,
+//   PaginationPrevious,
+// } from "@/components/ui/pagination"
 import {
   Dialog,
   DialogContent,
@@ -43,6 +43,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { DropdownMenu, DropdownMenuRadioGroup, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu"
 
 // Access level types and their corresponding colors
 const accessLevelConfig = {
@@ -175,34 +176,34 @@ export default function UserList() {
   const [addUserSearchQuery, setAddUserSearchQuery] = useState("")
   const [selectedRoleForNewUsers, setSelectedRoleForNewUsers] = useState("Viewer")
   const [selectedAccessLevelForNewUsers, setSelectedAccessLevelForNewUsers] = useState("View Only")
-  const usersPerPage = 4
+  // const usersPerPage = 4
 
-  // Format date to be more readable
-  const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
-  }
+  // // Format date to be more readable
+  // const formatDate = (dateString) => {
+  //   const date = new Date(dateString)
+  //   return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+  // }
 
-  // Filter users based on search query, selected roles, and selected access levels
-  const filteredUsers = users.filter((user) => {
-    // Text search filter
-    const matchesSearch =
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.accessLevel.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.grantedBy.toLowerCase().includes(searchQuery.toLowerCase())
+  // // Filter users based on search query, selected roles, and selected access levels
+  // const filteredUsers = users.filter((user) => {
+  //   // Text search filter
+  //   const matchesSearch =
+  //     user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     user.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     user.accessLevel.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     user.grantedBy.toLowerCase().includes(searchQuery.toLowerCase())
 
-    // Role filter
-    const matchesRole = selectedRoles.length === 0 || selectedRoles.includes(user.role)
+  //   // Role filter
+  //   const matchesRole = selectedRoles.length === 0 || selectedRoles.includes(user.role)
 
-    // Access level filter
-    const matchesAccessLevel = selectedAccessLevels.length === 0 || selectedAccessLevels.includes(user.accessLevel)
+  //   // Access level filter
+  //   const matchesAccessLevel = selectedAccessLevels.length === 0 || selectedAccessLevels.includes(user.accessLevel)
 
-    return matchesSearch && matchesRole && matchesAccessLevel
-  })
+  //   return matchesSearch && matchesRole && matchesAccessLevel
+  // })
 
-  // Filter potential users for the add user dialog
+  // // Filter potential users for the add user dialog
   const filteredPotentialUsers = potentialUsers.filter(
     (user) =>
       user.name.toLowerCase().includes(addUserSearchQuery.toLowerCase()) ||
@@ -211,44 +212,44 @@ export default function UserList() {
   )
 
   // Calculate pagination
-  const indexOfLastUser = currentPage * usersPerPage
-  const indexOfFirstUser = indexOfLastUser - usersPerPage
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser)
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage)
+  // const indexOfLastUser = currentPage * usersPerPage
+  // const indexOfFirstUser = indexOfLastUser - usersPerPage
+  // const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser)
+  // const totalPages = Math.ceil(filteredUsers.length / usersPerPage)
 
-  // Handle page change
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber)
-  }
+  // // Handle page change
+  // const handlePageChange = (pageNumber) => {
+  //   setCurrentPage(pageNumber)
+  // }
 
-  // View user details
-  const handleViewUser = (user) => {
-    setSelectedUser(user)
-  }
+  // // View user details
+  // const handleViewUser = (user) => {
+  //   setSelectedUser(user)
+  // }
 
-  // Toggle role selection
-  const toggleRole = (role) => {
-    setSelectedRoles((prev) => (prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]))
-    setCurrentPage(1) // Reset to first page when filter changes
-  }
+  // // Toggle role selection
+  // const toggleRole = (role) => {
+  //   setSelectedRoles((prev) => (prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]))
+  //   setCurrentPage(1) // Reset to first page when filter changes
+  // }
 
-  // Toggle access level selection
-  const toggleAccessLevel = (level) => {
-    setSelectedAccessLevels((prev) => (prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]))
-    setCurrentPage(1) // Reset to first page when filter changes
-  }
+  // // Toggle access level selection
+  // const toggleAccessLevel = (level) => {
+  //   setSelectedAccessLevels((prev) => (prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]))
+  //   setCurrentPage(1) // Reset to first page when filter changes
+  // }
 
-  // Clear all filters
-  const clearFilters = () => {
-    setSelectedRoles([])
-    setSelectedAccessLevels([])
-    setCurrentPage(1)
-  }
+  // // Clear all filters
+  // const clearFilters = () => {
+  //   setSelectedRoles([])
+  //   setSelectedAccessLevels([])
+  //   setCurrentPage(1)
+  // }
 
-  // Toggle user selection for adding
-  const toggleUserSelection = (userId) => {
-    setSelectedUsersToAdd((prev) => (prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]))
-  }
+  // // Toggle user selection for adding
+  // const toggleUserSelection = (userId) => {
+  //   setSelectedUsersToAdd((prev) => (prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]))
+  // }
 
   // Select all users in the filtered list
   const selectAllUsers = () => {
@@ -296,12 +297,12 @@ export default function UserList() {
   }
 
   // Check if any filters are active
-  const hasActiveFilters = selectedRoles.length > 0 || selectedAccessLevels.length > 0
+  // const hasActiveFilters = selectedRoles.length > 0 || selectedAccessLevels.length > 0
 
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">User Access Management</h1>
+        {/* <h1 className="text-2xl font-bold">User Access Management</h1> */}
         <Dialog open={addUserDialogOpen} onOpenChange={handleAddUserDialogOpenChange}>
           <DialogTrigger asChild>
             <Button>
@@ -433,7 +434,7 @@ export default function UserList() {
           </DialogContent>
         </Dialog>
       </div>
-
+{/* 
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
         <div className="relative w-full md:w-72">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -700,7 +701,7 @@ export default function UserList() {
             </PaginationItem>
           </PaginationContent>
         </Pagination>
-      )}
+      )} */}
     </div>
   )
 }

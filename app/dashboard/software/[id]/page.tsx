@@ -9,6 +9,29 @@ import { createClient } from '@/utils/supabase/server'
 import { assignUsers } from "@/actions/software_actions";
 import UserManagement from "@/components/access-list";
 import UserList from "@/hooks/user-management";
+import { columns, Payment } from "./columns";
+import { DataTable } from "./data-table";
+
+async function getData(): Promise<Payment[]> {
+  // Fetch data from your API here.
+  return [
+    {
+      id: "728ed52f",
+      name: "John Doe",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+    {
+      id: "728ed52f",
+      name: "Jane Doe",
+      amount: 100,
+      status: "pending",
+      email: "m@example.com",
+    },
+   
+  ]
+}
 
 export default async function Page({
   params,
@@ -63,7 +86,7 @@ const availableUsers = await prisma.user.findMany({
 });
   //return the page with the software details
  
-
+  const fakeData = await getData()
   
   return (
     <>
@@ -84,12 +107,14 @@ const availableUsers = await prisma.user.findMany({
       <br />
       =============================================
       <h3> Softwares Users</h3>
+     
 
-      <UserManagement />
-      <br />
-      =============================================
-      <UserList />
+      <UserManagement 
+  users={users} 
 
+/>
+    
+      
 
       {users.map(async (user) => {
         const removeAssignedUserWithIds = removeAssignedUser.bind(null,  user.user.id,id);
