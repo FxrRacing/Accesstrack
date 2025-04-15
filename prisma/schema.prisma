@@ -35,6 +35,7 @@ model UserProfiles {
   SharedAccountSoftware SharedAccountSoftware[] // Records shared account assignments to software
   SharedAccountUser     SharedAccountUser[]     // Records shared account assignments to users
   updatedSharedAccounts     SharedAccount[]        @relation("SharedAccountUpdate")
+ 
 }
 
 
@@ -109,6 +110,7 @@ model Software {
   pricePerUser         Float?
   updatedById          String?           @db.Uuid 
   website              String?
+  faviconUrl           String?
   
   accountReps          AccountRep[]
   // Relation to the auth user who last updated the notes:
@@ -129,16 +131,19 @@ model Software {
 
 model SoftwareAccess {
   id              String        @id @default(uuid())
-  sharedAccountId String
+  sharedAccountId String      
   softwareId      String
   access          Boolean
   lastEdited      DateTime      @default(now())
   lastEditedBy    String
   permissions     String[]
+  accessLevel     String
+  role            String
   uid             String
-  
+  grantedById     String         @db.Uuid
   software        Software      @relation(fields: [softwareId], references: [id])
-
+  
+  
   @@schema("public")
 }
 model SoftwareHistory {
@@ -253,6 +258,8 @@ model SharedAccountSoftware {
   softwareId      String
   createdById     String        @db.Uuid
   assignedAt      DateTime      @default(now())
+  accessLevel     String
+  role            String
 
   sharedAccount   SharedAccount @relation(fields: [sharedAccountId], references: [id])
   software        Software      @relation(fields: [softwareId], references: [id])
@@ -267,6 +274,7 @@ model SharedAccountUser {
   userId          String
   createdById     String        @db.Uuid
   assignedAt      DateTime      @default(now())
+
 
   sharedAccount   SharedAccount @relation(fields: [sharedAccountId], references: [id])
   user            User          @relation(fields: [userId], references: [id])

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, UserPlus, Filter, MoreHorizontal, X } from "lucide-react"
+import { Search, UserPlus , MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 // import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -45,6 +45,7 @@ import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { DropdownMenu, DropdownMenuRadioGroup, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu"
 
+
 // Access level types and their corresponding colors
 const accessLevelConfig = {
   "View Only": { color: "bg-green-50", description: "Can view resources but cannot make changes" },
@@ -58,58 +59,58 @@ const accessLevelConfig = {
 const availableRoles = ["Admin", "Developer", "Viewer", "Billing"]
 
 // Mock data for users and their access level
-const mockUsers = [
-  {
-    id: 1,
-    name: "Alex Johnson",
-    email: "alex.johnson@example.com",
-    role: "Admin",
-    avatar: "/placeholder.svg?height=40&width=40",
-    lastUpdated: "2023-04-10",
-    grantedBy: "System Admin",
-    accessLevel: "Manage",
-  },
-  {
-    id: 2,
-    name: "Sarah Williams",
-    email: "sarah.williams@example.com",
-    role: "Developer",
-    avatar: "/placeholder.svg?height=40&width=40",
-    lastUpdated: "2023-03-22",
-    grantedBy: "Alex Johnson",
-    accessLevel: "Edit",
-  },
-  {
-    id: 3,
-    name: "Michael Brown",
-    email: "michael.brown@example.com",
-    role: "Viewer",
-    avatar: "/placeholder.svg?height=40&width=40",
-    lastUpdated: "2023-02-15",
-    grantedBy: "Alex Johnson",
-    accessLevel: "View Only",
-  },
-  {
-    id: 4,
-    name: "Emily Davis",
-    email: "emily.davis@example.com",
-    role: "Developer",
-    avatar: "/placeholder.svg?height=40&width=40",
-    lastUpdated: "2023-04-11",
-    grantedBy: "Sarah Williams",
-    accessLevel: "Edit",
-  },
-  {
-    id: 5,
-    name: "David Wilson",
-    email: "david.wilson@example.com",
-    role: "Billing",
-    avatar: "/placeholder.svg?height=40&width=40",
-    lastUpdated: "2023-01-30",
-    grantedBy: "System Admin",
-    accessLevel: "View Only",
-  },
-]
+// const mockUsers = [
+//   {
+//     id: 1,
+//     name: "Alex Johnson",
+//     email: "alex.johnson@example.com",
+//     role: "Admin",
+//     avatar: "/placeholder.svg?height=40&width=40",
+//     lastUpdated: "2023-04-10",
+//     grantedBy: "System Admin",
+//     accessLevel: "Manage",
+//   },
+//   {
+//     id: 2,
+//     name: "Sarah Williams",
+//     email: "sarah.williams@example.com",
+//     role: "Developer",
+//     avatar: "/placeholder.svg?height=40&width=40",
+//     lastUpdated: "2023-03-22",
+//     grantedBy: "Alex Johnson",
+//     accessLevel: "Edit",
+//   },
+//   {
+//     id: 3,
+//     name: "Michael Brown",
+//     email: "michael.brown@example.com",
+//     role: "Viewer",
+//     avatar: "/placeholder.svg?height=40&width=40",
+//     lastUpdated: "2023-02-15",
+//     grantedBy: "Alex Johnson",
+//     accessLevel: "View Only",
+//   },
+//   {
+//     id: 4,
+//     name: "Emily Davis",
+//     email: "emily.davis@example.com",
+//     role: "Developer",
+//     avatar: "/placeholder.svg?height=40&width=40",
+//     lastUpdated: "2023-04-11",
+//     grantedBy: "Sarah Williams",
+//     accessLevel: "Edit",
+//   },
+//   {
+//     id: 5,
+//     name: "David Wilson",
+//     email: "david.wilson@example.com",
+//     role: "Billing",
+//     avatar: "/placeholder.svg?height=40&width=40",
+//     lastUpdated: "2023-01-30",
+//     grantedBy: "System Admin",
+//     accessLevel: "View Only",
+//   },
+// ]
 
 // Mock data for potential users to add
 const potentialUsers = [
@@ -165,14 +166,10 @@ const potentialUsers = [
 ]
 
 export default function UserList() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [currentPage, setCurrentPage] = useState(1)
-  const [selectedUser, setSelectedUser] = useState(null)
-  const [selectedRoles, setSelectedRoles] = useState([])
-  const [selectedAccessLevels, setSelectedAccessLevels] = useState([])
-  const [users, setUsers] = useState(mockUsers)
+
+  
   const [addUserDialogOpen, setAddUserDialogOpen] = useState(false)
-  const [selectedUsersToAdd, setSelectedUsersToAdd] = useState([])
+  const [selectedUsersToAdd, setSelectedUsersToAdd] = useState<number[]>([])
   const [addUserSearchQuery, setAddUserSearchQuery] = useState("")
   const [selectedRoleForNewUsers, setSelectedRoleForNewUsers] = useState("Viewer")
   const [selectedAccessLevelForNewUsers, setSelectedAccessLevelForNewUsers] = useState("View Only")
@@ -247,9 +244,9 @@ export default function UserList() {
   // }
 
   // // Toggle user selection for adding
-  // const toggleUserSelection = (userId) => {
-  //   setSelectedUsersToAdd((prev) => (prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]))
-  // }
+  const toggleUserSelection = (userId: number) => {
+    setSelectedUsersToAdd((prev) => (prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]))
+  } 
 
   // Select all users in the filtered list
   const selectAllUsers = () => {
@@ -262,31 +259,34 @@ export default function UserList() {
 
   // Add selected users to the main user list
   const addSelectedUsers = () => {
-    const today = new Date().toISOString().split("T")[0]
-    const currentUser = "Alex Johnson" // Assuming the current user is Alex Johnson
+    // const today = new Date().toISOString().split("T")[0]
+    // const currentUser = "Alex Johnson" 
 
-    const newUsers = selectedUsersToAdd.map((userId) => {
-      const user = potentialUsers.find((u) => u.id === userId)
-      return {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: selectedRoleForNewUsers,
-        avatar: user.avatar,
-        lastUpdated: today,
-        grantedBy: currentUser,
-        accessLevel: selectedAccessLevelForNewUsers,
-      }
-    })
+    // const newUsers = selectedUsersToAdd
+    //   .map((userId) => {
+    //     const user = potentialUsers.find((u) => u.id === userId)
+    //     if (!user) return null
+    //     return {
+    //       id: user.id,
+    //       name: user.name,
+    //       email: user.email,
+    //       role: selectedRoleForNewUsers,
+    //       avatar: user.avatar,
+    //       lastUpdated: today,
+    //       grantedBy: currentUser,
+    //       accessLevel: selectedAccessLevelForNewUsers,
+    //     }
+    //   })
+    //   .filter((user): user is NonNullable<typeof user> => user !== null) // Filter out null values
 
-    setUsers((prev) => [...prev, ...newUsers])
+    //setUsers((prev) => [...prev, ...newUsers])
     setSelectedUsersToAdd([])
     setAddUserDialogOpen(false)
     setAddUserSearchQuery("")
   }
 
   // Reset add user dialog state when closing
-  const handleAddUserDialogOpenChange = (open) => {
+  const handleAddUserDialogOpenChange = (open:boolean) => {
     setAddUserDialogOpen(open)
     if (!open) {
       setSelectedUsersToAdd([])

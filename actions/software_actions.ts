@@ -2,6 +2,35 @@
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 
+export async function createSoftware(prevState: {message: string},formData: FormData) {
+    'use server'
+    const name = formData.get('name') as string | null;
+    const description = formData.get('description') as string | null;
+    const category = formData.get('category') as string | null;
+    const status = formData.get('status') as string | null;
+    if (!name || !description || !category || !status) {
+        return {message: 'All fields are required.'}
+    }
+    const data = {
+      name,
+      description,
+      category,
+      status,
+    }
+    console.table(data)
+
+    try {
+      await prisma.software.create({
+        data: data,
+      });
+      revalidatePath('/dashboard/software');
+      return { message: 'success' }
+    } catch (error) {
+        console.error('Error creating software:', error);
+        return { message: 'Please enter a valid email' }
+    }
+}
+
 
 
 export async function editSoftware(formData: FormData) {
@@ -69,7 +98,7 @@ export async function editSoftware(formData: FormData) {
   }
 
 
-  export async function assignUsers(formData: FormData) {
+  export async function assignUserToSoftware(prevState: {message: string},formData: FormData) {
    
     //we are not logged in so we will use a default user id
     const softwareId = formData.get('softwareId') as string | null;
@@ -78,7 +107,7 @@ export async function editSoftware(formData: FormData) {
     const role = formData.get('role') as string | null;
     const userId = formData.get('userId') as string | null;
     if (!softwareId || !grantedById || !accessLevel || !role || !userId)  {
-        throw new Error('All fields are required.');
+        return {message: 'All fields are required.'}
     }
 
   console.table({
@@ -94,7 +123,7 @@ export async function editSoftware(formData: FormData) {
   });
   
   if (alreadyAssigned) {
-    throw new Error('This user already has access to this software.');
+    return {message: 'This user already has access to this software.'}
   }
     try {
         const userSoftware = await prisma.userSoftware.create({
@@ -120,8 +149,9 @@ export async function editSoftware(formData: FormData) {
       
         console.log('User Software created:', userSoftware);
         revalidatePath(`/dashboard/software/${softwareId}`);
+        return {message: 'success'}
     } catch (error) {
         console.error('Error creating User Software:', error);
-        throw new Error('Failed to create User Software.');
+        return {message: 'Failed to create User Software.'}
     }
 }

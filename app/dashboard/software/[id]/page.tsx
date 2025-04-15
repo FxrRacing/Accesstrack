@@ -6,32 +6,12 @@ import {Drawer} from "./drawer";
 import { removeAssignedUser } from "@/actions/software_actions";
 import { Button } from "@/components/ui/button";
 import { createClient } from '@/utils/supabase/server'
-import { assignUsers } from "@/actions/software_actions";
-import UserManagement from "@/components/access-list";
-import UserList from "@/hooks/user-management";
-import { columns, Payment } from "./columns";
-import { DataTable } from "./data-table";
 
-async function getData(): Promise<Payment[]> {
-  // Fetch data from your API here.
-  return [
-    {
-      id: "728ed52f",
-      name: "John Doe",
-      amount: 100,
-      status: "pending",
-      email: "m@example.com",
-    },
-    {
-      id: "728ed52f",
-      name: "Jane Doe",
-      amount: 100,
-      status: "pending",
-      email: "m@example.com",
-    },
-   
-  ]
-}
+import UserManagement from "@/components/access-list";
+import AssignForm from "./assign-form";
+
+
+
 
 export default async function Page({
   params,
@@ -73,6 +53,7 @@ export default async function Page({
       software: true,
     },
   });
+ 
 const assignedUsers = users.map((user) => ({
   id: user.user.id,
 }));
@@ -82,11 +63,19 @@ const availableUsers = await prisma.user.findMany({
     id: {
       notIn: assignedUsersIds,
     },
+  
   },
 });
   //return the page with the software details
  
-  const fakeData = await getData()
+const sharedAccounts = await prisma.sharedAccountSoftware.findMany({
+  where: {
+    softwareId: id,
+  },
+  include: {
+    sharedAccount: true,
+  },
+});
   
   return (
     <>
@@ -128,9 +117,6 @@ const availableUsers = await prisma.user.findMany({
             </h2>
           </Link>
 
-          <p className="text-green-700">
-            Description: {user.software.description}
-          </p>
           <p className="text-green-700">Granted By : {user.grantedBy.email}</p>
           <p className="text-green-700">Job Title : {user.user.jobTitle}</p>
           <p className="text-green-700">Access Level : {user.accessLevel}</p>
@@ -145,25 +131,23 @@ const availableUsers = await prisma.user.findMany({
       {/* Assign software */}
       <p>Assign Software</p>
 
-      {availableUsers.length > 0 ? <form action={assignUsers} className='flex flex-col gap-4'>
-            <select name="userId">
-                {availableUsers.map((user) => (
-                    <option key={user.id} value={user.id}>{user.name}-{user.id}</option>
-                ))}
-            </select>
-            <input type="text" name="grantedById"  defaultValue={data.user.id} hidden />
-            {/* <select name="grantedById" className='flex flex-col gap-4'>
-                {users.map((user) => (
-                    <option key={user.id} value={user.id}>{user.name}</option>
-                ))}
-            </select> */}
-            
-            <input type="text" name="accessLevel" placeholder="Access Level*" />
-            <input type="text" name="role" placeholder="Role*" />
-            <input type="text" name="softwareId" defaultValue={id} hidden />
-            <button type="submit">Assign Software +</button>
-        </form> : <p>No available users</p>}
+      {availableUsers.length > 0 ? <AssignForm id={id} /> : <p>No available users</p>
+        
+        
+        }
       =========================================
+<p className="text-xl">Shared Accounts</p>
+
+{sharedAccounts.map((sharedAccount) => (
+  <div key={sharedAccount.id} className="flex flex-col gap-2">
+    <Link href={`/dashboard/shared-accounts/${sharedAccount.sharedAccountId}`} prefetch={true}>{sharedAccount.sharedAccount.name}</Link>
+    <p>{sharedAccount.accessLevel}</p>
+    <p>{sharedAccount.assignedAt.toLocaleDateString()}</p>
+    <p>{sharedAccount.createdById}</p>
+    <p>{sharedAccount.role}</p>
+  </div>
+))}
+
     </>
   );
 }

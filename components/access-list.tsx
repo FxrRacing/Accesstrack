@@ -6,7 +6,7 @@ import { debounce } from "lodash"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { User, UserSoftware } from "@prisma/client"
+import { Software, User, UserSoftware } from "@prisma/client"
 import UserList from "@/hooks/user-management"
 import {
   DropdownMenu,
@@ -68,25 +68,25 @@ const availableRoles = ["Admin", "Developer", "Viewer", "Billing"]
 type AccessLevel = "View Only" | "Edit" | "Delete" | "Manage" | "No Access";
 
 // Update MockUser type to use string IDs
-
+type GrantedBy = {
+    id: string;
+    username: string | null;
+    fullName: string | null;
+    email: string | null;
+    phone: string | null;
+    avatarUrl: string | null;
+    website: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+}
 
 // Update UserManagementProps to match your database schema
 interface UserManagementProps {
   users: (UserSoftware & {
     user: User;
-    grantedBy: User;
-    software: {
-      id: string;
-      name: string;
-      description?: string;
-    };
+    grantedBy: GrantedBy;
+    software: Software;
   })[];
-  potentialUsers?: User[];       
-  currentUser?: {                
-    id: string;
-    name?: string;
-    email: string;
-  };
 }
 
 export default function UserManagement({ 
@@ -98,7 +98,10 @@ export default function UserManagement({
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
   const [searchField, setSearchField] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
-  const [selectedUser, setSelectedUser] = useState<(UserSoftware & { user: User }) | null>(null)
+  const [selectedUser, setSelectedUser] = useState<(UserSoftware & { 
+    user: User, 
+    grantedBy: GrantedBy
+  }) | null>(null)
   const [selectedRoles, setSelectedRoles] = useState<string[]>([])
   const [selectedAccessLevels, setSelectedAccessLevels] = useState<string[]>([])
   const [sortField, setSortField] = useState<string>("user.name") // Changed to string as we need nested properties
@@ -171,9 +174,9 @@ export default function UserManagement({
       comparison = (a.accessLevel || "").localeCompare(b.accessLevel || "")
     } else if (sortField === "updatedAt") {
       // Special case for date comparison
-      comparison = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
-    } else if (sortField === "grantedBy.name") {
-      comparison = (a.grantedBy.name || "").localeCompare(b.grantedBy.name || "")
+      comparison = new Date(a.assignedAt).getTime() - new Date(b.assignedAt).getTime()
+    } else if (sortField === "grantedBy.fullName") {
+      comparison = (a.grantedBy.fullName || "").localeCompare(b.grantedBy.fullName || "")
     } else {
       // Default fallback sorting
       comparison = (a.user.name || "").localeCompare(b.user.name || "")
@@ -232,7 +235,7 @@ export default function UserManagement({
   }
 
   // View user details
-  const handleViewUser = (user: UserSoftware & { user: User }) => {
+  const handleViewUser = (user: UserSoftware & { user: User, grantedBy: GrantedBy }) => {
     setSelectedUser(user)
   }
 
@@ -518,7 +521,7 @@ export default function UserManagement({
                   <TableCell className="hidden md:table-cell">{formatDate(user.assignedAt)}</TableCell>
                   <TableCell className="hidden md:table-cell">
                    
-                    {searchQuery ? getHighlightedText(user.grantedBy.name, searchQuery) : user.grantedBy.email}
+                    {searchQuery ? getHighlightedText(user.grantedBy?.fullName || "", searchQuery) : user.grantedBy?.email || ""}
                   </TableCell>
                   <TableCell>
                     <Dialog>
@@ -533,17 +536,18 @@ export default function UserManagement({
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DialogTrigger asChild>
-                            <DropdownMenuItem onClick={() => handleViewUser(user as UserSoftware & { user: User })}>View details</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleViewUser(user as UserSoftware & { user: User, grantedBy: GrantedBy })}>View details</DropdownMenuItem>
                           </DialogTrigger>
                           <DropdownMenuItem>Change access level</DropdownMenuItem>
                           <DropdownMenuItem>Reset password</DropdownMenuItem>
                           <DropdownMenuSeparator />
                          
                           <DropdownMenuItem className="text-destructive">
-                          <form action={removeAssignedUserWithIds} className="flex flex-col gap-4">
-                              <Button type="submit"  variant="ghost" size="sm" >Revoke access </Button>
+                            <form action={removeAssignedUserWithIds}>
+                              <input type="hidden" name="userId" value={user.user.id} />
+                              <input type="hidden" name="softwareId" value={user.software.id} />
+                              <Button type="submit" variant="ghost" size="sm">Revoke access</Button>
                             </form>
-
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -569,15 +573,15 @@ export default function UserManagement({
                                 <h4 className="font-medium">Role</h4>
                                 <Badge
                                   variant={
-                                    selectedUser.user.role === "Admin"
+                                    selectedUser.role === "Admin"
                                       ? "default"
-                                      : selectedUser.user.role === "Developer"
+                                      : selectedUser.role === "Developer"
                                         ? "secondary"
                                         : "outline"
                                   }
                                   className="w-fit"
                                 >
-                                  {selectedUser.user.role}
+                                  {selectedUser.role}
                                 </Badge>
                               </div>
                               <div className="grid gap-2">
