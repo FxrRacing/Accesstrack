@@ -53,7 +53,6 @@ export default async function Page({
       software: true,
     },
   });
- 
 const assignedUsers = users.map((user) => ({
   id: user.user.id,
 }));
@@ -131,7 +130,9 @@ const sharedAccounts = await prisma.sharedAccountSoftware.findMany({
       {/* Assign software */}
       <p>Assign Software</p>
 
-      {availableUsers.length > 0 ? <AssignForm id={id} /> : <p>No available users</p>
+      {availableUsers.length > 0 ? 
+      <AssignForm id={id} availableUsers={availableUsers} authId={data.user.id} /> 
+      : <p>There are no available users to assign to this software</p>
         
         
         }
