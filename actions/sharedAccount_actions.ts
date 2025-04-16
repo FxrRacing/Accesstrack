@@ -86,3 +86,71 @@ export async function assignSoftware(formData: FormData) {
         throw error;
     }
 }
+
+
+export async function addUserToSharedAccount(prevState: {message: string}, formData: FormData) {
+   
+
+    const assignUserSchema = z.object({
+        sharedAccountId: z.string().min(1, "Shared account ID is required"),
+        userId: z.string().min(1, "User ID is required"),
+        authId: z.string().min(1, "Auth ID is required"),
+    });
+    try {
+        const result = assignUserSchema.safeParse({
+            sharedAccountId: formData.get('sharedAccountId'),
+            userId: formData.get('userId'),
+            authId: formData.get('authId'),
+        }
+           
+        );
+        if (!result.success) {
+            console.log(result.error)
+            return { message: 'Invalid form data', errors: result.error.message };
+        }
+        console.table(result.data);
+        await prisma.sharedAccountUser.create({
+            data: {
+                sharedAccountId: result.data.sharedAccountId,
+                userId: result.data.userId,
+                createdById: result.data.authId,
+            },
+    })
+    await prisma.sharedAccountHistory.create({
+        data: {
+            action: "Assigned User",
+            sharedAccountId: result.data.sharedAccountId,
+            field: "users",
+            oldValue: null,
+            newValue: result.data.userId,
+            updatedBy: result.data.authId,
+        },
+    })
+    revalidatePath(`/dashboard/shared-accounts/${result.data.sharedAccountId}`)
+    revalidatePath('/dashboard/shared-accounts')
+    revalidatePath(`/dashboard/users/${result.data.userId}`)
+    return { message: 'User added to shared account.',  };
+   } catch (error) {
+    console.error('Error adding user to shared account:', error);
+    return { message: 'Failed to add user to shared account.' };
+   }
+}
+
+export async function deleteSharedAccount(id: string, sharedAccountId: string) {
+    await prisma.sharedAccountUser.delete({
+        where: {
+            id: id
+        }
+    })
+    await prisma.sharedAccountHistory.create({
+        data: {
+            action: "Deleted Shared Account",
+            sharedAccountId: sharedAccountId,
+            field: "users",
+            oldValue: id,
+            newValue: null,
+            updatedBy: sharedAccountId,
+        },
+    })
+    revalidatePath(`/dashboard/users/${sharedAccountId}`)
+}

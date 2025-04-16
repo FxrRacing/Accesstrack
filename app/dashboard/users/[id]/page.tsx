@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { assignSoftware, removeAssignedSoftware } from '@/actions/user_actions'
 import { createClient } from '@/utils/supabase/server'
 import { findRealUser } from '@/lib/queries'
+import SharedAccounts from './shared-accounts'
 
 export default async function Page({
     params,
@@ -123,6 +124,7 @@ export default async function Page({
         </form>
         ============================
 
+        <SharedAccounts id={id} authId={data.user.id} />
     </>
   }
 

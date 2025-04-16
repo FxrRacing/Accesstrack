@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 
 import { notFound, redirect } from "next/navigation";
+import Users from "./users";
 
 export default async function Page({
     params,
@@ -49,6 +50,9 @@ export default async function Page({
      
     );
 
+    
+    
+
     return <>
     <div className="flex flex-col gap-4 p-3">
         <h1>Shared Account: {id}</h1>
@@ -72,9 +76,8 @@ export default async function Page({
               <p>{software.role}</p>
             </div>
           ))}
-        
+          {availableSoftware.length === 0 && <p>There are no available software to assign to this shared account</p>}
         </div>
-
 
 <br />
         =================
@@ -101,6 +104,8 @@ export default async function Page({
     </div>
     <div className="flex flex-col gap-4 p-3">
         <h1>Users</h1>
+       
+        <Users id={id} authId={data.user.id} />
     </div>
 
     
