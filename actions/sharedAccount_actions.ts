@@ -123,7 +123,7 @@ export async function addUserToSharedAccount(prevState: {message: string}, formD
             field: "users",
             oldValue: null,
             newValue: result.data.userId,
-            updatedBy: result.data.authId,
+            updatedById: result.data.authId,
         },
     })
     revalidatePath(`/dashboard/shared-accounts/${result.data.sharedAccountId}`)
@@ -136,21 +136,21 @@ export async function addUserToSharedAccount(prevState: {message: string}, formD
    }
 }
 
-export async function deleteSharedAccount(id: string, sharedAccountId: string) {
-    await prisma.sharedAccountUser.delete({
-        where: {
-            id: id
-        }
-    })
-    await prisma.sharedAccountHistory.create({
-        data: {
-            action: "Deleted Shared Account",
-            sharedAccountId: sharedAccountId,
-            field: "users",
-            oldValue: id,
-            newValue: null,
-            updatedBy: sharedAccountId,
-        },
-    })
-    revalidatePath(`/dashboard/users/${sharedAccountId}`)
-}
+// export async function deleteSharedAccount(id: string, sharedAccountId: string) {
+//     await prisma.sharedAccountUser.delete({
+//         where: {
+//             id: id
+//         }
+//     })
+//     await prisma.sharedAccountHistory.create({
+//         data: {
+//             action: "Deleted Shared Account",
+//             sharedAccountId: sharedAccountId,
+//             field: "users",
+//             oldValue: id,
+//             newValue: null,
+//             updatedBy: sharedAccountId,
+//         },
+//     })
+//     revalidatePath(`/dashboard/users/${sharedAccountId}`)
+// }

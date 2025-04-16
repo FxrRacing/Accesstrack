@@ -1,6 +1,7 @@
 import { assignSoftware } from "@/actions/sharedAccount_actions";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
+import History from "./history";
 import Link from "next/link";
 
 import { notFound, redirect } from "next/navigation";
@@ -108,6 +109,9 @@ export default async function Page({
         <Users id={id} authId={data.user.id} />
     </div>
 
-    
+
+    <br />
+    =============== 
+    <History id={id} />
     </>
 } ;

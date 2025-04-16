@@ -36,6 +36,7 @@ model UserProfiles {
   SharedAccountUser     SharedAccountUser[]     // Records shared account assignments to users
   updatedSharedAccounts     SharedAccount[]        @relation("SharedAccountUpdate")
  
+  SharedAccountHistory SharedAccountHistory[]
 }
 
 
@@ -243,11 +244,11 @@ model SharedAccountHistory {
   field           String
   newValue        String?
   oldValue        String?
-  updatedBy       String
+  updatedById     String        @db.Uuid
   updatedOn       DateTime       @default(now())
   
   sharedAccount   SharedAccount  @relation(fields: [sharedAccountId], references: [id], onDelete: Cascade)
-
+  updatedBy       UserProfiles   @relation(fields: [updatedById], references: [id])
   @@index([sharedAccountId])
   @@schema("public")
 }
