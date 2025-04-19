@@ -136,21 +136,47 @@ export async function addUserToSharedAccount(prevState: {message: string}, formD
    }
 }
 
-// export async function deleteSharedAccount(id: string, sharedAccountId: string) {
-//     await prisma.sharedAccountUser.delete({
-//         where: {
-//             id: id
-//         }
-//     })
-//     await prisma.sharedAccountHistory.create({
-//         data: {
-//             action: "Deleted Shared Account",
-//             sharedAccountId: sharedAccountId,
-//             field: "users",
-//             oldValue: id,
-//             newValue: null,
-//             updatedBy: sharedAccountId,
-//         },
-//     })
-//     revalidatePath(`/dashboard/users/${sharedAccountId}`)
-// }
+export async function unassignUserFromSharedAccount(prevState: {message: string}, formData: FormData) {
+    try {
+        const id = formData.get('id') as string;
+        const name = formData.get('name') as string;
+        const sharedAccountId = formData.get('sharedAccountId') as string;
+        const authId = formData.get('authId') as string;
+        if (!id || !sharedAccountId || !authId || !name) {
+            return { message: 'All fields are required.' };
+        }
+
+        await prisma.sharedAccountUser.delete({
+            where: {
+                sharedAccountId_userId: {
+                    sharedAccountId: sharedAccountId,
+                    userId: id
+                }
+            }
+        })
+        await prisma.sharedAccount.update({
+            where: {
+                id: sharedAccountId
+            },
+            data: {
+                updatedAt: new Date()
+            }
+        })
+        await prisma.sharedAccountHistory.create({
+            data: {
+                action: "Unassigned User",
+                sharedAccountId: sharedAccountId,
+                field: "users",
+                oldValue: name,
+                newValue: null,
+                updatedById: authId,
+            },
+        })
+        revalidatePath(`/dashboard/users/${sharedAccountId}`)
+        revalidatePath(`/dashboard/shared-accounts/${sharedAccountId}`)
+        return { message: 'User unassigned from shared account.' };
+    } catch (error) {
+        console.error('Error unassigning user from shared account:', error);
+        return { message: 'Failed to unassign user from shared account.' };
+    }
+}

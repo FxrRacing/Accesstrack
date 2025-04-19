@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/utils/supabase/server'
+
 export async function logout() {
   const supabase = await createClient()
   const { error } = await supabase.auth.signOut()
@@ -59,3 +60,6 @@ export async function signup(formData: FormData) {
   revalidatePath('/', 'layout')
   redirect('/')
 }
+
+
+

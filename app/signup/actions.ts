@@ -32,3 +32,45 @@ export async function signup(formData: FormData) {
     revalidatePath('/', 'layout')
     redirect('/')
   }
+
+
+
+
+export async function signinWithAzure(){
+  const supabase = await createClient()
+  if (process.env.NODE_ENV !== "production") {
+    const supabase = await createClient()
+    const {data, error} = await supabase.auth.signInWithOAuth({
+      provider: 'azure',
+      options: {
+       scopes: 'email profile',
+       redirectTo: 'http://localhost:3000/auth/callback',
+      }
+    })
+    if (data.url) {
+      redirect(data.url) // use the redirect API for your server framework
+    }
+    if (error) {
+      console.error('Error signing in with Azure:', error)
+      redirect('/error')
+    }
+  }
+  console.log("this should not be happening")
+  const {data, error} = await supabase.auth.signInWithOAuth({
+    provider: 'azure',
+    options: {
+     scopes: 'email profile',
+     redirectTo: 'http://localhost:3000/auth/callback',
+    }
+  })
+
+  console.log(data)
+
+  if(error){
+    console.error('Error signing in with Azure:', error)
+    redirect('/error')
+  }
+
+  revalidatePath('/dashboard', 'layout')
+  redirect('/dashboard')
+}

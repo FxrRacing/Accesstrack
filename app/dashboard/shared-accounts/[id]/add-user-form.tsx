@@ -14,8 +14,8 @@ export default function AddUserForm({id, availableUsers, authId}: {id: string, a
         <h1>Add User</h1>
       ====
         <form action={formAction}>
-            <input type="text" name="sharedAccountId" value={id} hidden />
-            <input type="text" name="authId" value={authId} hidden />
+            <input type="text" name="sharedAccountId" value={id} hidden readOnly />
+            <input type="text" name="authId" value={authId} hidden readOnly />
             <select name="userId">
                 {availableUsers.map((user) => (
                     <option key={user.id} value={user.id}>{user.name}</option>
