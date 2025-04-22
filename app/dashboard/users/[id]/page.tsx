@@ -6,7 +6,10 @@ import { assignSoftware, removeAssignedSoftware } from '@/actions/user_actions'
 import { createClient } from '@/utils/supabase/server'
 import { findRealUser } from '@/lib/queries'
 import SharedAccounts from './shared-accounts'
-
+import EmployeeProfile from '../employee-profile'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+import EditUser from './edit-user'
 export default async function Page({
     params,
   }: {
@@ -24,6 +27,9 @@ export default async function Page({
     const user = await prisma.user.findUnique({
       where: {
         id: id,
+      },
+      include: {
+        reportsTo: true,
       },
     })
     if (!user) {
@@ -55,7 +61,14 @@ export default async function Page({
          orderBy: {
              name: 'asc',
          },
+        
  
+      });
+      const users = await prisma.user.findMany({
+        orderBy: {
+            name: 'asc',
+        },
+        where: {id: {not: id}}
       });
      
 
@@ -65,13 +78,22 @@ export default async function Page({
     
     return <>
         <div>
+
+       
+
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             <h1 className='text-2xl font-bold'>{user.name}</h1>
+            
             <p className="text-green-700">Department: {user.department}</p>
             <p className="text-green-700">Job Title: {user.jobTitle}</p>
             <p className="text-green-700">Email: {user.email}</p>
             <p className="text-green-700">Location: {user.location}</p>
+            <p className="text-green-700">Reports To: {user.reportsTo?.name}</p>
+
+           <Badge>{user.status}</Badge>
         </div>
+
+<EditUser user={user}  authId={data.user.id} users={users} />
 
         ===============================
         <h1>Software</h1>
@@ -125,6 +147,13 @@ export default async function Page({
         ============================
 
         <SharedAccounts id={id} authId={data.user.id} />
+
+        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        <EmployeeProfile />
+
+
+
     </>
   }
 

@@ -1,9 +1,12 @@
 'use server'
 import { prisma } from '@/lib/prisma';
+import { User } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 
 
-export async function editUser(formData: FormData, id: string) {
+
+
+export async function editUser(prevState: {message: string}, formData: FormData) {
   
     // Mutate data
     const name = formData.get('name') as string | null;
@@ -11,27 +14,39 @@ export async function editUser(formData: FormData, id: string) {
     const jobTitle = formData.get('jobTitle') as string | null;
     const email = formData.get('email') as string | null;
     const location = formData.get('location') as string | null;
-
-    if (!name || !department || !jobTitle || !email || !location) {
-        throw new Error('All fields are required.');
+    const status = formData.get('status') as string | null;
+    const id = formData.get('id') as string | null;
+    const reportsToId = formData.get('reportsToId') as string | null;
+    const authId = formData.get('authId') as string | null;
+    if (!id || !authId) {
+        return {message: 'User or Auth ID is required.'}
     }
+
+    const updates : Partial<User> = {
+    }
+if (department != null)  updates.department  = department
+if (email      != null)  updates.email       = email
+if (location   != null)  updates.location    = location
+if (jobTitle   != null)  updates.jobTitle    = jobTitle
+if (name       != null)  updates.name        = name
+if (status     != null)  updates.status      = status
+if (reportsToId != null)  updates.reportsToId = reportsToId
 
     try {
         // Perform the edit user action here
         const user = await prisma.user.update({
             where: { id: id },
-            data: {
-                name: name,
-                department: department,
-                jobTitle: jobTitle,
-                email: email,
-                location: location,
-            },
+            data: updates,
         });
+      
         console.log('User updated:', user);
+        revalidatePath(`/dashboard/users/${user.id}`);
+        revalidatePath(`/dashboard/org-chart`);
+        revalidatePath(`/dashboard/users`);
+        return {message: 'User updated successfully'}
     } catch (error) {
         console.error('Error updating user:', error);
-        throw new Error('Failed to update user.');
+        return {message: 'Failed to update user.'}
     }
     
     //we are not logged in so we will use a default user id
@@ -46,10 +61,12 @@ export async function createUser(formData: FormData) {
     const jobTitle = formData.get('jobTitle') as string | null;
     const email = formData.get('email') as string | null;
     const location = formData.get('location') as string | null;
-
+    const reportsTo = formData.get('reportsTo') as string | null;
+//reports to can be null we just wont add it to the user
     if (!name || !department || !jobTitle || !email || !location) {
         throw new Error('All fields are required.');
     }
+    
 
     try {
         // Perform the edit user action here
@@ -60,11 +77,14 @@ export async function createUser(formData: FormData) {
                 jobTitle: jobTitle,
                 email: email,
                 location: location,
+                reportsToId: reportsTo ? reportsTo : null,
             },
         });
         console.log('User created:', user);
         //you will want to revalidate to the new user page
         revalidatePath(`/dashboard/users/${user.id}`);
+        revalidatePath(`/dashboard/org-chart`);
+        revalidatePath(`/dashboard/users`);
     } catch (error) {
         console.error('Error creating user:', error);
         throw new Error('Failed to create user.');

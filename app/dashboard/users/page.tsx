@@ -1,17 +1,30 @@
 import { createUser } from "@/actions/user_actions";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import CreateUserForm from "./create-user-form";
+import { UsersTable } from "./table";
+import { User } from "@prisma/client";
+
 
 export default async function UsersPage() {  
-     const users= await prisma.user.findMany({
+     const users: (User & { reportsTo: User | null })[] = await prisma.user.findMany({
         orderBy: {
             name: 'asc',
+        },
+        include: {
+            reportsTo: true,
         },
      });
     return (
         <div>
             <h1>Users</h1>
             <p>Users page content goes here.</p>
+
+
+            =====
+            <UsersTable data={users} />
+            =====
+
             {users.map((user) => (
                 
                 <div key={user.id}>
@@ -21,6 +34,7 @@ export default async function UsersPage() {
                     <p className="text-green-700">Job Title: {user.jobTitle}</p>
                     <p className="text-green-700">Email: {user.email}</p>
                     <p className="text-green-700">Location: {user.location}</p>
+                    <p className="text-green-700">Reports To: {user.reportsTo?.name}</p>
                 </div>
                
             ))}
@@ -28,6 +42,9 @@ export default async function UsersPage() {
 
             ==========================================
             <h2>Create User</h2>
+
+            <CreateUserForm users={users} />
+            =====   
             <form action={createUser} className='flex flex-col gap-4'>
                 <input type="text" name="name" placeholder="Name*" />
                 <input type="text" name="department" placeholder="Department*" />
