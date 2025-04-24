@@ -259,7 +259,7 @@ const hasActiveFilters =
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px]">
-              {statusOptions.map((option, index) => (
+              {statusOptions.map((option) => (
                 <DropdownMenuCheckboxItem
                   key={option.label}
                   checked={selectedStatus.includes(option.value)}
@@ -292,13 +292,13 @@ const hasActiveFilters =
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px]">
               <ScrollArea className="h-[300px]">
-                {uniqueLocations.map((location, index) => (
+                {uniqueLocations.map((location) => (
                   <DropdownMenuCheckboxItem
                     key={location}
-                    checked={selectedLocations.includes(location)}
+                    checked={selectedLocations.includes(location || '')}
                     onCheckedChange={(checked) => {
                       if (checked) {
-                        setSelectedLocations([...selectedLocations, location])
+                        setSelectedLocations([...selectedLocations, location || ''])
                       } else {
                         setSelectedLocations(selectedLocations.filter((l) => l !== location))
                       }
@@ -326,13 +326,13 @@ const hasActiveFilters =
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px]">
               <ScrollArea className="h-[300px] sm:h-auto">
-                {uniqueTypes.map((type, index) => (
+                {uniqueTypes.map((type) => (
                   <DropdownMenuCheckboxItem
                     key={type}
-                    checked={selectedTypes.includes(type)}
+                    checked={selectedTypes.includes(type || '')}
                     onCheckedChange={(checked) => {
                       if (checked) {
-                        setSelectedTypes([...selectedTypes, type])
+                        setSelectedTypes([...selectedTypes, type || ''])
                       } else {
                         setSelectedTypes(selectedTypes.filter((t) => t !== type))
                       }
@@ -360,13 +360,13 @@ const hasActiveFilters =
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px]">
               <ScrollArea className="h-[300px]">
-                {uniqueReportsTo.map((manager, index) => (
+                {uniqueReportsTo.map((manager) => (
                   <DropdownMenuCheckboxItem
                     key={manager}
-                    checked={selectedReportsTo.includes(manager)}
+                    checked={selectedReportsTo.includes(manager || '')}
                     onCheckedChange={(checked) => {
                       if (checked) {
-                        setSelectedReportsTo([...selectedReportsTo, manager])
+                        setSelectedReportsTo([...selectedReportsTo, manager || ''   ])
                       } else {
                         setSelectedReportsTo(selectedReportsTo.filter((m) => m !== manager))
                       }
@@ -508,7 +508,7 @@ const hasActiveFilters =
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                     {row.getVisibleCells().map((cell) => (
   <TableCell key={cell.id} >
-    <Link href={`users/${cell.row.original.id}` }>
+    <Link href={`/dashboard/users/${cell.row.original.id}` }>
       {flexRender(
         cell.column.columnDef.cell,
         cell.getContext() // Directly use `getContext` without modifying `key`

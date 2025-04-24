@@ -22,6 +22,8 @@ export default function EditUser({user, authId, users}: {user: User, authId: str
             <select name="status">
                 <option value="ACTIVE">Active</option>
                 <option value="INACTIVE">Inactive</option>
+                <option value="SUSPENDED">Suspended</option>
+                <option value="ON_LEAVE">On Leave</option>
             </select>
             <input type="text" name="authId" value={authId} readOnly hidden />
             <label htmlFor="reportsToId">Reports To</label>

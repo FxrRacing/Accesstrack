@@ -1,8 +1,10 @@
 import { createSharedAccount } from "@/actions/sharedAccount_actions";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
-import Link from "next/link";
+
 import { redirect } from "next/navigation";
+import { DataTable } from "./data-table";
+import { columns } from "./columns";
 
 export default async function SharedAccountsPage() {
     const supabase = await createClient()
@@ -21,16 +23,10 @@ export default async function SharedAccountsPage() {
     return (
         <div className="flex flex-col gap-4 p-3">
             <h1>Shared Accounts</h1>
+            <DataTable columns={columns} data={sharedAccounts} />
+
+
            
-            {sharedAccounts.length > 0 ? sharedAccounts.map((sharedAccount) => (
-                <div key={sharedAccount.id}>
-                   <Link href={`/dashboard/shared-accounts/${sharedAccount.id}`}> <h2 className="font-bold text-lg">{sharedAccount.name}</h2></Link>
-                    <p>{sharedAccount.email}</p>
-                    <p>{sharedAccount.location}</p>
-                    <p>{sharedAccount.type}</p>
-                    <p>{sharedAccount.status}</p>
-                </div>
-            )) : <p>No shared accounts found</p>}
 ===================
             <h2 className="font-bold text-lg">Create Shared Account</h2>
             <form action={createSharedAccount} className="flex flex-col gap-2">

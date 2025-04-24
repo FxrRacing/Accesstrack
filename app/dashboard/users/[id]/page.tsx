@@ -8,7 +8,7 @@ import { findRealUser } from '@/lib/queries'
 import SharedAccounts from './shared-accounts'
 import EmployeeProfile from '../employee-profile'
 import { Badge } from '@/components/ui/badge'
-import { cn } from '@/lib/utils'
+
 import EditUser from './edit-user'
 export default async function Page({
     params,
