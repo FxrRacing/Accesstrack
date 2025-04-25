@@ -1,10 +1,19 @@
 import { Separator } from "@/components/ui/separator"
+import { createClient } from "@/utils/supabase/server"
+
+import { redirect } from "next/navigation"
 import { AccountForm } from "./account-form"
-import SettingInfoPage from "./info"
 
 
-export default function SettingsAccountPage() {
+export default async function SettingsAccountPage() {
 
+  const supabase = await createClient()
+
+  const { data, error } = await supabase.auth.getUser()
+  
+  if (error || !data?.user) {
+    redirect('/login')
+  }
   return (
     <div className="space-y-6">
       <div>
@@ -16,7 +25,7 @@ export default function SettingsAccountPage() {
       </div>
    
       <Separator />
-      <AccountForm />
+      <AccountForm user={data.user} />
     </div>
   )
 }

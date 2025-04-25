@@ -58,7 +58,8 @@ type UserWithReportsTo = User & { reportsTo: User | null }
       <p className="capitalize">{row.getValue("status")}</p>
     </Badge>}
             
-            </div>,
+            </div>
+        },
         filterFn: (row, id, filterValue) => {
           // If no filter value is selected, show all rows
           if (!filterValue.length) return true
