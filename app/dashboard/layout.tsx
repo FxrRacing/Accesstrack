@@ -40,9 +40,9 @@ export default async function RootLayout({
         <SiteHeader />  
 
     <Nav />
-
+    
       <div
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-1 flex-col gap-4 p-4`  }
       >
 
 

@@ -31,6 +31,8 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
 import { DownloadIcon } from "@radix-ui/react-icons"
+import Link from "next/link"
+import { SharedAccount } from "@prisma/client"
   
 
 
@@ -156,9 +158,14 @@ export function DataTable<TData, TValue>({
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
+                  <TableCell key={cell.id} >
+                  <Link href={`/dashboard/shared-accounts/${(row.original as SharedAccount).id}` }>
+                    {flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext() // Directly use `getContext` without modifying `key`
+                    )}
+                  </Link>
+                </TableCell>
                 ))}
               </TableRow>
             ))
