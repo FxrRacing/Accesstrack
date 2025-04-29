@@ -5,15 +5,17 @@ import { prisma } from "@/lib/prisma";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 
-import Invite from "./intive";
+import Invite from "./invite";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function StaffPage() {
 
-    const staff = await prisma.userProfiles.findMany();  
+    const staff = await prisma.userProfiles.findMany(
+       
+    );  
 const supabase = await createClient()
-
+//staff.map(staff => staff.id)
   const { data, error } = await supabase.auth.getUser()
   
   if (error || !data?.user) {
