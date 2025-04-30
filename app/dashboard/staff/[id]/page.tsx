@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { grantAccess } from "../actions";
 import { revokeAccess } from "../actions";
+import { deleteStaff } from "../actions";
 import { Button } from "@/components/ui/button";
 
 export default async function Page({
@@ -34,6 +35,7 @@ if (!authUser) {
 
     const revokeAccessWithId = revokeAccess.bind(null, id);
     const grantAccessWithId = grantAccess.bind(null, id);
+    const deleteStaffWithId = deleteStaff.bind(null, id);   
     return (
             <div>
 
@@ -60,6 +62,10 @@ if (!authUser) {
 </form>
 <form action={grantAccessWithId}>
 <Button type="submit">Grant Access</Button>
+</form>
+
+<form action={deleteStaffWithId}>
+<Button type="submit">Delete Staff</Button>
 </form>
 </div>
         </div>

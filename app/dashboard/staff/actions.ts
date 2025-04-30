@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 
 import { prisma } from '@/lib/prisma';
 import {  serviceRoleClient } from '@/utils/supabase/admin';
+import { redirect } from 'next/navigation';
 
 
 
@@ -122,4 +123,20 @@ export async function grantAccess(id: string) {
     console.log(user2)
     
     revalidatePath('/dashboard/staff', 'layout')
+}
+
+
+export async function deleteStaff(id: string) {
+    try {
+        await prisma.userProfiles.delete({
+            where: {
+                id: id,
+            },
+        })
+    } catch (error) {
+        console.error('Error deleting user:', error)
+        throw new Error('Failed to delete user')
+    }
+    revalidatePath('/dashboard/staff', 'layout')
+    redirect('/dashboard/staff')
 }
