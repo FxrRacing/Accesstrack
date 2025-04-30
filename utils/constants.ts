@@ -1,0 +1,33 @@
+
+
+export const  TEAM_OPTIONS = [
+    {label: "Management", value: "management"},
+    {label: "Sales", value: "sales"},
+    {label: "Marketing", value: "marketing"},
+    {label: "Engineering", value: "engineering"},
+    {label: "IT", value: "it"},
+    {label: "HR", value: "hr"},
+    {label: "Other", value: "other"},
+]
+
+// <option value="admin">Administrator</option>
+// <option value="editor">Editor</option>
+// <option value="viewer">Viewer</option>
+// <option value="accountant">Accountant</option>
+// <option value="sales">Sales</option>
+// <option value="marketing">Marketing</option>
+// <option value="support">Support</option>
+// <option value="hr">HR</option>
+// <option value="other">Other</option>
+
+export const ROLE_OPTIONS = [
+    {label: "Administrator", value: "admin"},
+    {label: "Editor", value: "editor"},
+    {label: "Viewer", value: "viewer"},
+    {label: "Accountant", value: "accountant"},
+    {label: "Sales", value: "sales"},
+    {label: "Marketing", value: "marketing"},
+    {label: "Support", value: "support"},
+    {label: "HR", value: "hr"},
+    {label: "Other", value: "other"},
+]

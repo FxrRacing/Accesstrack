@@ -7,6 +7,7 @@ import { createInvite } from "./actions";
 import { Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useActionState } from "react";
+import { ROLE_OPTIONS, TEAM_OPTIONS } from "@/utils/constants";
 
 const initialState = {
     message: '',
@@ -17,14 +18,14 @@ export default function Invite({authId}: {authId: string}) {
         <Dialog>
           <DialogTrigger asChild>
             <Button className="bg-black text-white hover:bg-black/90">
-              <Plus className="mr-2 h-4 w-4" /> Add User
+              <Plus className="mr-2 h-4 w-4" /> Invite User
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Add New User</DialogTitle>   
+              <DialogTitle>Invite User</DialogTitle>   
               <DialogDescription>
-                Enter the details of the new user. They will receive an email invitation.
+                Enter the details of the new user. They will receive an email invitation that will allow them to sign up. They Can also sign up with their Microsoft account.
               </DialogDescription>
             </DialogHeader>
             <form action={formAction}>
@@ -45,17 +46,29 @@ export default function Invite({authId}: {authId: string}) {
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   name="role"
                 >
-                  <option value="admin">Administrator</option>
-                  <option value="editor">Editor</option>
-                  <option value="viewer">Viewer</option>
-                  <option value="accountant">Accountant</option>
-                  <option value="sales">Sales</option>
-                  <option value="marketing">Marketing</option>
-                  <option value="support">Support</option>
-                  <option value="hr">HR</option>
-                  <option value="other">Other</option>
+              {ROLE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
                 </select>
               </div>
+              <div className="grid gap-2">
+                <Label htmlFor="team">Team</Label>
+                <select
+                  id="team"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  name="team"
+                >
+                  {TEAM_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+
             </div>
             <DialogFooter>
               {pending ? <Button  className="bg-black text-white hover:bg-black/90" disabled>

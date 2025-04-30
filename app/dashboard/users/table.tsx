@@ -508,7 +508,7 @@ const hasActiveFilters =
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                     {row.getVisibleCells().map((cell) => (
   <TableCell key={cell.id} >
-    <Link href={`/dashboard/users/${cell.row.original.id}` }>
+    <Link href={`users/${cell.row.original.id}` }>
       {flexRender(
         cell.column.columnDef.cell,
         cell.getContext() // Directly use `getContext` without modifying `key`

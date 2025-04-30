@@ -1,4 +1,4 @@
-import { login, signup } from './actions'
+
 import { LoginForm } from './form'
 import { GalleryVerticalEnd } from "lucide-react"
 
@@ -20,7 +20,7 @@ export default function LoginPage() {
       </div>
     </div>
     
-    <form className='flex flex-col gap-4 w-auto bg-slate-400' method="post">
+    {/* <form className='flex flex-col gap-4 w-auto bg-slate-400' method="post">
       <h1 className="text-2xl font-bold">Login</h1>
       <label htmlFor="firstName">First Name:</label>
       <input id="firstName" name="firstName" type="text" required />
@@ -35,7 +35,7 @@ export default function LoginPage() {
       <button formAction={login}>Log in</button>
       <br />
       <button formAction={signup}>Sign up</button>
-    </form>
+    </form> */}
     </>
   )
 }

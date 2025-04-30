@@ -3,12 +3,17 @@
 import { revalidatePath } from 'next/cache';
 
 import { prisma } from '@/lib/prisma';
-import { createClient } from '@/utils/supabase/server';
+import {  serviceRoleClient } from '@/utils/supabase/admin';
+
+
 
 
 
 export async function createInvite(prevState: {message: string}, formData: FormData) {
-    const supabase = await createClient()
+    
+
+
+
     const email = formData.get('email') as string
     const fullName = formData.get('name') as string
     const role = formData.get('role') as string
@@ -19,7 +24,10 @@ export async function createInvite(prevState: {message: string}, formData: FormD
         return { message: 'Please fill in all fields' }
     }
    try {
-    const {data, error} = await supabase.auth.admin.inviteUserByEmail(email, {
+
+   
+    
+    const {data, error} = await serviceRoleClient.auth.admin.inviteUserByEmail(email, {
         redirectTo: 'http://localhost:3000/dashboard/staff',
         data: {
             fullName: fullName,
@@ -29,7 +37,8 @@ export async function createInvite(prevState: {message: string}, formData: FormD
         }
     })
     if (error) {
-        return { message: 'Failed to invite user' }
+        console.error('Error inviting user:', error)
+        return { message: 'Failed to invite user '}
     }
     console.log(data)
     await prisma.invites.create({
@@ -60,13 +69,19 @@ export async function revokeAccess(id: string) {
         },
     })
     console.log(user)
+if (!user) {
+    throw new Error('User not found')
+   // return { message: 'User not found' }
+}
 
+const raw_user_meta_data = user?.raw_user_meta_data 
     await prisma.users.update({
         where: {
             id: id,
         },
         data: {
             raw_user_meta_data: {
+                ...(typeof raw_user_meta_data === 'object' && raw_user_meta_data !== null ? raw_user_meta_data : {}),
                 is_active: false,
             },
         },
@@ -81,15 +96,20 @@ export async function grantAccess(id: string) {
             id: id,
         },
     })
-
-    console.log(user)
+    if (!user) {
+        //return { message: 'User not found' }
+        throw new Error('User not found')
+    }
+    const raw_user_meta_data = user?.raw_user_meta_data 
     await prisma.users.update({
         where: {
             id: id,
         },
         data: {
             raw_user_meta_data: {
+                ...(typeof raw_user_meta_data === 'object' && raw_user_meta_data !== null ? raw_user_meta_data : {}),
                 is_active: true,
+                role:"test"
             },
         },
     })

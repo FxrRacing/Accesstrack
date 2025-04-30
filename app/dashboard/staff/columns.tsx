@@ -1,7 +1,7 @@
 "use client"
 
 
-import { UserProfiles } from "@prisma/client"
+//import { UserProfiles } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
  
@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ArrowUpDown } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox";
-
-export const columns: ColumnDef<UserProfiles>[] = [
+import { User } from "@supabase/supabase-js";
+export const columns: ColumnDef<User>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -42,7 +42,7 @@ export const columns: ColumnDef<UserProfiles>[] = [
       },
       //name = firstName + lastName
       {
-        accessorKey: "fullName",
+        accessorKey: "user_metadata.full_name",
         header: ({ column }) => {
             return (
               <Button
@@ -71,8 +71,20 @@ export const columns: ColumnDef<UserProfiles>[] = [
           }, 
       },
       {
-        accessorKey: "role",
+        accessorKey: "user_metadata.role",
         header: "Role",
+      },
+      {
+        accessorKey: "last_sign_in_at",
+        header: "Last Sign In",
+        cell: ({ row }) => {
+            const lastSignIn = row.original.last_sign_in_at
+            return lastSignIn ? new Date(lastSignIn).toLocaleDateString() : 'N/A'
+        }
+      },
+      {
+        accessorKey: "user_metadata.team",
+        header: "Team",
       },
       
     
