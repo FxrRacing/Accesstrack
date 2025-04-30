@@ -3,6 +3,8 @@ import { createClient } from "@/utils/supabase/server"
 
 import { redirect } from "next/navigation"
 import { AccountForm } from "./account-form"
+import { prisma } from "@/lib/prisma"
+
 
 
 export default async function SettingsAccountPage() {
@@ -13,6 +15,13 @@ export default async function SettingsAccountPage() {
   
   if (error || !data?.user) {
     redirect('/login')
+  }const userProfile = await prisma.userProfiles.findUnique({
+    where: { id: data.user.id },
+  });
+
+  if (!userProfile) {
+    // Handle case where user profile doesn't exist
+    return <div>User profile not found</div>;
   }
   return (
     <div className="space-y-6">
@@ -25,7 +34,7 @@ export default async function SettingsAccountPage() {
       </div>
    
       <Separator />
-      <AccountForm user={data.user} />
+      <AccountForm user={{...userProfile, email: data.user.email || ""}} />
     </div>
   )
 }

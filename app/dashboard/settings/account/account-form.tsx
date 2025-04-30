@@ -66,7 +66,14 @@ const defaultValues: Partial<AccountFormValues> = {
   // dob: new Date("2023-01-23"),
 }
 
-export function AccountForm({user}: {user: UserProfiles}) {
+interface AccountFormProps {
+  user: UserProfiles & {
+    email: string
+  }
+
+}
+
+export function AccountForm({user}: AccountFormProps) {
   
  
   

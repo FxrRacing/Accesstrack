@@ -47,7 +47,7 @@ type UserWithReportsTo = User & { reportsTo: User | null }
         header: "Status",
         cell: ({ row }) => 
         
-        <div className="">
+        <div className="capitalize">
             
             
             {row.getValue("status")  == "ACTIVE"? <Badge className='rounded-full border-none bg-green-600/10 text-green-600 focus-visible:ring-green-600/20 focus-visible:outline-none dark:bg-green-400/10 dark:text-green-400 dark:focus-visible:ring-green-400/40 [a&]:hover:bg-green-600/5 dark:[a&]:hover:bg-green-400/5'>
@@ -55,11 +55,10 @@ type UserWithReportsTo = User & { reportsTo: User | null }
       Active
     </Badge> : <Badge className='rounded-full border-none bg-red-600/10 text-red-600 focus-visible:ring-red-600/20 focus-visible:outline-none dark:bg-red-400/10 dark:text-red-400 dark:focus-visible:ring-red-400/40 [a&]:hover:bg-red-600/5 dark:[a&]:hover:bg-red-400/5'>
       <span className='size-1.5 rounded-full bg-red-600 dark:bg-red-400' aria-hidden='true' />
-      <p className="capitalize">{row.getValue("status")}</p>
+      <p className="capitalize">Inactive</p>
     </Badge>}
             
-            </div>
-        },
+            </div>,
         filterFn: (row, id, filterValue) => {
           // If no filter value is selected, show all rows
           if (!filterValue.length) return true

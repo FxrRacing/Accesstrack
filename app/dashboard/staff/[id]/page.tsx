@@ -43,15 +43,15 @@ if (!authUser) {
             <p>phone: {staff.phone}</p>
 ==========
 <p>auth user details </p>
-<p>first name: {raw_user_meta_data.first_name}</p>
-<p>last name: {raw_user_meta_data.last_name}</p>
+<p>first name: {raw_user_meta_data?.first_name}</p>
+<p>last name: {raw_user_meta_data?.last_name}</p>
 <p>email: {authUser?.email}</p>
 <p>email confirmed at: {authUser?.email_confirmed_at?.toISOString()}</p>
 <p>created at: {authUser?.created_at?.toISOString()}</p>
 <p>updated at: {authUser?.updated_at?.toISOString()}</p>
 <p>last sign in at: {authUser?.last_sign_in_at?.toISOString()}</p>
-<p>has access should be bool: {raw_user_meta_data.is_active.toString()}</p>
-<p>is active: {raw_user_meta_data.is_active ? 'true' : 'false'}</p>
+<p>has access should be bool: {raw_user_meta_data?.is_active?.toString()}</p>
+<p>is active: {raw_user_meta_data?.is_active ? 'true' : 'false'}</p>
 <p>json: {JSON.stringify(raw_user_meta_data)}</p>
 
 <div className="flex flex-row gap-4">
