@@ -24,7 +24,7 @@ export function SignupForm({
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Sign up</CardTitle>
           <CardDescription>
-            Sign up with your Apple or Google account
+            Sign up with your Microsoft account
           </CardDescription>
         </CardHeader>
         <CardContent>

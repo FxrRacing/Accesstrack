@@ -17,13 +17,13 @@ export default async function UsersPage() {
      });
     return (
         <div>
-            <h1>Users</h1>
-            <p>Users page content goes here.</p>
+            <h1 className="text-2xl font-bold">Users</h1>
+            
 
 
-            =====
+            
             <UsersTable data={users} />
-            =====
+            {/* =====
 
             {users.map((user) => (
                 
@@ -37,7 +37,7 @@ export default async function UsersPage() {
                     <p className="text-green-700">Reports To: {user.reportsTo?.name}</p>
                 </div>
                
-            ))}
+            ))} */}
 
 
             ==========================================

@@ -187,7 +187,7 @@ model Invites{
   role String
   team String
   createdById String @db.Uuid
-  createdBy UserProfiles @relation(fields: [createdById], references: [id])
+  createdBy UserProfiles @relation(fields: [createdById], references: [id], onDelete: Cascade)
   status String @default("PENDING")
   @@schema("public")
 }

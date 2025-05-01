@@ -5,9 +5,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner"
 import Nav from "@/components/nav";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
+
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset } from "@/components/ui/sidebar";
+import WrapSidebar from "@/components/wrap-sidebar";
 
 
 const geistSans = Geist({
@@ -35,7 +36,7 @@ export default async function RootLayout({
   return (
     <>
     <SidebarProvider>
-    <AppSidebar variant="inset" />
+   <WrapSidebar />
       <SidebarInset>
         <SiteHeader />  
 

@@ -35,7 +35,11 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
-
+import { User } from "@supabase/supabase-js"
+interface AppSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant: "inset" | "sidebar" | "floating";
+  user: User;
+}
 
 const data = {
   user: {
@@ -168,11 +172,11 @@ const data = {
   ],
 }
 
-export  function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
- 
+export function AppSidebar({ variant, user, ...props }: AppSidebarProps) {
+ console.log(user)  
   
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar collapsible="offcanvas" variant={variant} {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -194,7 +198,7 @@ export  function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data?.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )
