@@ -1,6 +1,6 @@
 
 import { prisma } from "@/lib/prisma";
-import Link from "next/link";
+
 import CreateUserForm from "./create-user-form";
 import { UsersTable } from "./table";
 import { User } from "@prisma/client";
