@@ -1,4 +1,4 @@
-'use'
+
 import { logout } from "@/app/login/actions";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";

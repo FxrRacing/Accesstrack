@@ -3,7 +3,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner"
-import Nav from "@/components/nav";
+
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 import { SiteHeader } from "@/components/site-header"
@@ -40,7 +40,7 @@ export default async function RootLayout({
       <SidebarInset>
         <SiteHeader />  
 
-    <Nav />
+   
     
       <div
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-1 flex-col gap-4 p-4`  }
