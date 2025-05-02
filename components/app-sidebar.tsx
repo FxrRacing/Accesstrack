@@ -3,6 +3,7 @@
 import * as React from "react"
 import {
   IconBuilding,
+  IconBuildings,
   IconCamera,
   
   IconDashboard,
@@ -18,6 +19,7 @@ import {
   IconReport,
   IconSearch,
   IconSettings,
+  IconTournament,
   IconUsers,
 } from "@tabler/icons-react"
 
@@ -73,13 +75,18 @@ const data = {
       url: "/dashboard/keys&codes",
       icon: IconKey,
     },
+    {
+      title: "Locations",
+      url: "/dashboard/locations",
+      icon: IconBuildings,
+    },
 
 
     
     {
       title: "Org Chart",
       url: "/dashboard/org-chart",
-      icon: IconBuilding,
+      icon: IconTournament,
     },
     
     {

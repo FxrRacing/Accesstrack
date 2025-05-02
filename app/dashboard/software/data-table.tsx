@@ -33,7 +33,7 @@ import {
   } from "@/components/ui/dropdown-menu"
 import { DownloadIcon } from "@radix-ui/react-icons"
 
-import { SharedAccount } from "@prisma/client"
+import {  Software } from "@prisma/client"
   
 
 
@@ -71,9 +71,7 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   })
-
   const router = useRouter()
-
   return (
     <div>
         <div className="flex items-center py-4 justify-between">
@@ -161,8 +159,9 @@ export function DataTable<TData, TValue>({
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="cursor-pointer" onClick={() => {
-                    router.push(`/dashboard/shared-accounts/${(row.original as SharedAccount).id}`)
+                    
+                  <TableCell key={cell.id}  className="cursor-pointer" onClick={() => {
+                    router.push(`/dashboard/software/${(row.original as Software).id}`)
                   }} >
                  
                     {flexRender(
@@ -170,7 +169,9 @@ export function DataTable<TData, TValue>({
                       cell.getContext() // Directly use `getContext` without modifying `key`
                     )}
                    
+                 
                 </TableCell>
+               
                 ))}
               </TableRow>
             ))

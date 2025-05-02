@@ -63,6 +63,7 @@ model User {
 
   @@schema("public")
   SharedAccountUser SharedAccountUser[]
+  Location Location[] @relation("UserLocation")
 }
 
 model UserHistory {
@@ -189,6 +190,61 @@ model Invites{
   createdById String @db.Uuid
   createdBy UserProfiles @relation(fields: [createdById], references: [id], onDelete: Cascade)
   status String @default("PENDING")
+  @@schema("public")
+}
+model Location {
+  id            String             @id @default(uuid())
+  type          String
+  name          String
+  address       String
+  city          String
+  state         String
+  postalCode    String
+  country       String
+  latitude      Float?
+  longitude     Float?
+
+  // business-hours: one entry per weekday
+  operatingHours OperatingHour[]
+
+  // all the doors in this location
+  doors         Door[]
+
+  // the employees assigned here
+  employees     User[]             @relation("UserLocation")
+
+  @@schema("public")
+}
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+
+  @@schema("public")
+}
+model OperatingHour {
+  id          String      @id @default(uuid())
+  location    Location    @relation(fields: [locationId], references: [id])
+  locationId  String
+  dayOfWeek   DayOfWeek
+  openTime    DateTime    // use Time if supported, otherwise DateTime with same date
+  closeTime   DateTime
+
+  @@unique([locationId, dayOfWeek]) // one entry per day
+  @@schema("public")
+}
+model Door {
+  id          String      @id @default(uuid())
+  name        String
+  floor       Int
+  type        String
+  location    Location    @relation(fields: [locationId], references: [id])
+  locationId  String
+
   @@schema("public")
 }
 
