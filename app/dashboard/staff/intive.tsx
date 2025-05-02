@@ -17,7 +17,7 @@ export default function Invite({authId}: {authId: string}) {
     return ( 
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="bg-black text-white hover:bg-black/90">
+            <Button className="bg-black text-white hover:bg-black/90 rounded-full px-6">
               <Plus className="mr-2 h-4 w-4" /> Invite User
             </Button>
           </DialogTrigger>
