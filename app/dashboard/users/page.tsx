@@ -45,14 +45,7 @@ export default async function UsersPage() {
 
             <CreateUserForm users={users} />
             =====   
-            <form action={createUser} className='flex flex-col gap-4'>
-                <input type="text" name="name" placeholder="Name*" />
-                <input type="text" name="department" placeholder="Department*" />
-                <input type="text" name="jobTitle" placeholder="Job Title" />
-                <input type="text" name="email" placeholder="Email" />
-                <input type="text" name="location" placeholder="Location" />
-                <button type="submit">Create User +</button>
-            </form>
+           
         </div>
     );
 }
