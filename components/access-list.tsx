@@ -195,14 +195,23 @@ export default function UserManagement({
     }
   }
 
-  // Create a debounced search function
+  // Create a debounced search function using an inline function
   const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      setDebouncedSearchQuery(value)
-      setCurrentPage(1) // Reset to first page when search changes
-    }, 300),
-    []
-  )
+    (value: string) => {
+      // Create the debounce function inside the callback
+      const delayedSearch = debounce(() => {
+        setDebouncedSearchQuery(value);
+      }, 300);
+      
+      delayedSearch();
+      
+      // Clean up the debounced function on each callback invocation
+      return () => {
+        delayedSearch.cancel();
+      };
+    },
+    [] // No dependencies needed since we're using value from the callback argument
+  );
 
   // Format date to be more readable
   const formatDate = (dateString: string | number | Date) => {

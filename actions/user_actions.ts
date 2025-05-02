@@ -60,13 +60,27 @@ export async function createUser(formData: FormData) {
     const department = formData.get('department') as string | null;
     const jobTitle = formData.get('jobTitle') as string | null;
     const email = formData.get('email') as string | null;
+    const personalEmail = formData.get('personalEmail') as string | null;
     const location = formData.get('location') as string | null;
     const reportsTo = formData.get('reportsTo') as string | null;
+    const status = formData.get('status') as string | null;
+    const type = formData.get('type') as string | null;
 //reports to can be null we just wont add it to the user
+console.table({
+    name,
+    department,
+    jobTitle,
+    email,
+    personalEmail,
+    location,
+    reportsTo,
+    status,
+    type,
+});
     if (!name || !department || !jobTitle || !email || !location) {
         throw new Error('All fields are required.');
     }
-    
+   
 
     try {
         // Perform the edit user action here
@@ -78,6 +92,9 @@ export async function createUser(formData: FormData) {
                 email: email,
                 location: location,
                 reportsToId: reportsTo ? reportsTo : null,
+                personalEmail: personalEmail,
+                status: status as string,
+                type
             },
         });
         console.log('User created:', user);

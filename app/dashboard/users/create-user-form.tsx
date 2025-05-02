@@ -138,12 +138,12 @@ export default function CreateUserForm({users}: {users: User[]} ) {
             <h3 className="text-sm font-medium text-muted-foreground">Contact Information</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="personalEmail">Personal Email</Label>
-                <Input id="personalEmail" name="personalEmail" type="email" />
+                <Label htmlFor="personalEmail">Email*</Label>
+                <Input id="personalEmail" name="email" type="email" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="fxrEmail">FXR Email</Label>
-                <Input id="fxrEmail" name="fxrEmail" type="email" />
+                <Label htmlFor="personalEmail">Personal Email</Label>
+                <Input id="personalEmail" name="personalEmail" type="email" required />
               </div>
             </div>
 

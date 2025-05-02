@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useCallback } from "react"
 import {
   type ColumnFiltersState,
   type SortingState,
@@ -90,12 +90,14 @@ export function UsersTable({ data }: UsersTableProps) {
 
   // Extract unique locations and types for filters
   const uniqueLocations = useMemo(
-    () => Array.from(new Set(data.map((item) => item.location).filter(Boolean))).sort((a, b) => a.localeCompare(b)),
+    () => Array.from(new Set(data.map((item) => item.location).filter(Boolean)))
+      .sort((a, b) => (a as string).localeCompare(b as string)),
     [data],
   )
   
   const uniqueTypes = useMemo(
-    () => Array.from(new Set(data.map((item) => item.type).filter(Boolean))).sort((a, b) => a.localeCompare(b)),
+    () => Array.from(new Set(data.map((item) => item.type).filter(Boolean)))
+      .sort((a, b) => (a as string).localeCompare(b as string)),
     [data],
   )
   
@@ -123,7 +125,7 @@ export function UsersTable({ data }: UsersTableProps) {
   const [selectedStatus, setSelectedStatus] = useState<string[]>(["ACTIVE"])
 
   // Apply filters to the table
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     const filters = []
 
     if (selectedLocations.length > 0) {
@@ -150,22 +152,20 @@ export function UsersTable({ data }: UsersTableProps) {
     if (selectedStatus.length > 0) {
       filters.push({
         id: "status",
-        value: selectedStatus,
+        value: selectedStatus.map(status => status.toUpperCase()),
       })
     }
 
     setColumnFilters(filters)
-  }
-
-
-  // Effect to apply filters when selections change
-  useMemo(() => {
-    applyFilters()
   }, [selectedLocations, selectedTypes, selectedReportsTo, selectedStatus])
+
+  useEffect(() => {
+    applyFilters()
+  }, [applyFilters])
 
   // Helper function to get status label from value
   const getStatusLabel = (status: string) => {
-    return status === "ACTIVE" ? "Active" : "Inactive"
+    return status.toUpperCase() === "ACTIVE" ? "Active" : "Inactive"
   }
 
   // Clear all filters

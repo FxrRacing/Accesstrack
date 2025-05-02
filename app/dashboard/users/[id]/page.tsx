@@ -71,6 +71,11 @@ export default async function Page({
         where: {id: {not: id}}
       });
      
+      const locations = await prisma.location.findMany({
+        orderBy: {
+            name: 'asc',
+        },
+      });
 
       //have software.grantedBy
       //if we have that we want to search our list of auth users for a match and show their details not current user
@@ -93,7 +98,7 @@ export default async function Page({
            <Badge>{user.status}</Badge>
         </div>
 
-<EditUser user={user}  authId={data.user.id} users={users} />
+<EditUser user={user}  authId={data.user.id} users={users} locations={locations} />
 
         ===============================
         <h1>Software</h1>

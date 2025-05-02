@@ -15,6 +15,7 @@ import {
   Position,
   type Node,
   type Edge,
+  type Connection
 } from "@xyflow/react";
 import dagre from "@dagrejs/dagre";
 import "@xyflow/react/dist/style.css";
@@ -31,8 +32,17 @@ const departmentColors: Record<string, { bg: string; border: string }> = {
   "Customer Support": { bg: "#ec4899", border: "#be185d" },
 };
 
+// Add an interface for the employee node data
+interface EmployeeNodeData {
+  name: string;
+  role: string;
+  department: string;
+  directReports: string[];
+  onClick: () => void;
+}
+
 // ——— Custom node w/ top & bottom handles ———
-const EmployeeNode = ({ data }: { data: any }) => {
+const EmployeeNode = ({ data }: { data: EmployeeNodeData }) => {
   const { name, role, department, directReports, onClick } = data;
   const colors = departmentColors[department] || departmentColors.Executive;
 
@@ -170,12 +180,12 @@ const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(rawNo
 
 // ——— Main component ———
 export default function OrgChartSmoothFull() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(layoutedNodes);
+  const [nodes, , onNodesChange] = useNodesState(layoutedNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges);
 
   // reuse smoothstep & styling on user-drawn
   const onConnect = useCallback(
-    (params: any) =>
+    (params: Connection) =>
       setEdges(eds =>
         addEdge({ ...params, type: edgeType, animated: true, style: { stroke: "#555", strokeWidth: 2 } }, eds)
       ),

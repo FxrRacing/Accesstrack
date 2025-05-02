@@ -46,4 +46,5 @@ export const EMPLOYMENT_STATUS_OPTIONS = [
     {label: "Inactive", value: "inactive"},
     {label: "Onboarding", value: "onboarding"},
     {label: "Terminated", value: "terminated"},
+    {label: "On Leave", value: "on_leave"},
 ]

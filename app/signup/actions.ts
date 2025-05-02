@@ -65,6 +65,9 @@ export async function signinWithAzure(){
   })
 
   console.log(data)
+  if (data.url) {
+    redirect(data.url) // use the redirect API for your server framework
+  }
 
   if(error){
     console.error('Error signing in with Azure:', error)

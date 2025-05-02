@@ -25,7 +25,7 @@ export function SubmitButton() {
 export default function CreateForm() {
     const [error, formAction, pending] = useActionState(createSoftware, initialState )
     return (<>
-        <form action={formAction}>
+        <form action={formAction} className="flex flex-col gap-4">
             <input type="text" name="name" placeholder="Name" />
             <input type="text" name="description" placeholder="Description" />
             <input type="text" name="category" placeholder="Category" />

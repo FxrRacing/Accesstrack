@@ -1,6 +1,6 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge";
+;
 import { SharedAccount } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ArrowUpDown } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { StatusTypes } from "@/types/types";
 
 export const columns: ColumnDef<SharedAccount>[] = [
     {
@@ -44,8 +46,8 @@ export const columns: ColumnDef<SharedAccount>[] = [
         accessorKey: "status",
         header: "Status",
         cell: ({ row }) => {
-            const status = row.getValue("status") as string;
-            return <Badge variant={status === "Active" ? "default" : "destructive"}>{status}</Badge>;
+            const status = row.getValue("status") as StatusTypes;
+            return <StatusBadge status={status} />  
         },
     },
     

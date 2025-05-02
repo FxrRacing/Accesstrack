@@ -1,7 +1,7 @@
 // OrgChart.tsx
 "use client";
 
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback } from 'react'
 import {
   ReactFlow,
   useNodesState,
@@ -15,6 +15,7 @@ import {
   Controls,
   type Node,
   type Edge,
+  type Connection
 } from '@xyflow/react'
 import dagre from '@dagrejs/dagre'
 import '@xyflow/react/dist/style.css'
@@ -29,9 +30,7 @@ interface User {
 }
 
 interface OrgChartProps {
-  users: User[] & {
-    subordinates: User[]
-  }
+  users: User[];
 }
 
 const departmentColors: Record<string, { bg: string; border: string }> = {
@@ -45,8 +44,16 @@ const departmentColors: Record<string, { bg: string; border: string }> = {
   "Customer Support": { bg: "#ec4899", border: "#be185d" },
 }
 
+// Add this interface before the EmployeeNode component
+interface EmployeeNodeData {
+  name: string;
+  jobTitle?: string;
+  department: string;
+  directReportsCount: number;
+}
+
 // Custom node  
-const EmployeeNode = ({ data }: { data: any }) => {
+const EmployeeNode = ({ data }: { data: EmployeeNodeData }) => {
   const { name, jobTitle, department, directReportsCount } = data
   const colors = departmentColors[department] || departmentColors.Executive
 
@@ -107,6 +114,7 @@ export default function OrgChart({ users }: OrgChartProps) {
       department: u.department,
       directReportsCount: u.subordinates.length,
     },
+    position: { x: 0, y: 0 },
   }))
 
   const rawEdges: Edge[] = users
@@ -123,11 +131,11 @@ export default function OrgChart({ users }: OrgChartProps) {
   // 2) Layout once on mount
   const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(rawNodes, rawEdges, 'TB')
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(layoutedNodes)
+  const [nodes, , onNodesChange] = useNodesState(layoutedNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges)
 
   // 3) Preserve smoothstep on user-drawn connections
-  const onConnect = useCallback(params => {
+  const onConnect = useCallback((params: Connection) => {
     setEdges(es => addEdge({ ...params, type: edgeType, animated: true, style: { stroke: '#555', strokeWidth: 2 } }, es))
   }, [setEdges])
 

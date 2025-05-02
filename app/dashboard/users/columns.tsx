@@ -63,8 +63,11 @@ type UserWithReportsTo = User & { reportsTo: User | null }
           // If no filter value is selected, show all rows
           if (!filterValue.length) return true
     
-          // Check if the row's status is in the selected filter values
-          return filterValue.includes(row.getValue(id))
+          // Get the row's status value and normalize it
+          const rowStatus = String(row.getValue(id)).toUpperCase()
+          
+          // Check if any of the selected filter values (normalized) match the row's status
+          return filterValue.some((value: string) => String(value).toUpperCase() === rowStatus)
         },
         meta: {
           filterVariant: "select",

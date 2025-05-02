@@ -1,9 +1,11 @@
 'use client'
 import { editUser } from "@/actions/user_actions";
+import { EMPLOYMENT_STATUS_OPTIONS } from "@/utils/constants";
 import { User } from "@prisma/client";
 import { useActionState } from "react";
+import { Location } from "@prisma/client";
 
-export default function EditUser({user, authId, users}: {user: User, authId: string, users: User[]}) {
+export default function EditUser({user, authId, users, locations}: {user: User, authId: string, users: User[], locations: Location[]}) {
     //providing total users temporarily
     const initialState = {
         message: '',
@@ -18,12 +20,19 @@ export default function EditUser({user, authId, users}: {user: User, authId: str
             <input type="text" name="department" defaultValue={user.department} />
             <input type="text" name="jobTitle" defaultValue={user.jobTitle || ''} />
             <input type="text" name="email" defaultValue={user.email || ''} />
-            <input type="text" name="location" defaultValue={user.location || ''} />
+           <select name="location">
+            {locations.map((location: Location) => (
+                <option key={location.id} value={location.id}>
+                  {location.name}
+                </option>
+              ))}
+           </select>
             <select name="status">
-                <option value="ACTIVE">Active</option>
-                <option value="INACTIVE">Inactive</option>
-                <option value="SUSPENDED">Suspended</option>
-                <option value="ON_LEAVE">On Leave</option>
+                {EMPLOYMENT_STATUS_OPTIONS.map((option: { value: string; label: string }) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
             </select>
             <input type="text" name="authId" value={authId} readOnly hidden />
             <label htmlFor="reportsToId">Reports To</label>

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import Link from "next/link";
+
 import CreateForm from "./create-form";
 import { PlusCircle, AppWindow, FileUp } from "lucide-react";
 import { GradientCard } from "@/components/ui/gradient-card";
@@ -44,7 +44,7 @@ export default async function SoftwarePage() {
             <DataTable columns={columns} data={software} /> 
         </main>
         <div className="flex flex-col gap-4">
-            <h1>Software</h1>
+            {/* <h1>Software</h1>
             <p>Software page content goes here.</p>
             {software.map((software) => (
                
@@ -54,7 +54,7 @@ export default async function SoftwarePage() {
                     <p className="text-green-700">{software.description}</p>
                 </div>
                
-            ))}
+            ))} */}
             <CreateForm />
         </div>
         </>
