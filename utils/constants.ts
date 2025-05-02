@@ -31,3 +31,19 @@ export const ROLE_OPTIONS = [
     {label: "HR", value: "hr"},
     {label: "Other", value: "other"},
 ]
+
+
+export const EMPLOYMENT_TYPE_OPTIONS = [
+    {label: "Full Time Employee", value: "full_time"},
+    {label: "Part Time Employee", value: "part_time"},
+    {label: "Contractor", value: "contractor"},
+    {label: "Intern", value: "intern"},
+    {label: "Other", value: "other"},
+        ]
+
+export const EMPLOYMENT_STATUS_OPTIONS = [
+    {label: "Active", value: "active"},
+    {label: "Inactive", value: "inactive"},
+    {label: "Onboarding", value: "onboarding"},
+    {label: "Terminated", value: "terminated"},
+]

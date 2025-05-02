@@ -14,13 +14,14 @@ import {
     type FilterFn,
 
 } from "@tanstack/react-table"
-import { ChevronDown, X } from "lucide-react"
+import { ChevronDown, FileDown, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -401,6 +402,25 @@ const hasActiveFilters =
                     </DropdownMenuCheckboxItem>
                   )
                 })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-auto">
+                    <FileDown className="mr-2 h-4 w-4" />
+                    Export
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                    <FileDown className="mr-2 h-4 w-4" />
+                    Export All to CSV
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                    <FileDown className="mr-2 h-4 w-4" />
+                    Export Selected to CSV
+                </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
