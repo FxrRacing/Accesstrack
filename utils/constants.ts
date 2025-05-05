@@ -7,7 +7,13 @@ export const  TEAM_OPTIONS = [
     {label: "Engineering", value: "engineering"},
     {label: "IT", value: "it"},
     {label: "HR", value: "hr"},
+    {label: "Accounting", value: "accounting"},
+    {label: "Admin", value: "admin"},
+    {label: "Editor", value: "editor"},
+    {label: "Viewer", value: "viewer"},
+    {label: "Support", value: "support"},
     {label: "Other", value: "other"},
+    {label: "Super Admin", value: "super_admin"},
 ]
 
 // <option value="admin">Administrator</option>

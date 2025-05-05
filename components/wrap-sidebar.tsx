@@ -11,7 +11,7 @@ export default async  function WrapSidebar() {
   if (error || !data?.user) {
     redirect('/login')
   } 
-  console.log(data.user)    
+ 
     return (
         <>
         <AppSidebar variant="inset"  user={data.user}/>

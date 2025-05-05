@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
   
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useFormState } from "react-dom";
+import { useActionState, useEffect } from "react";
 import {toast} from "sonner"
 import { addLocation } from "./actions";
+
 
 // address: string;
 //     name: string;
@@ -25,9 +26,18 @@ const initialState = {
 }
 
 export default function AddLocation() {
-const [state, formAction, pending] = useFormState(addLocation, initialState)    
+const [state, formAction, pending] = useActionState(addLocation, initialState)    
+useEffect(() => {
+    if (state.message && !pending) {
+      if (state.message.includes('Error')) {
+        toast.error(state.message);
+      } else {
+        toast.success(state.message);
+      }
+    }
+  }, [state.message, pending]);
     return <Dialog>
-        <DialogTrigger>
+        <DialogTrigger asChild>
             <Button className="bg-black text-white hover:bg-black/80 rounded-full px-6">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Location
@@ -89,6 +99,11 @@ const [state, formAction, pending] = useFormState(addLocation, initialState)
                         <SelectItem value="NO">Norway</SelectItem>
                         <SelectItem value="DK">Denmark</SelectItem>
                         <SelectItem value="FI">Finland</SelectItem>
+                        <SelectItem value="HK">Hong Kong</SelectItem>
+                      
+                        <SelectItem value="DE">Germany</SelectItem>
+                        
+                       
                       
                     </SelectContent>
                 </Select>
@@ -104,8 +119,7 @@ const [state, formAction, pending] = useFormState(addLocation, initialState)
             </div>
             </div>
             
-            {state.message && state.message.includes('Error') && !pending && toast.error(state.message)}
-            {state.message && !state.message.includes('Error') && !pending && toast.success(state.message)}
+            
             <Button className="bg-black text-white hover:bg-black/80  px-6" disabled={pending}>Add Location <PlusCircle className="ml-2 h-4 w-4" /></Button>
 
             </form>

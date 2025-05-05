@@ -19,7 +19,7 @@ import {
   Shield,
   Calendar,
   MapPin,
-  Phone,
+ 
   ChevronRight,
   Pencil,
   Save,
@@ -39,6 +39,7 @@ export default function EmployeeProfile() {
     location: "New York Office",
     email: "sarah.johnson@company.com",
     phone: "+1 (555) 123-4567",
+    type: "Employee",
     reportsTo: {
       name: "Michael Chen",
       position: "Marketing Director",
@@ -247,8 +248,8 @@ export default function EmployeeProfile() {
                       <Calendar className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-sm text-zinc-500 dark:text-zinc-400">Joined</p>
-                      <p className="font-medium">{employee.joinDate}</p>
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400">Type</p>
+                      <p className="font-medium">{employee.type}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 group">
@@ -262,11 +263,11 @@ export default function EmployeeProfile() {
                   </div>
                   <div className="flex items-center gap-3 group">
                     <div className="p-2 rounded-full bg-sky-500/10 text-sky-600 dark:bg-sky-500/20 dark:text-sky-300 group-hover:bg-sky-500/20 dark:group-hover:bg-sky-500/30 transition-colors">
-                      <Phone className="h-5 w-5" />
+                      <Mail className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-sm text-zinc-500 dark:text-zinc-400">Phone</p>
-                      <p className="font-medium">{employee.phone}</p>
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400">Email</p>
+                      <p className="font-medium">{employee.email}</p>
                     </div>
                   </div>
                 </div>

@@ -35,13 +35,17 @@ interface OrgChartProps {
 
 const departmentColors: Record<string, { bg: string; border: string }> = {
   Executive:   { bg: "#4f46e5", border: "#3730a3" },
+
   Engineering: { bg: "#0891b2", border: "#065d8c" },
   Marketing:   { bg: "#16a34a", border: "#14532d" },
   Sales:       { bg: "#ea580c", border: "#9a3412" },
+  "London Operations": { bg: "#f0800a", border: "#f0800a" },
+  "Human Resources": { bg: "#c02026", border: "#c02026" },
   HR:          { bg: "#d946ef", border: "#86198f" },
   Finance:     { bg: "#f59e0b", border: "#b45309" },
   Operations:  { bg: "#6366f1", border: "#4338ca" },
   "Customer Support": { bg: "#ec4899", border: "#be185d" },
+  "Cross‑Product Sales": { bg: "#0b5c02", border: "#0b5c02" },
 }
 
 // Add this interface before the EmployeeNode component

@@ -37,6 +37,7 @@ export default async function OrgChartPage() {
       <Separator />
       <TwoNodeTest />
       {/* <OrgChart /> */}
+      <pre>{JSON.stringify(transformedData, null, 2)}</pre>
    {/* {JSON.stringify(data ,null, 2)} */}
       {/* <OrgChart data={data} /> */}
     </div>

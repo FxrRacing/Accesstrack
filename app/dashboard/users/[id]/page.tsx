@@ -8,7 +8,7 @@ import { findRealUser } from '@/lib/queries'
 import SharedAccounts from './shared-accounts'
 import EmployeeProfile from '../employee-profile'
 import { Badge } from '@/components/ui/badge'
-
+import { User } from '@prisma/client'
 import EditUser from './edit-user'
 export default async function Page({
     params,
@@ -30,6 +30,7 @@ export default async function Page({
       },
       include: {
         reportsTo: true,
+        Location: true,
       },
     })
     if (!user) {
@@ -92,13 +93,13 @@ export default async function Page({
             <p className="text-green-700">Department: {user.department}</p>
             <p className="text-green-700">Job Title: {user.jobTitle}</p>
             <p className="text-green-700">Email: {user.email}</p>
-            <p className="text-green-700">Location: {user.location}</p>
+            <p className="text-green-700">Location: {user.Location?.name}</p>
             <p className="text-green-700">Reports To: {user.reportsTo?.name}</p>
 
            <Badge>{user.status}</Badge>
         </div>
 
-<EditUser user={user}  authId={data.user.id} users={users} locations={locations} />
+<EditUser user={user as User & {reportsTo: User}}  authId={data.user.id} users={users} locations={locations} />
 
         ===============================
         <h1>Software</h1>

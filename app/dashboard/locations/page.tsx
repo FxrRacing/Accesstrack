@@ -1,10 +1,11 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { prisma } from '@/lib/prisma'
-import {  Building, Building2, ChevronRight, Clock, MapPin, Users } from 'lucide-react'
+import {  Building, Building2, ChevronRight, Clock,  MapPin, Users } from 'lucide-react'
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { GradientCard } from '@/components/ui/gradient-card'
+import Link from 'next/link'
 
 
 import AddLocation from './addLocation'
@@ -41,9 +42,10 @@ export default async function LocationsPage() {
                 </GradientCard>
             </div>
            
-            <div className="grid gap-6 md:grid-cols-2 mb-8">
+            <div className="grid gap-4 md:grid-cols-3 mb-8">
             {locations.map((location) => (
-                <Card key={location.id} className="w-full max-w-md bg-zinc-900 text-white border-none">
+                <Link  key={location.id} href={`/dashboard/locations/${location.id}`}>
+                  <Card  className="w-full max-w-md bg-zinc-900 text-white border-none">
                 <CardHeader className="pb-2">
                   <Badge className="w-fit bg-emerald-700/30 text-emerald-400 hover:bg-emerald-700/30 hover:text-emerald-400 capitalize">
                   {location.type}
@@ -76,7 +78,8 @@ export default async function LocationsPage() {
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </CardFooter>
-              </Card>
+              </Card>   
+                </Link>
             ))}
             </div>
         </div>

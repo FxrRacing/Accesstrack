@@ -51,6 +51,7 @@ model User {
   name          String          @unique
   jobTitle      String?
   location      String?
+  locationId    String?
   personalEmail String?         @unique
   reportsToId   String?
   type          String?
@@ -63,7 +64,9 @@ model User {
 
   @@schema("public")
   SharedAccountUser SharedAccountUser[]
-  Location Location[] @relation("UserLocation")
+ // Location Location?       @relation(fields: [locationId], references: [id]) // Optional relation to Location
+  
+  Location Location?       @relation(fields: [locationId], references: [id]) // Optional relation to Location
 }
 
 model UserHistory {
@@ -211,9 +214,10 @@ model Location {
   doors         Door[]
 
   // the employees assigned here
-  employees     User[]             @relation("UserLocation")
+  employees     User[]        
 
   @@schema("public")
+  
 }
 enum DayOfWeek {
   MONDAY

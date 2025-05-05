@@ -52,7 +52,7 @@ export async function createInvite(prevState: {message: string}, formData: FormD
         },
     })
     revalidatePath('/dashboard/staff', 'layout')
-    return { message: 'Invite created successfully' }
+    return { message: 'Invite created successfully ' }
    } catch (error) {
     console.error('Error creating invite:', error)
     return { message: 'Failed to create invite' }

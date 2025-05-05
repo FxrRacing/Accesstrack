@@ -13,7 +13,7 @@ export async function editUser(prevState: {message: string}, formData: FormData)
     const department = formData.get('department') as string | null;
     const jobTitle = formData.get('jobTitle') as string | null;
     const email = formData.get('email') as string | null;
-    const location = formData.get('location') as string | null;
+    const locationId = formData.get('locationId') as string | null;
     const status = formData.get('status') as string | null;
     const id = formData.get('id') as string | null;
     const reportsToId = formData.get('reportsToId') as string | null;
@@ -26,14 +26,16 @@ export async function editUser(prevState: {message: string}, formData: FormData)
     }
 if (department != null)  updates.department  = department
 if (email      != null)  updates.email       = email
-if (location   != null)  updates.location    = location
+// if (location   != null)  updates.locationId    = location
 if (jobTitle   != null)  updates.jobTitle    = jobTitle
 if (name       != null)  updates.name        = name
 if (status     != null)  updates.status      = status
 if (reportsToId != null)  updates.reportsToId = reportsToId
-
+if (locationId != null)  updates.locationId  = locationId
     try {
         // Perform the edit user action here
+       
+        console.table(updates)
         const user = await prisma.user.update({
             where: { id: id },
             data: updates,
@@ -61,7 +63,7 @@ export async function createUser(formData: FormData) {
     const jobTitle = formData.get('jobTitle') as string | null;
     const email = formData.get('email') as string | null;
     const personalEmail = formData.get('personalEmail') as string | null;
-    const location = formData.get('location') as string | null;
+    const locationId = formData.get('locationId') as string | null;
     const reportsTo = formData.get('reportsTo') as string | null;
     const status = formData.get('status') as string | null;
     const type = formData.get('type') as string | null;
@@ -72,12 +74,12 @@ console.table({
     jobTitle,
     email,
     personalEmail,
-    location,
+    locationId,
     reportsTo,
     status,
     type,
 });
-    if (!name || !department || !jobTitle || !email || !location) {
+    if (!name || !department || !jobTitle || !email || !locationId) {
         throw new Error('All fields are required.');
     }
    
@@ -90,7 +92,7 @@ console.table({
                 department: department,
                 jobTitle: jobTitle,
                 email: email,
-                location: location,
+                locationId: locationId,
                 reportsToId: reportsTo ? reportsTo : null,
                 personalEmail: personalEmail,
                 status: status as string,

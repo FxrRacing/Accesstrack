@@ -21,6 +21,7 @@ import {
   IconSettings,
   IconTournament,
   IconUsers,
+  IconBuildingCommunity,
 } from "@tabler/icons-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -74,6 +75,11 @@ const data = {
       title: "Keys & Codes",
       url: "/dashboard/keys&codes",
       icon: IconKey,
+    },
+    {
+      title: "Departments",
+      url: "/dashboard/departments",
+      icon: IconBuildingCommunity,
     },
     {
       title: "Locations",
@@ -180,7 +186,7 @@ const data = {
 }
 
 export function AppSidebar({ variant, user, ...props }: AppSidebarProps) {
- console.log(user)  
+ 
   
   return (
     <Sidebar collapsible="offcanvas" variant={variant} {...props}>

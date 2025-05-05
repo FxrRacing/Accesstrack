@@ -5,6 +5,9 @@ import { grantAccess } from "../actions";
 import { revokeAccess } from "../actions";
 import { deleteStaff } from "../actions";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectTrigger, SelectItem, SelectValue } from "@/components/ui/select";
+import { TEAM_OPTIONS } from "@/utils/constants";
+import PermissionsProvider from "@/utils/providers/permissions";
 
 export default async function Page({
     params,
@@ -31,7 +34,7 @@ if (!authUser) {
         return notFound();
     }
 
-    const raw_user_meta_data = authUser.raw_user_meta_data as { first_name: string, last_name: string, is_active: boolean};
+    const raw_user_meta_data = authUser.raw_user_meta_data as { first_name: string, last_name: string, is_active: boolean, role: string};
 
     const revokeAccessWithId = revokeAccess.bind(null, id);
     const grantAccessWithId = grantAccess.bind(null, id);
@@ -51,10 +54,13 @@ if (!authUser) {
 <p>email confirmed at: {authUser?.email_confirmed_at?.toISOString()}</p>
 <p>created at: {authUser?.created_at?.toISOString()}</p>
 <p>updated at: {authUser?.updated_at?.toISOString()}</p>
+-------
 <p>last sign in at: {authUser?.last_sign_in_at?.toISOString()}</p>
 <p>has access should be bool: {raw_user_meta_data?.is_active?.toString()}</p>
 <p>is active: {raw_user_meta_data?.is_active ? 'true' : 'false'}</p>
-<p>json: {JSON.stringify(raw_user_meta_data)}</p>
+<p>Role: {raw_user_meta_data?.role}</p>
+
+<p>json: <pre>{JSON.stringify(authUser, null, 2)}</pre></p>
 
 <div className="flex flex-row gap-4">
 <form action={revokeAccessWithId}>
@@ -67,9 +73,36 @@ if (!authUser) {
 <form action={deleteStaffWithId}>
 <Button type="submit">Delete Staff</Button>
 </form>
+
+<PermissionsProvider requiredPermission="grant">
+<GrantRole />
+</PermissionsProvider>
 </div>
         </div>
     )
+}
+
+
+
+async function GrantRole() {
+    return<>
+    <form>
+        <label htmlFor="role">Role</label>
+       <Select>
+        <SelectTrigger>
+            <SelectValue placeholder="Select Role" />
+        </SelectTrigger>
+        <SelectContent>
+            {TEAM_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+            ))}
+           
+          
+        </SelectContent>
+       </Select>
+        <button type="submit">Grant Role</button>
+    </form>
+    </>
 }
 
 
