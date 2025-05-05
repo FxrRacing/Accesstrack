@@ -46,7 +46,9 @@ export const columns: ColumnDef<SharedAccount>[] = [
         accessorKey: "status",
         header: "Status",
         cell: ({ row }) => {
-            const status = row.getValue("status") as StatusTypes;
+
+            const status = row.getValue("status")?.toString().toLocaleLowerCase() as StatusTypes;
+          
             return <StatusBadge status={status} />  
         },
     },
@@ -80,13 +82,18 @@ export const columns: ColumnDef<SharedAccount>[] = [
           },
     },
     {
+      accessorKey: "type",
+      header: "Type",
+  },
+    {
         accessorKey: "location",
         header: "Location",
     },
     {
-        accessorKey: "type",
-        header: "Type",
+      accessorKey: "userCount",
+      header: "User Count",
     },
+    
     {
         id: "actions",
         header: "Actions",

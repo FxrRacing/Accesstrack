@@ -140,3 +140,41 @@ export async function deleteStaff(id: string) {
     revalidatePath('/dashboard/staff', 'layout')
     redirect('/dashboard/staff')
 }
+
+
+
+export async function revokeAccessForTimeFrame(id: string) {
+
+    console.log(id)
+    revalidatePath('/dashboard/staff', 'layout')
+    
+}
+
+
+export async function banAccess(id: string) {
+   
+    const user = await serviceRoleClient.auth.admin.getUserById(id)
+    console.log(user)
+
+
+    // const user = await prisma.users.findUnique({
+    //     where: {
+    //         id: id,
+    //     },
+    // })
+    console.log(user)
+if (!user) {
+    throw new Error('User not found')
+   // return { message: 'User not found' }
+}
+ 
+await serviceRoleClient.auth.admin.updateUserById(id, {
+    ban_duration: '2h45m'
+})
+
+    console.log('revoked access for user', id)
+    const user2 = await serviceRoleClient.auth.admin.getUserById(id)
+    console.log(user2)
+    revalidatePath(`/dashboard/staff/${id}`, 'layout')
+    
+}

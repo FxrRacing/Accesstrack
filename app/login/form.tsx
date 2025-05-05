@@ -1,3 +1,4 @@
+"use client"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,12 +13,19 @@ import { Label } from "@/components/ui/label"
 import { login } from "./actions"
 import Link from "next/link"
 import  MicrosoftButton  from "@/app/signup/microsoft-button"
-
+import { useActionState } from "react"
+import { AlertCircle } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+const initialState = {
+ message: "",
+ success: false
+}
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const [state, formAction,pending] = useActionState(login, initialState)
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -33,8 +41,13 @@ export function LoginForm({
         <MicrosoftButton /> 
                 
               </div>
-          <form>
-           
+          <form action={formAction}>
+
+              {!state.success && 
+              <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{state?.message}</AlertDescription>
+            </Alert>  }
              
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
                 <span className="relative z-10 bg-background px-2 text-muted-foreground">
@@ -48,7 +61,7 @@ export function LoginForm({
                     id="email"
                     name="email"
                     type="email"
-                    placeholder="m@example.com"
+                    placeholder="m@fxrracing.com"
                     required
                   />
                 </div>
@@ -64,7 +77,7 @@ export function LoginForm({
                   </div>
                   <Input id="password" name="password" type="password" required />
                 </div>
-                <Button type="submit" className="w-full" formAction={login}>
+                <Button type="submit" className="w-full" disabled={pending}>
                   Log in
                 </Button>
                 

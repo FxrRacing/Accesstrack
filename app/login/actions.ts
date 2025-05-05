@@ -17,7 +17,7 @@ export async function logout() {
 }
 
 
-export async function login(formData: FormData) {
+export async function login(prevState: {message: string, success: boolean}, formData: FormData) {
   const supabase = await createClient()
 
   // type-casting here for convenience
@@ -26,17 +26,29 @@ export async function login(formData: FormData) {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   }
-
-  console.log(data)
-  const { error } = await supabase.auth.signInWithPassword(data)
-
-  if (error) {
-    console.error('Error logging in:', error)
-    redirect('/error')
+  if (typeof data.email !== 'string' || data.email.trim() === '') {
+    return { message: 'Email is required', success: false }
+  }
+  if (typeof data.password !== 'string' || data.password.trim() === '') {
+    return { message: 'Password is required', success: false }
   }
 
-  revalidatePath('/', 'layout')
-  redirect('/')
+  try {
+    const { error } = await supabase.auth.signInWithPassword(data)
+    if (error) {
+      console.error('Error logging in:', error)
+      return { message: 'Incorrect email address and/or password. Try again or contact support if you need help.', success: false }
+    }revalidatePath('/', 'layout')
+    redirect('/dashboard/')
+    return { message: 'Logged in', success: true }
+  } catch (error) {
+    console.error('Error logging in:', error)
+    return { message: 'Error logging in, please try again or contact support if you need help.', success: false }
+  }
+
+  
+
+  
 }
 
 

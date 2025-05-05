@@ -126,6 +126,15 @@ export async function addUserToSharedAccount(prevState: {message: string}, formD
             updatedById: result.data.authId,
         },
     })
+    // Update the user count
+    await prisma.sharedAccount.update({
+        where: {
+            id: result.data.sharedAccountId
+        },
+        data: {
+            userCount: { increment: 1 }
+        }
+    })
     revalidatePath(`/dashboard/shared-accounts/${result.data.sharedAccountId}`)
     revalidatePath('/dashboard/shared-accounts')
     revalidatePath(`/dashboard/users/${result.data.userId}`)
