@@ -43,7 +43,7 @@ export function LoginForm({
               </div>
           <form action={formAction}>
 
-              {!state.success && 
+              {!state.success && state.message && 
               <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{state?.message}</AlertDescription>
