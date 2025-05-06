@@ -1,11 +1,12 @@
 'use client'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { SharedAccountHistory, UserProfiles } from "@prisma/client"
+import { SharedAccount, SharedAccountHistory, UserProfiles } from "@prisma/client"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import {GradientAvatar} from "./gradient-avatar"
 import { Clock } from "lucide-react"
-export type HistoryWithUser = SharedAccountHistory & { updatedBy: UserProfiles }
+import { ScrollArea } from "@/components/ui/scroll-area"
+export type HistoryWithUser = SharedAccountHistory & { updatedBy: UserProfiles, sharedAccount: SharedAccount }
 type props = {
     history: HistoryWithUser[]
 }
@@ -32,11 +33,12 @@ export default function HistorySheet({history}: props) {
         View the history of changes to this account.
       </SheetDescription>
     </SheetHeader>
-    <div className="flex flex-col gap-2 p-4">
+   <ScrollArea className="h-[calc(100vh-8rem)]">
+   <div className="flex flex-col gap-2">
         {history.map((history) => (
             <>
-            <div key={history.id} className="space-y-4">
-                <div className="flex gap-4">
+            <div key={history.id} className="space-y-4 p-4">
+                <div className="flex gap-4 px-6 py-2 space-y-4">
                   <GradientAvatar seed={history.updatedById} size={40} />
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
@@ -77,6 +79,7 @@ export default function HistorySheet({history}: props) {
             </>
         ))}
     </div>
+   </ScrollArea>
   </SheetContent>
 </Sheet>
 

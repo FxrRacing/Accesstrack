@@ -7,13 +7,17 @@ export default async function History({id}: {id: string}) {
         where: {
             sharedAccountId: id
         },
+        orderBy: {
+            updatedOn: 'desc'
+        },
         include: {
-            updatedBy: true
+            updatedBy: true,
+            sharedAccount: true
         }
     })
     return <div>
         <h1>History</h1>
-        <HistorySheet history={history as unknown as HistoryWithUser[]} />
+        <HistorySheet history={history as  HistoryWithUser[]} />
        
     </div>
 }   
