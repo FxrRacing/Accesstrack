@@ -1,7 +1,13 @@
+//"use client"
+//import { usePathname } from "next/navigation"
+
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage, BreadcrumbList} from "@/components/ui/breadcrumb"
 
 
     export default function PatchCrumbs(){
+   // const pathname = usePathname()
+    //const pathnames = pathname.split('/').filter(Boolean)
+      
     return <>
     <Breadcrumb>
   <BreadcrumbList>
@@ -10,7 +16,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, Breadc
     </BreadcrumbItem>
     <BreadcrumbSeparator />
     <BreadcrumbItem>
-      <BreadcrumbLink href="/components">Components</BreadcrumbLink>
+      <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
     </BreadcrumbItem>
     <BreadcrumbSeparator />
     <BreadcrumbItem>
