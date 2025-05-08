@@ -11,17 +11,23 @@ datasource db {
   schemas   = ["auth", "public", "storage"]
 }
 
-//public
+//public 
+//public 
+
 model UserProfiles {
-  id                   String                 @id @db.Uuid
-  username             String?                @unique
-  fullName             String?                @map("full_name")
-  email                String?
-  phone                String?
-  avatarUrl            String?                @map("avatar_url")
-  website              String?
-  createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt            DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+    id        String   @id @db.Uuid
+    username  String?  @unique
+    fullName  String?  @map("full_name")
+    email     String?
+    phone     String?
+    avatarUrl String?  @map("avatar_url")
+    website   String?
+    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+    updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+    
+    UserHistory UserHistory[]
+
 
   @@map("user_profiles")
   @@schema("public")
@@ -40,69 +46,72 @@ model UserProfiles {
   Invites Invites[]
 }
 
-
+model Invites{
+  id String @id @default(uuid()) @db.Uuid
+  fullName String
+  email String @unique
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  role String
+  team String
+  createdById String @db.Uuid
+  createdBy UserProfiles @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  status String @default("FULFILLED")
+  @@schema("public")
+} 
 
 model User {
-  id            String          @id @default(uuid())
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  id            String          @id @default(uuid()) @db.Uuid
+  createdAt     DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime        @updatedAt @db.Timestamptz(6)
   department    String          @default("unassigned")
   email         String          @unique
   name          String          @unique
   jobTitle      String?
   location      String?
-  locationId    String?
+  locationId    String?         @db.Uuid
   personalEmail String?         @unique
-  reportsToId   String?
+  reportsToId   String?         @db.Uuid
   type          String?
   status        String          @default("ACTIVE")
   
   reportsTo     User?           @relation("ManagerSubordinates", fields: [reportsToId], references: [id], onDelete: Cascade)
   subordinates  User[]          @relation("ManagerSubordinates")
-  histories     UserHistory[]
-  software      UserSoftware[]
+   histories     UserHistory[]
+   software      UserSoftware[]
 
+ 
   @@schema("public")
   SharedAccountUser SharedAccountUser[]
  // Location Location?       @relation(fields: [locationId], references: [id]) // Optional relation to Location
   
   Location Location?       @relation(fields: [locationId], references: [id]) // Optional relation to Location
+  Service Service[]
 }
 
 model UserHistory {
-  id        String   @id @default(uuid())
-  userId    String
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
   action    String
   field     String
   newValue  String?
   oldValue  String?
-  updatedBy String
-  updatedOn DateTime @default(now())
+  updatedById String @db.Uuid
+  updatedBy  UserProfiles @relation(fields: [updatedById], references: [id], onDelete: Cascade)
+  updatedOn DateTime @default(now()) @db.Timestamptz(6)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@schema("public")
 }
 
-model AccountRep {
-  id         String   @id @default(uuid())
-  softwareId String
-  email      String
-  name       String
-  phone      String
-  software   Software @relation(fields: [softwareId], references: [id])
-
-  @@schema("public")
-}
-
 model Software {
-  id                   String            @id @default(uuid())
+  id                   String            @id @default(uuid()) @db.Uuid
   name                 String
   description          String?
   category             String?
   status               String?           @default("ACTIVE")
-  createdAt            DateTime          @default(now())
-  updatedAt            DateTime          @updatedAt
+  createdAt            DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime          @updatedAt @db.Timestamptz(6)
   userCount            Int?
   notes                String?
   notesLastUpdatedById String?           @db.Uuid
@@ -135,47 +144,14 @@ model Software {
   SharedAccountSoftware SharedAccountSoftware[]
 }
 
-model SoftwareAccess {
-  id              String        @id @default(uuid())
-  sharedAccountId String      
-  softwareId      String
-  access          Boolean
-  lastEdited      DateTime      @default(now())
-  lastEditedBy    String
-  permissions     String[]
-  accessLevel     String
-  role            String
-  uid             String
-  grantedById     String         @db.Uuid
-  software        Software      @relation(fields: [softwareId], references: [id])
-  
-  
-  @@schema("public")
-}
-model SoftwareHistory {
-  id         String   @id @default(uuid())
-  softwareId String
-  action     String
-  field      String
-  newValue   String?
-  oldValue   String?
-  updatedBy  String
-  updatedOn  DateTime @default(now())
-  software   Software @relation(fields: [softwareId], references: [id], onDelete: Cascade)
-
-  @@index([softwareId])
-  @@schema("public")
-  Software Software[] @relation("SoftwareHistory")
-}
-
 model UserSoftware {
-  id          String       @id @default(uuid())
-  userId      String
-  softwareId  String
+  id          String       @id @default(uuid()) @db.Uuid
+  userId      String       @db.Uuid
+  softwareId  String       @db.Uuid
   grantedById String       @db.Uuid
   accessLevel String
   role        String
-  assignedAt  DateTime     @default(now())
+  assignedAt  DateTime     @default(now()) @db.Timestamptz(6)
   grantedBy   UserProfiles @relation("GrantedAccess", fields: [grantedById], references: [id])
   software    Software     @relation(fields: [softwareId], references: [id])
   user        User         @relation(fields: [userId], references: [id])
@@ -183,20 +159,142 @@ model UserSoftware {
   @@unique([userId, softwareId])
   @@schema("public")
 }
-model Invites{
-  id String @id @default(uuid())
-  fullName String
-  email String @unique
-  createdAt DateTime @default(now())
-  role String
-  team String
-  createdById String @db.Uuid
-  createdBy UserProfiles @relation(fields: [createdById], references: [id], onDelete: Cascade)
-  status String @default("PENDING")
+
+
+model SoftwareAccess {
+  id              String        @id @default(uuid()) @db.Uuid
+  sharedAccountId String       @db.Uuid
+  softwareId      String       @db.Uuid
+  access          Boolean
+  lastEdited      DateTime      @default(now()) @db.Timestamptz(6)
+  lastEditedBy    String       @db.Uuid
+  permissions     String[]
+  accessLevel     String
+  role            String
+  uid             String
+  grantedById     String         @db.Uuid
+  software        Software      @relation(fields: [softwareId], references: [id])
+  sharedAccount   SharedAccount @relation(fields: [sharedAccountId], references: [id])
+  
   @@schema("public")
 }
+
+
+model SoftwareHistory {
+  id         String   @id @default(uuid()) @db.Uuid
+  softwareId String   @db.Uuid
+  action     String
+  field      String
+  newValue   String?
+  oldValue   String?
+  updatedBy  String
+  updatedOn  DateTime @default(now()) @db.Timestamptz(6)
+  software   Software @relation(fields: [softwareId], references: [id], onDelete: Cascade)
+
+  @@index([softwareId])
+  @@schema("public")
+  Software Software[] @relation("SoftwareHistory")
+}
+
+model AccountRep {
+  id         String   @id @default(uuid()) @db.Uuid
+  softwareId String   @db.Uuid
+  email      String
+  name       String
+  phone      String
+  software   Software @relation(fields: [softwareId], references: [id])
+
+  @@schema("public")
+}
+model SharedAccount {
+  id               String                  @id @default(uuid()) @db.Uuid
+  email            String                  @unique
+  name             String
+  normalizedName   String
+  location         String?
+  type             String?
+  createdAt        DateTime                @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime                @updatedAt
+  updatedById      String                  @db.Uuid
+  userCount        Int                     @default(0)
+  status           String                  @default("Active")
+  
+  // Relation to the auth user who last updated this shared account
+ updatedBy          UserProfiles?            @relation("SharedAccountUpdate", fields: [updatedById], references: [id])
+  // History of shared account changes
+  histories        SharedAccountHistory[]
+  // Assignments of this shared account to Software (via join table)
+  assignmentsSoftware SharedAccountSoftware[]
+  // Assignments of this shared account to Users (via join table)
+  assignmentsUser     SharedAccountUser[]
+
+  @@schema("public")
+  SoftwareAccess SoftwareAccess[]
+}
+
+model SharedAccountHistory {
+  id              String         @id @default(uuid()) @db.Uuid
+  sharedAccountId String         @db.Uuid
+  action          String
+  field           String
+  newValue        String?
+  oldValue        String?
+  updatedById     String        @db.Uuid
+  updatedOn       DateTime       @default(now()) @db.Timestamptz(6)
+  
+  sharedAccount   SharedAccount  @relation(fields: [sharedAccountId], references: [id], onDelete: Cascade)
+  updatedBy       UserProfiles   @relation(fields: [updatedById], references: [id])
+  @@index([sharedAccountId])
+  @@schema("public")
+}
+
+model SharedAccountSoftware {
+  id              String        @id @default(uuid()) @db.Uuid
+  sharedAccountId String        @db.Uuid
+  softwareId      String        @db.Uuid
+  createdById     String        @db.Uuid
+  assignedAt      DateTime      @default(now()) @db.Timestamptz(6)
+  accessLevel     String
+  role            String
+
+  sharedAccount   SharedAccount @relation(fields: [sharedAccountId], references: [id])
+  software        Software      @relation(fields: [softwareId], references: [id])
+  createdBy       UserProfiles  @relation(fields: [createdById], references: [id])
+
+  @@unique([sharedAccountId, softwareId])
+  @@schema("public")
+}
+model SharedAccountUser {
+  id              String        @id @default(uuid()) @db.Uuid
+  sharedAccountId String        @db.Uuid
+  userId          String        @db.Uuid
+  createdById     String        @db.Uuid
+  assignedAt      DateTime      @default(now()) @db.Timestamptz(6)
+
+
+  sharedAccount   SharedAccount @relation(fields: [sharedAccountId], references: [id])
+  user            User          @relation(fields: [userId], references: [id])
+  createdBy       UserProfiles  @relation(fields: [createdById], references: [id])
+
+  @@unique([sharedAccountId, userId])
+  @@schema("public")
+}
+model Service {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  description String
+  contactID String @db.Uuid
+  contact User @relation(fields: [contactID], references: [id])
+  locationId String @db.Uuid
+  location Location @relation(fields: [locationId], references: [id])
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  status String @default("active")
+  @@schema("public")
+}
+
 model Location {
-  id            String             @id @default(uuid())
+  id            String             @id @default(uuid()) @db.Uuid
   type          String
   name          String
   address       String
@@ -218,6 +316,28 @@ model Location {
 
   @@schema("public")
   
+  Service Service[]
+}
+model OperatingHour {
+  id          String      @id @default(uuid()) @db.Uuid
+  location    Location    @relation(fields: [locationId], references: [id])
+  locationId  String      @db.Uuid
+  dayOfWeek   DayOfWeek
+  openTime    DateTime    // use Time if supported, otherwise DateTime with same date
+  closeTime   DateTime
+
+  @@unique([locationId, dayOfWeek]) // one entry per day
+  @@schema("public")
+}
+model Door {
+  id          String      @id @default(uuid()) @db.Uuid
+  name        String
+  floor       Int
+  type        String
+  location    Location    @relation(fields: [locationId], references: [id])
+  locationId  String      @db.Uuid
+
+  @@schema("public")
 }
 enum DayOfWeek {
   MONDAY
@@ -230,29 +350,6 @@ enum DayOfWeek {
 
   @@schema("public")
 }
-model OperatingHour {
-  id          String      @id @default(uuid())
-  location    Location    @relation(fields: [locationId], references: [id])
-  locationId  String
-  dayOfWeek   DayOfWeek
-  openTime    DateTime    // use Time if supported, otherwise DateTime with same date
-  closeTime   DateTime
-
-  @@unique([locationId, dayOfWeek]) // one entry per day
-  @@schema("public")
-}
-model Door {
-  id          String      @id @default(uuid())
-  name        String
-  floor       Int
-  type        String
-  location    Location    @relation(fields: [locationId], references: [id])
-  locationId  String
-
-  @@schema("public")
-}
-
-
 
 enum PaymentFrequency {
   WEEKLY
@@ -277,88 +374,9 @@ enum PaymentMethod {
   @@schema("public")
 }
 
-enum EntityType {
-  USER
-  SOFTWARE
-  SHARED_ACCOUNT
-
-  @@schema("public")
-}
-
-model SharedAccount {
-  id               String                  @id @default(uuid())
-  email            String                  @unique
-  name             String
-  normalizedName   String
-  location         String?
-  type             String?
-  createdAt        DateTime                @default(now())
-  updatedAt        DateTime                @updatedAt
-  updatedById      String                  @db.Uuid
-  userCount        Int                     @default(0)
-  status           String                  @default("Active")
-  
-  // Relation to the auth user who last updated this shared account
- updatedBy          UserProfiles?            @relation("SharedAccountUpdate", fields: [updatedById], references: [id])
-  // History of shared account changes
-  histories        SharedAccountHistory[]
-  // Assignments of this shared account to Software (via join table)
-  assignmentsSoftware SharedAccountSoftware[]
-  // Assignments of this shared account to Users (via join table)
-  assignmentsUser     SharedAccountUser[]
-
-  @@schema("public")
-}
-
-model SharedAccountHistory {
-  id              String         @id @default(uuid())
-  sharedAccountId String
-  action          String
-  field           String
-  newValue        String?
-  oldValue        String?
-  updatedById     String        @db.Uuid
-  updatedOn       DateTime       @default(now())
-  
-  sharedAccount   SharedAccount  @relation(fields: [sharedAccountId], references: [id], onDelete: Cascade)
-  updatedBy       UserProfiles   @relation(fields: [updatedById], references: [id])
-  @@index([sharedAccountId])
-  @@schema("public")
-}
-
-model SharedAccountSoftware {
-  id              String        @id @default(uuid())
-  sharedAccountId String
-  softwareId      String
-  createdById     String        @db.Uuid
-  assignedAt      DateTime      @default(now())
-  accessLevel     String
-  role            String
-
-  sharedAccount   SharedAccount @relation(fields: [sharedAccountId], references: [id])
-  software        Software      @relation(fields: [softwareId], references: [id])
-  createdBy       UserProfiles  @relation(fields: [createdById], references: [id])
-
-  @@unique([sharedAccountId, softwareId])
-  @@schema("public")
-}
-model SharedAccountUser {
-  id              String        @id @default(uuid())
-  sharedAccountId String
-  userId          String
-  createdById     String        @db.Uuid
-  assignedAt      DateTime      @default(now())
 
 
-  sharedAccount   SharedAccount @relation(fields: [sharedAccountId], references: [id])
-  user            User          @relation(fields: [userId], references: [id])
-  createdBy       UserProfiles  @relation(fields: [createdById], references: [id])
-
-  @@unique([sharedAccountId, userId])
-  @@schema("public")
-}
-
-
+//end of public
 
 
 

@@ -24,7 +24,7 @@ import "@xyflow/react/dist/style.css";
 const departmentColors: Record<string, { bg: string; border: string }> = {
   Executive:   { bg: "#4f46e5", border: "#3730a3" },
   Ecommerce:   { bg: "#0891b2", border: "#065d8c" },
-  Engineering: { bg: "#16a34a", border: "#14532d" },
+  Developer: { bg: "#16a34a", border: "#14532d" },
   Marketing:   { bg: "#ea580c", border: "#9a3412" },
   HR:          { bg: "#d946ef", border: "#86198f" },
   Finance:     { bg: "#f59e0b", border: "#b45309" },
@@ -81,12 +81,12 @@ const position = { x: 0, y: 0 };
 const rawNodes: Node[] = [
   { id: "1", type: "employee", data: { name: "Bren Crocker",        role: "IT Manager", department: "Executive",       directReports: ["2","3","4","6","7"], onClick: () => null }, position },
   { id: "2", type: "employee", data: { name: "Yani Santos",         role: "E-commerce UI/UX Designer Lead", department: "Ecommerce",     directReports: ["5","8"],       onClick: () => null }, position },
-  { id: "3", type: "employee", data: { name: "Derek Fodeke-Rodgers",     role: "Full Stack Developer",  department: "Engineering",       directReports: [],      onClick: () => null }, position },
-  { id: "4", type: "employee", data: { name: "Chandan Kumar",      role: "Full Stack Developer",      department: "Engineering",           directReports: [],      onClick: () => null }, position },
-  { id: "5", type: "employee", data: { name: "Cindy Unrau",         role: "E-commerce Product & UX Coordinator",  department: "Ecommerce",         directReports: [],      onClick: () => null }, position },
+  { id: "3", type: "employee", data: { name: "Derek Fodeke-Rodgers",     role: "Full Stack Developer",  department: "Developer",       directReports: [],      onClick: () => null }, position },
+  { id: "4", type: "employee", data: { name: "Chandan Kumar",      role: "Full Stack Developer",      department: "Developer",           directReports: [],      onClick: () => null }, position },
+  { id: "5", type: "employee", data: { name: "Cindy Unrau",         role: "Senior E-Commerce UX Administrator",  department: "Ecommerce",         directReports: [],      onClick: () => null }, position },
   { id: "6", type: "employee", data: { name: "Raul Bernales",           role: "ERP Administrator", department: "Support",      directReports: [], onClick: () => null }, position },
   { id: "7", type: "employee", data: { name: "Level 1 (Baba)",          role: "IT Support Technician - Level 1",        department: "Support",     directReports: [],onClick: () => null }, position },
-  { id: "8", type: "employee", data: { name: "Jr E-com",         role: "Junior E-commerce Coordinator",  department: "Ecommerce",         directReports: [],      onClick: () => null }, position },
+  { id: "8", type: "employee", data: { name: "Jr E-com",         role: "E-commerce Coordinator",  department: "Ecommerce",         directReports: [],      onClick: () => null }, position },
   
   
  
