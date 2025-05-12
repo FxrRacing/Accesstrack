@@ -6,6 +6,7 @@ import { GradientCard } from "@/components/ui/gradient-card";
 import { Button } from "@/components/ui/button";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
+import ImportSoftware from "./import";
 export default async function SoftwarePage() {  
    const software= await prisma.software.findMany({});
 
@@ -34,14 +35,12 @@ export default async function SoftwarePage() {
                 badge="Import"
                 icon={<FileUp className="h-20 w-20" strokeWidth={1.5} />}
                 >
-               <Button className="bg-black text-white hover:bg-black/80 rounded-full px-6">
-    <FileUp className="mr-2 h-4 w-4" />
-    Upload File
-  </Button>     
+               <ImportSoftware />     
                 </GradientCard>     
             </div>
-            </div>
             <DataTable columns={columns} data={software} /> 
+            </div>
+            
         </main>
         <div className="flex flex-col gap-4">
             {/* <h1>Software</h1>
