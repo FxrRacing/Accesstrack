@@ -4,7 +4,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AlertCircle, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Download, FileText, FileUp, Upload, X } from "lucide-react"
+import { AlertCircle, Check, ChevronDown,  ChevronUp, Download, FileText, FileUp, Upload, X } from "lucide-react"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { useState, useRef } from "react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
@@ -20,8 +20,8 @@ export default function ImportSoftware() {
     const [isDragging, setIsDragging] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [isPreviewOpen, setIsPreviewOpen] = useState(false)
-    const tableRef = useRef<HTMLDivElement>(null)
-    const [mounted, setMounted] = useState(false)
+    // const tableRef = useRef<HTMLDivElement>(null)
+    // const [mounted, setMounted] = useState(false)
 
 
     const parseCSV = (file: File) => {
