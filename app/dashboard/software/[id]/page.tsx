@@ -9,7 +9,8 @@ import { createClient } from '@/utils/supabase/server'
 
 import UserManagement from "@/components/access-list";
 import AssignForm from "./assign-form";
-
+import Image from "next/image";
+import { Suspense } from "react";
 
 
 
@@ -80,6 +81,13 @@ const sharedAccounts = await prisma.sharedAccountSoftware.findMany({
     <>
       <div>
         <h1 className="text-xl">{software.name}</h1>
+
+
+        {software.iconUrl && (
+          <Suspense fallback={<div>Loading Image...</div>}>
+          <Image src={software.iconUrl} alt="Software Icon" width={30} height={30} />
+          </Suspense>
+        )}
         <p>Description:{software.description}</p>
         <p>Category:{software.category}</p>
       
@@ -96,14 +104,15 @@ const sharedAccounts = await prisma.sharedAccountSoftware.findMany({
       =============================================
       <h3> Softwares Users</h3>
      
-
+<Suspense fallback={<div>Loading Users...</div>}>
       <UserManagement 
   users={users} 
 
 />
-    
+</Suspense>
       
 
+<Suspense fallback={<div>Loading Users...</div>}>
       {users.map(async (user) => {
         const removeAssignedUserWithIds = removeAssignedUser.bind(null,  user.user.id,id);
        
@@ -126,6 +135,7 @@ const sharedAccounts = await prisma.sharedAccountSoftware.findMany({
         </div>
         )
       })}
+      </Suspense>
       =========================================
       {/* Assign software */}
       <p>Assign Software</p>

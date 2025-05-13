@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import ImportSoftware from "./import";
+import Link from "next/link";
 export default async function SoftwarePage() {  
    const software= await prisma.software.findMany({});
 
@@ -55,6 +56,8 @@ export default async function SoftwarePage() {
                
             ))} */}
             <CreateForm />
+
+            <Link href="https://logo.dev" target="_blank" className="text-sm text-gray-500">Logos provided by Logo.dev</Link>
         </div>
         </>
     );

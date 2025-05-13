@@ -125,7 +125,7 @@ model Software {
   pricePerUser         Float?
   updatedById          String?           @db.Uuid 
   website              String?
-  faviconUrl           String?
+  iconUrl              String?
   
   accountReps          AccountRep[]
   // Relation to the auth user who last updated the notes:

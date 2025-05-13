@@ -8,14 +8,25 @@ export async function createSoftware(prevState: {message: string},formData: Form
     const description = formData.get('description') as string | null;
     const category = formData.get('category') as string | null;
     const status = formData.get('status') as string | null;
-    if (!name || !description || !category || !status) {
+    const website = formData.get('website') as string | null;
+    const icon = formData.get('icon') as string | null;
+    if (!name || !description || !category || !status   || !icon) {
         return {message: 'All fields are required.'}
     }
+    let strippedWebsite 
+      if(website){
+        strippedWebsite = stripProtocol(website);
+        console.log(strippedWebsite)
+      }
+    
     const data = {
       name,
       description,
       category,
       status,
+      website,
+      iconUrl: icon,
+      
     }
     console.table(data)
 
@@ -31,6 +42,9 @@ export async function createSoftware(prevState: {message: string},formData: Form
     }
 }
 
+async function stripProtocol(website: string) {
+    return website.replace(/^https?:\/\//, '');
+}
 
 
 export async function editSoftware(formData: FormData) {

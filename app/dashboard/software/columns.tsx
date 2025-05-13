@@ -4,6 +4,7 @@
 import { Software } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
+import Image from "next/image";
  
 import { Button } from "@/components/ui/button"
 import {
@@ -42,15 +43,7 @@ export const columns: ColumnDef<Software>[] = [
         enableSorting: false,
         enableHiding: false,
       },
-    {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ row }) => {
-            const status = row.getValue("status") as StatusTypes;
-            return <StatusBadge status={status} />
-            
-        },
-    },
+    
     
     {
         accessorKey: "name",
@@ -60,12 +53,44 @@ export const columns: ColumnDef<Software>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
               >
+
                 Name
                 <ArrowUpDown className="ml-2 h-4 w-4" />
               </Button>
             )
           },
+          cell: ({ row }) => {
+            const iconUrl = row.original.iconUrl;
+            return (
+              <>
+              <div className="flex items-center gap-3">
+                  <Image
+                    className="rounded-sm"
+                    src={iconUrl || ""}
+                    width={40}
+                    height={40}
+                    alt={row.original.name}
+                  />
+                  <div>
+                    <div className="font-medium">{row.original.name}</div>
+                    <span className="text-muted-foreground mt-0.5 text-xs">
+                      {row.original.category}
+                    </span>
+                  </div>
+                </div>
+              </>
+            )
+          }
     },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+          const status = row.getValue("status") as StatusTypes;
+          return <StatusBadge status={status} />
+          
+      },
+  },
    
     {
         accessorKey: "category",
