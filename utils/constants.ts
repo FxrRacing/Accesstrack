@@ -1,4 +1,29 @@
 
+export const SOFTWARE_STATUS_OPTIONS = [
+    {label: "Active", value: "active"},
+    {label: "Inactive", value: "inactive"},
+    {label: "Pending", value: "pending"},
+    {label: "Cancelled", value: "cancelled"},
+    {label: "Other", value: "other"},
+]
+
+export const SOFTWARE_CATEGORY_OPTIONS = [
+    {label: "Productivity", value: "productivity"},
+    {label: "Communication", value: "communication"},
+    {label: "Project Management", value: "project_management"},
+    {label: "Other", value: "other"},
+    {label: "Finance", value: "finance"},
+    {label: "Sales", value: "sales"},
+    {label: "Marketing", value: "marketing"},
+    {label: "Engineering", value: "engineering"},
+    {label: "IT", value: "it"},
+    {label: "HR", value: "hr"},
+    {label: "Accounting", value: "accounting"},
+    {label: "Legal", value: "legal"},
+    {label: "Other", value: "other"},
+]
+
+
 
 export const  TEAM_OPTIONS = [
     {label: "Management", value: "management"},
@@ -16,15 +41,7 @@ export const  TEAM_OPTIONS = [
     {label: "Super Admin", value: "super_admin"},
 ]
 
-// <option value="admin">Administrator</option>
-// <option value="editor">Editor</option>
-// <option value="viewer">Viewer</option>
-// <option value="accountant">Accountant</option>
-// <option value="sales">Sales</option>
-// <option value="marketing">Marketing</option>
-// <option value="support">Support</option>
-// <option value="hr">HR</option>
-// <option value="other">Other</option>
+
 
 export const ROLE_OPTIONS = [
     {label: "Administrator", value: "admin"},

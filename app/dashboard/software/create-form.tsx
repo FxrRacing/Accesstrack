@@ -18,6 +18,10 @@ import { useFormStatus } from 'react-dom'
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
+import { SOFTWARE_CATEGORY_OPTIONS, SOFTWARE_STATUS_OPTIONS } from "@/utils/constants";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CirclePlus } from "lucide-react";
+import {  UserProfiles } from "@prisma/client";
 const initialState = {
     message: '',
   }
@@ -32,7 +36,7 @@ export function SubmitButton() {
   )
 }
 
-export default function CreateForm() {
+export default function CreateForm({teamOwners}: {teamOwners: UserProfiles[]}) {
     const [error, formAction, pending] = useActionState(createSoftware, initialState )
     const [website, setWebsite] = useState('');
     const [icon, setIcon] = useState<string | null>(null);
@@ -70,7 +74,10 @@ export default function CreateForm() {
 
 <Dialog>
   <DialogTrigger asChild>
-    <Button>Create Software</Button>
+    <Button className="rounded-full px-6">
+      <CirclePlus className="mr-2 h-4 w-4" />
+      Create Software
+    </Button>
   </DialogTrigger>
 
   <DialogContent>
@@ -82,15 +89,38 @@ export default function CreateForm() {
     </DialogDescription>
 
     <form action={formAction} className="flex flex-col gap-4">
-      <Label>Name</Label>
+      <Label>Name*</Label>
             <Input type="text" name="name" placeholder="Name" />
-            <Label>Description</Label>
+            <Label>Description*</Label>
             <Input type="text" name="description" placeholder="Description" />
-            <Label>Category</Label>
-            <Input type="text" name="category" placeholder="Category" />
-            <Label>Status</Label>
-            <Input type="text" name="status" placeholder="Status" />
-            <Label>Website</Label>
+            <Label>Category *</Label>
+           <Select name="category">
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              {SOFTWARE_CATEGORY_OPTIONS.map((category: { label: string; value: string }) => (
+                <SelectItem key={category.value} value={category.value}>
+                  {category.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+           </Select>
+            <Label>Status *</Label>
+            <Select name="status">
+  <SelectTrigger className="w-full">
+    <SelectValue placeholder="Status" />
+  </SelectTrigger>
+  <SelectContent>
+  {SOFTWARE_STATUS_OPTIONS.map((status) => (
+                    <SelectItem key={status.value} value={status.value}>
+                        {status.label}
+                    </SelectItem>
+                ))}
+  </SelectContent>
+</Select>
+            
+            <Label>Website *</Label>
             <div className="flex items-center gap-2">
                 <Input 
                     type="text" 
@@ -112,7 +142,19 @@ export default function CreateForm() {
                 )}
               <Input type="hidden" name="icon" value={iconUrl || ''} />
             </div>
-            
+            <Label>IT Team Owner</Label>
+            <Select name="teamOwnerId">
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select Team Owner" />
+              </SelectTrigger>
+              <SelectContent>
+                {teamOwners.map((teamOwner: UserProfiles) => (
+                  <SelectItem key={teamOwner.id} value={teamOwner.id}>
+                    {teamOwner.fullName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             
 
 

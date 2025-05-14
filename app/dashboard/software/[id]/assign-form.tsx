@@ -16,7 +16,7 @@ export default function AssignForm({id, availableUsers,authId}: {id: string, ava
         <form action={formAction}>
         <select name="userId">
                 {availableUsers.map((user) => (
-                    <option key={user.id} value={user.id}>{user.name}-{user.id}</option>
+                    <option key={user.id} value={user.id}>{user.name}</option>
                 ))}
             </select>
             <input type="text" name="grantedById"  defaultValue={authId} hidden />

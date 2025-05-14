@@ -1,16 +1,16 @@
 import { prisma } from "@/lib/prisma";
 
 import CreateForm from "./create-form";
-import { PlusCircle, AppWindow, FileUp } from "lucide-react";
+import {AppWindow, FileUp } from "lucide-react";
 import { GradientCard } from "@/components/ui/gradient-card";
-import { Button } from "@/components/ui/button";
+
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import ImportSoftware from "./import";
 import Link from "next/link";
 export default async function SoftwarePage() {  
    const software= await prisma.software.findMany({});
-
+   const teamOwners = await prisma.userProfiles.findMany({})
     return (
         <>
         <main className="flex-1 ">
@@ -25,10 +25,7 @@ export default async function SoftwarePage() {
                 gradientTo="to-blue-600"
                 icon={<AppWindow className="h-20 w-20" strokeWidth={1.5} />}
                 >
-               <Button className="bg-black text-white hover:bg-black/80 rounded-full px-6">
-    <PlusCircle className="mr-2 h-4 w-4" />
-    Add Software
-  </Button>     
+                <CreateForm teamOwners={teamOwners} /> 
                 </GradientCard> 
                 <GradientCard
                 title="Import Software"
@@ -55,7 +52,7 @@ export default async function SoftwarePage() {
                 </div>
                
             ))} */}
-            <CreateForm />
+           
 
             <Link href="https://logo.dev" target="_blank" className="text-sm text-gray-500">Logos provided by Logo.dev</Link>
         </div>

@@ -126,7 +126,7 @@ model Software {
   updatedById          String?           @db.Uuid 
   website              String?
   iconUrl              String?
-  
+  assignedToId          String?           @db.Uuid
   accountReps          AccountRep[]
   // Relation to the auth user who last updated the notes:
   notesLastUpdatedBy   UserProfiles? @relation("NotesLastUpdatedBy", fields: [notesLastUpdatedById], references: [id])
@@ -137,7 +137,7 @@ model Software {
   histories            SoftwareHistory[] @relation("SoftwareHistory")
   UserSoftware         UserSoftware[]
   // Relation for assigned auth users (the ones designated as primary contact points):
-  Assigned             UserProfiles[]    @relation("AuthUserToSoftware")
+  Assigned             UserProfiles?    @relation("AuthUserToSoftware", fields: [assignedToId], references: [id])
 
   @@schema("public")
   SoftwareHistory SoftwareHistory[]

@@ -67,8 +67,8 @@ export const columns: ColumnDef<Software>[] = [
                   <Image
                     className="rounded-sm"
                     src={iconUrl || ""}
-                    width={40}
-                    height={40}
+                    width={30}
+                    height={30}
                     alt={row.original.name}
                   />
                   <div>

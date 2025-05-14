@@ -10,6 +10,8 @@ export async function createSoftware(prevState: {message: string},formData: Form
     const status = formData.get('status') as string | null;
     const website = formData.get('website') as string | null;
     const icon = formData.get('icon') as string | null;
+    const teamOwnerId = formData.get('teamOwnerId') as string | null;
+    //team
     if (!name || !description || !category || !status   || !icon) {
         return {message: 'All fields are required.'}
     }
@@ -26,6 +28,7 @@ export async function createSoftware(prevState: {message: string},formData: Form
       status,
       website,
       iconUrl: icon,
+      teamOwnerId: teamOwnerId,
       
     }
     console.table(data)
