@@ -73,6 +73,8 @@ model User {
   reportsToId   String?         @db.Uuid
   type          String?
   status        String          @default("ACTIVE")
+  onboardingDate DateTime?      @db.Timestamptz(6)
+  offboardingDate DateTime?      @db.Timestamptz(6)
   
   reportsTo     User?           @relation("ManagerSubordinates", fields: [reportsToId], references: [id], onDelete: Cascade)
   subordinates  User[]          @relation("ManagerSubordinates")

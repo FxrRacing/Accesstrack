@@ -2,7 +2,7 @@
 import { prisma } from '@/lib/prisma';
 import { User } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
-
+import { redirect } from 'next/navigation';
 
 
 
@@ -18,6 +18,9 @@ export async function editUser(prevState: {message: string}, formData: FormData)
     const id = formData.get('id') as string | null;
     const reportsToId = formData.get('reportsToId') as string | null;
     const authId = formData.get('authId') as string | null;
+    const onboardingDate = formData.get('onboardingDate') as Date | null;
+    const offboardingDate = formData.get('offboardingDate') as Date | null;
+    const personalEmail = formData.get('personalEmail') as string | null;
     if (!id || !authId) {
         return {message: 'User or Auth ID is required.'}
     }
@@ -32,6 +35,9 @@ if (name       != null)  updates.name        = name
 if (status     != null)  updates.status      = status
 if (reportsToId != null)  updates.reportsToId = reportsToId
 if (locationId != null)  updates.locationId  = locationId
+if (onboardingDate != null)  updates.onboardingDate  = onboardingDate
+if (offboardingDate != null)  updates.offboardingDate  = offboardingDate
+if (personalEmail != null)  updates.personalEmail  = personalEmail
     try {
         // Perform the edit user action here
        
@@ -67,6 +73,8 @@ export async function createUser(formData: FormData) {
     const reportsTo = formData.get('reportsTo') as string | null;
     const status = formData.get('status') as string | null;
     const type = formData.get('type') as string | null;
+    const onboardingDate = formData.get('onboardingDate') as Date | null;
+    const offboardingDate = formData.get('offboardingDate') as Date | null;
 //reports to can be null we just wont add it to the user
 console.table({
     name,
@@ -78,6 +86,8 @@ console.table({
     reportsTo,
     status,
     type,
+    onboardingDate,
+    offboardingDate,
 });
     if (!name || !department || !jobTitle || !email || !locationId) {
         throw new Error('All fields are required.');
@@ -96,7 +106,9 @@ console.table({
                 reportsToId: reportsTo ? reportsTo : null,
                 personalEmail: personalEmail,
                 status: status as string,
-                type
+                type: type as string,
+                onboardingDate: onboardingDate,
+                offboardingDate: offboardingDate,
             },
         });
         console.log('User created:', user);
@@ -104,6 +116,7 @@ console.table({
         revalidatePath(`/dashboard/users/${user.id}`);
         revalidatePath(`/dashboard/org-chart`);
         revalidatePath(`/dashboard/users`);
+        redirect(`/dashboard/users/${user.id}`);
     } catch (error) {
         console.error('Error creating user:', error);
         throw new Error('Failed to create user.');

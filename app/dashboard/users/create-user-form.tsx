@@ -15,16 +15,17 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-
+import { Location } from "@prisma/client";
 import { EMPLOYMENT_TYPE_OPTIONS, EMPLOYMENT_STATUS_OPTIONS } from "@/utils/constants";
 import { PlusCircle, X, UserPlus } from "lucide-react";
 import { useState } from "react";
+
 
   
 
 
 
-export default function CreateUserForm({users}: {users: User[]} ) {
+export default function CreateUserForm({users, locations}: {users: User[], locations: Location[]} ) {
     const [additionalEmails, setAdditionalEmails] = useState<string[]>([""])
 
     const addEmailField = () => {
@@ -79,8 +80,21 @@ export default function CreateUserForm({users}: {users: User[]} ) {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="location">Location</Label>
-                <Input id="location" name="location" />
-              </div>
+                  
+                    <Select name="locationId" defaultValue={locations[0].id}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select location" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {locations.map((location) => (
+                          <SelectItem key={location.id} value={location.id}>
+                            {location.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                
+                </div>
             </div>
           </div>
           <Separator />
@@ -110,7 +124,7 @@ export default function CreateUserForm({users}: {users: User[]} ) {
                   <SelectItem value="N/A">None</SelectItem>
                   {users.map((user) => (
                     <SelectItem key={user.id} value={user.id}>
-                      {user.name}
+                      {user.name} 
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -131,19 +145,29 @@ export default function CreateUserForm({users}: {users: User[]} ) {
                   ))}
                 </SelectContent>
               </Select>
-            </div>      
-          </div>     
+            </div> 
+
+            <div className="space-y-2">
+              <Label htmlFor="onboardingDate">Onboarding Date</Label>
+              <Input id="onboardingDate" name="onboardingDate" type="date" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="offboardingDate">Offboarding Date</Label>
+              <Input id="offboardingDate" name="offboardingDate" type="date" />
+              <p className="text-sm text-muted-foreground">Leave blank if the user is still active</p>
+            </div>
+          </div>
           <Separator />
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-muted-foreground">Contact Information</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="personalEmail">Email*</Label>
+               <Label htmlFor="personalEmail">Email*</Label>
                 <Input id="personalEmail" name="email" type="email" required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="personalEmail">Personal Email</Label>
-                <Input id="personalEmail" name="personalEmail" type="email" required />
+                <Input id="personalEmail" name="personalEmail" type="email" />
               </div>
             </div>
 
@@ -197,20 +221,3 @@ export default function CreateUserForm({users}: {users: User[]} ) {
   )
 }
 
-{/* <Input type="text" name="name" placeholder="Name*" />
-                <Input type="text" name="department" placeholder="Department*" />
-                <Input type="text" name="jobTitle" placeholder="Job Title" />
-                <Input type="text" name="email" placeholder="Email" />
-                <Input type="text" name="location" placeholder="Location" />
-                <label htmlFor="reportsTo">Reports To</label>
-                <Select>
-  <SelectTrigger className="w-full">
-    <SelectValue placeholder="Select manager" />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="N/A">None</SelectItem>
-    {users.map((user) => (
-        <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>
-    ))}
-  </SelectContent>
-</Select> */}
