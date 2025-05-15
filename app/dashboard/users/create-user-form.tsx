@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Location } from "@prisma/client";
+import { Location, Department } from "@prisma/client";
 import { EMPLOYMENT_TYPE_OPTIONS, EMPLOYMENT_STATUS_OPTIONS } from "@/utils/constants";
 import { PlusCircle, X, UserPlus } from "lucide-react";
 import { useState } from "react";
@@ -25,7 +25,7 @@ import { useState } from "react";
 
 
 
-export default function CreateUserForm({users, locations}: {users: User[], locations: Location[]} ) {
+export default function CreateUserForm({users, locations, departments}: {users: User[], locations: Location[], departments: Department[]} ) {
     const [additionalEmails, setAdditionalEmails] = useState<string[]>([""])
 
     const addEmailField = () => {
@@ -69,8 +69,19 @@ export default function CreateUserForm({users, locations}: {users: User[], locat
                 <Input id="name" name="name" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="department">Department*</Label>
-                <Input id="department" name="department" required />
+                <Label htmlFor="department">Department</Label>
+                <Select name="departmentId" defaultValue={departments[0].id}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departments.map((department) => (
+                      <SelectItem key={department.id} value={department.id}>
+                        {department.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">

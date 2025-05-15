@@ -69,7 +69,7 @@ model User {
   jobTitle      String?
   location      String?
   locationId    String?         @db.Uuid
-  personalEmail String?         @unique
+  personalEmail String?         
   reportsToId   String?         @db.Uuid
   type          String?
   status        String          @default("ACTIVE")
@@ -80,7 +80,7 @@ model User {
   subordinates  User[]          @relation("ManagerSubordinates")
    histories     UserHistory[]
    software      UserSoftware[]
-
+ 
  
   @@schema("public")
   SharedAccountUser SharedAccountUser[]
@@ -88,6 +88,10 @@ model User {
   
   Location Location?       @relation(fields: [locationId], references: [id]) // Optional relation to Location
   Service Service[]
+  departmentId     String?        @db.Uuid
+  Department       Department?    @relation("DepartmentUsers", fields: [departmentId], references: [id], onDelete: Cascade)
+
+  headedDepartment Department?    @relation("DepartmentHead")
 }
 
 model UserHistory {
@@ -294,6 +298,23 @@ model Service {
   status String @default("active")
   @@schema("public")
 }
+
+model Department {
+  id            String   @id @default(uuid()) @db.Uuid
+  name          String
+  description   String?
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @db.Timestamptz(6)
+  
+  // One-to-one relationship: Department head 
+  departmentHeadId String?   @db.Uuid @unique
+  departmentHead   User?     @relation("DepartmentHead", fields: [departmentHeadId], references: [id])
+
+  users            User[]    @relation("DepartmentUsers")
+
+  @@schema("public")
+}
+
 
 model Location {
   id            String             @id @default(uuid()) @db.Uuid

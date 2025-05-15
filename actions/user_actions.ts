@@ -65,12 +65,12 @@ export async function createUser(formData: FormData) {
     'use server'
     // Mutate data
     const name = formData.get('name') as string | null;
-    const department = formData.get('department') as string | null;
+    const departmentId = formData.get('departmentId') as string | null;
     const jobTitle = formData.get('jobTitle') as string | null;
     const email = formData.get('email') as string | null;
     const personalEmail = formData.get('personalEmail') as string | null;
     const locationId = formData.get('locationId') as string | null;
-    const reportsTo = formData.get('reportsTo') as string | null;
+    let reportsTo = formData.get('reportsTo') as string | null;
     const status = formData.get('status') as string | null;
     const type = formData.get('type') as string | null;
     const onboardingDate = formData.get('onboardingDate') as Date | null;
@@ -78,7 +78,7 @@ export async function createUser(formData: FormData) {
 //reports to can be null we just wont add it to the user
 console.table({
     name,
-    department,
+    departmentId,
     jobTitle,
     email,
     personalEmail,
@@ -89,17 +89,17 @@ console.table({
     onboardingDate,
     offboardingDate,
 });
-    if (!name || !department || !jobTitle || !email || !locationId) {
+    if (!name || !departmentId || !jobTitle || !email || !locationId) {
         throw new Error('All fields are required.');
     }
-   
-
+   if (reportsTo === "N/A") {reportsTo = null}
+let id = ''
     try {
         // Perform the edit user action here
         const user = await prisma.user.create({
             data: {
                 name: name,
-                department: department,
+                departmentId: departmentId,
                 jobTitle: jobTitle,
                 email: email,
                 locationId: locationId,
@@ -107,8 +107,8 @@ console.table({
                 personalEmail: personalEmail,
                 status: status as string,
                 type: type as string,
-                onboardingDate: onboardingDate,
-                offboardingDate: offboardingDate,
+                onboardingDate: onboardingDate ? new Date(onboardingDate) : null,
+                offboardingDate: offboardingDate ? new Date(offboardingDate) : null,
             },
         });
         console.log('User created:', user);
@@ -116,11 +116,13 @@ console.table({
         revalidatePath(`/dashboard/users/${user.id}`);
         revalidatePath(`/dashboard/org-chart`);
         revalidatePath(`/dashboard/users`);
-        redirect(`/dashboard/users/${user.id}`);
+        id = user.id
+        
     } catch (error) {
         console.error('Error creating user:', error);
         throw new Error('Failed to create user.');
     }
+    redirect(`/dashboard/users/${id}`);
 }
 export async function deleteUser(id: string) {
     'use server'

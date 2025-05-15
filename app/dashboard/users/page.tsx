@@ -23,6 +23,7 @@ export default async function UsersPage() {
     });
 
     const locations = await prisma.location.findMany();
+    const departments = await prisma.department.findMany();
   return (
     <main className="flex-1 ">
       <div className="container mx-auto px-4 py-8">
@@ -36,7 +37,7 @@ export default async function UsersPage() {
             gradientFrom="from-indigo-600"
             gradientTo="to-purple-700"
           >
-            <CreateUserForm users={users} locations={locations} />
+            <CreateUserForm users={users} locations={locations} departments={departments} />
           </GradientCard>
 
           <GradientCard

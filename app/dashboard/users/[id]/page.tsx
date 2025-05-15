@@ -31,12 +31,14 @@ export default async function Page({
       include: {
         reportsTo: true,
         Location: true,
+        headedDepartment: true,
+       
       },
     })
     if (!user) {
       return notFound()
     }
- 
+ console.log(user)
 
     const software = await prisma.userSoftware.findMany({
       where: {
