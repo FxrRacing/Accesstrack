@@ -40,16 +40,22 @@ export function LocationSuggestions({ onSelect, label = "Search Location" }: Loc
   
   // Load the Google Maps API
   useEffect(() => {
-    loader.load()
-      .then(() => {
+    async function loadGoogleMaps() {
+      try {
+        await loader.load();
         console.log("Google Maps API loaded successfully");
         setIsLoaded(true);
-        setSessionToken(new google.maps.places.AutocompleteSessionToken());
-      })
-      .catch(err => {
+        
+        // Get the Places library
+        const { AutocompleteSessionToken } = await google.maps.importLibrary("places") as google.maps.PlacesLibrary;
+        setSessionToken(new AutocompleteSessionToken());
+      } catch (err) {
         console.error("Failed to load Google Maps API:", err);
         setError("Failed to load location search");
-      });
+      }
+    }
+    
+    loadGoogleMaps();
   }, []);
 
   // Handle input changes and fetch suggestions
