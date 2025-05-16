@@ -11,6 +11,7 @@ import PermissionsProvider from "@/utils/providers/permissions";
 import { Suspense } from "react";
 import { SkeletonCard } from "@/components/skeleton-card";
 import { Label } from "@/components/ui/label";
+import StaffDetails from "./staff-details";
 
 export default async function Page({
     params,
@@ -67,6 +68,7 @@ if (!authUser) {
     }
     return (
             <div>
+                <StaffDetails authUser={authUser} />
 
             <h1 className="text-2xl font-bold">Staff Details</h1>
             <h1>staff details for {staff.fullName}</h1>

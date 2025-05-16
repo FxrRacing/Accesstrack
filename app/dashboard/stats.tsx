@@ -8,7 +8,7 @@ import Link from "next/link"
 import { AvatarFallback } from "@/components/ui/avatar"
 
 import { Avatar } from "@/components/ui/avatar"
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
+
 import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import { DropdownMenuContent, DropdownMenuLabel } from "@/components/ui/dropdown-menu"
 import { DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -120,7 +120,7 @@ export async function OnboardingSoon(){
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {user.status === "pending" ? (
+          {/* {user.status === "pending" ? (
             <DropdownMenuItem onClick={() => console.log("start onboarding "+user.id)}>
               Start onboarding
             </DropdownMenuItem>
@@ -131,7 +131,7 @@ export async function OnboardingSoon(){
           )}
           <DropdownMenuItem onClick={() => console.log("remove "+user.id)} className="text-destructive">
             Remove member
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

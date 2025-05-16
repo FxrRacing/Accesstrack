@@ -47,46 +47,7 @@ export default async function LocationsPage() {
                 </GradientCard>
             </div>
            
-            {/* <div className="grid gap-4 md:grid-cols-3 mb-8">
-            {locations.map((location) => (
-                <Link  key={location.id} href={`/dashboard/locations/${location.id}`}>
-                  <Card  className="w-full max-w-md bg-zinc-900 text-white border-none">
-                <CardHeader className="pb-2">
-                  <Badge className="w-fit bg-emerald-700/30 text-emerald-400 hover:bg-emerald-700/30 hover:text-emerald-400 capitalize">
-                  {location.type}
-                  </Badge>
-                  <h2 className="text-2xl font-bold mt-4">{location.name}</h2>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <MapPin className="h-5 w-5 text-zinc-400 shrink-0" />
-                    <span className="text-zinc-300">{location.city}, {location.state}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Building2 className="h-5 w-5 text-zinc-400 shrink-0" />
-                    <span className="text-zinc-300">{location.address}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Users className="h-5 w-5 text-zinc-400 shrink-0" />
-                    <span className="text-zinc-300">{location._count.employees}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Clock className="h-5 w-5 text-zinc-400 shrink-0" />
-                    <span className="text-zinc-300">Mon-Fri: 8:00 AM - 6:00 PM</span>
-                  </div>
-                </CardContent>
-                <div className="mx-6 h-px bg-zinc-800" />
-                <CardFooter className="justify-between py-4">
-                  <span className="text-zinc-300">5 access points</span>
-                  <button className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
-                    View Details
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </CardFooter>
-              </Card>   
-                </Link>
-            ))}
-            </div> */}
+           
 
 <LocationsMinimal locations={locations} />
         </div>
