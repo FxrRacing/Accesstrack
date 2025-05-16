@@ -1,1 +1,1 @@
- export type StatusTypes = "active" | "inactive" | "onboarding" | "terminated"
+ export type StatusTypes = "active" | "inactive" | "onboarding" | "terminated" | "on_leave"

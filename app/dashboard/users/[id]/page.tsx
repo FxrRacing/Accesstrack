@@ -31,7 +31,7 @@ export default async function Page({
       include: {
         reportsTo: true,
         Location: true,
-        headedDepartment: true,
+        headedDepartments: true,
        
       },
     })

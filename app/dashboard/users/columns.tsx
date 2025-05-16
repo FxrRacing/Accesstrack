@@ -12,7 +12,9 @@ import {
   import { Button } from "@/components/ui/button"
   import { Checkbox } from "@/components/ui/checkbox"
 import { User } from "@prisma/client"
-import { Badge } from "@/components/ui/badge"
+
+import { StatusBadge } from "@/components/ui/status-badge"
+import { StatusTypes } from "@/types/types"
 
 
 type UserWithReportsTo = User & { reportsTo: User | null }
@@ -45,20 +47,12 @@ type UserWithReportsTo = User & { reportsTo: User | null }
       {
         accessorKey: "status",
         header: "Status",
-        cell: ({ row }) => 
+        cell: ({ row }) => {
+          const status = row.getValue("status")
+          return <StatusBadge status={status as StatusTypes} />
+        }
         
-        <div className="capitalize">
-            
-            
-            {row.getValue("status")  == "ACTIVE"? <Badge className='rounded-full border-none bg-green-600/10 text-green-600 focus-visible:ring-green-600/20 focus-visible:outline-none dark:bg-green-400/10 dark:text-green-400 dark:focus-visible:ring-green-400/40 [a&]:hover:bg-green-600/5 dark:[a&]:hover:bg-green-400/5'>
-      <span className='size-1.5 rounded-full bg-green-600 dark:bg-green-400' aria-hidden='true' />
-      Active
-    </Badge> : <Badge className='rounded-full border-none bg-red-600/10 text-red-600 focus-visible:ring-red-600/20 focus-visible:outline-none dark:bg-red-400/10 dark:text-red-400 dark:focus-visible:ring-red-400/40 [a&]:hover:bg-red-600/5 dark:[a&]:hover:bg-red-400/5'>
-      <span className='size-1.5 rounded-full bg-red-600 dark:bg-red-400' aria-hidden='true' />
-      <p className="capitalize">Inactive</p>
-    </Badge>}
-            
-            </div>,
+        ,
         filterFn: (row, id, filterValue) => {
           // If no filter value is selected, show all rows
           if (!filterValue.length) return true

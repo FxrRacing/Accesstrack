@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge"
 import { StatusTypes } from "@/types/types";
 import clsx from "clsx"
 
-type EmploymentStatus = "active" | "inactive" | "onboarding" | "terminated"
+type EmploymentStatus = "active" | "inactive" | "onboarding" | "terminated" | "on_leave"
 
 const statusStyles: Record<EmploymentStatus, { text: string; textColor: string; bgColor: string; dotColor: string }> = {
   active: {
@@ -22,6 +22,12 @@ const statusStyles: Record<EmploymentStatus, { text: string; textColor: string; 
     textColor: "text-yellow-600 dark:text-yellow-400",
     bgColor: "bg-yellow-600/10 dark:bg-yellow-400/10",
     dotColor: "bg-yellow-600 dark:bg-yellow-400",
+  },
+  on_leave: {
+    text: "On Leave",
+    textColor: "text-blue-600 dark:text-blue-400",
+    bgColor: "bg-blue-600/10 dark:bg-blue-400/10",
+    dotColor: "bg-blue-600 dark:bg-blue-400",
   },
   terminated: {
     text: "Terminated",

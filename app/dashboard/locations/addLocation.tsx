@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
   
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import {toast} from "sonner"
 import { addLocation } from "./actions";
+import { LocationSuggestions } from "./locationSuggestions";
 
 
 // address: string;
@@ -23,10 +24,31 @@ import { addLocation } from "./actions";
 //     longitude: number | null;
 const initialState = {
    message: '',
+
 }
+
+type LocationData = {
+  address: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  latitude: number | null;
+  longitude: number | null;
+};
 
 export default function AddLocation() {
 const [state, formAction, pending] = useActionState(addLocation, initialState)    
+const [locationData, setLocationData] = useState<LocationData | null>(null);
+
+// Handle location selection
+const handleLocationSelect = (data: LocationData) => {
+  setLocationData(data);
+  
+  // Optionally, you could also update a hidden form field with the data
+  console.log("Selected location:", data);
+};
+
 useEffect(() => {
     if (state.message && !pending) {
       if (state.message.includes('Error')) {
@@ -56,10 +78,6 @@ useEffect(() => {
                 <Input placeholder="Location Name" name="name" />
             </div>
             <div className="space-y-2">
-                <Label>Address*</Label>
-                <Input placeholder="Location Address" name="address" />
-            </div>
-            <div className="space-y-2">
                 <Label>Type*</Label>
                 <Select name="type">
                     <SelectTrigger className="w-full">
@@ -73,23 +91,41 @@ useEffect(() => {
                     </SelectContent>
                 </Select>
             </div>
+            <LocationSuggestions 
+              onSelect={handleLocationSelect} 
+              label="Find Location"
+            />
+            <div className="space-y-2">
+                <Label>Address*</Label>
+                <Input 
+                  placeholder="Location Address" 
+                  name="address" 
+                  value={locationData?.address || ""}
+                  onChange={(e) => setLocationData(prev => prev ? {...prev, address: e.target.value} : null)}
+                />
+            </div>
             <div className="space-y-2">
                 <Label>City*</Label>
-                <Input placeholder="Location City" name="city" />
+                <Input 
+                  placeholder="Location City" 
+                  name="city" 
+                  value={locationData?.city || ""}
+                  onChange={(e) => setLocationData(prev => prev ? {...prev, city: e.target.value} : null)}
+                />
             </div>
             <div className="space-y-2">
                 <Label>State*</Label>
-                <Input placeholder="Location State" name="state" />
+                <Input placeholder="Location State" name="state" value={locationData?.state || ""} onChange={(e) => setLocationData(prev => prev ? {...prev, state: e.target.value} : null)}/>
             </div>
             <div className="space-y-2">
                 <Label>Postal Code*</Label>
-                <Input placeholder="Postal Code" name="postalCode" />
+                <Input placeholder="Postal Code" name="postalCode" value={locationData?.postalCode || ""} onChange={(e) => setLocationData(prev => prev ? {...prev, postalCode: e.target.value} : null)}/>
             </div>
             <div className="space-y-2">
                 <Label>Country*</Label>
-                <Select name="country">
+                <Select name="country" value={locationData?.country || ""} onValueChange={(value) => setLocationData(prev => prev ? {...prev, country: value} : null)}>
                     <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Country" />
+                        <SelectValue placeholder="Select Country" defaultValue={locationData?.country || ""} />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="US">United States</SelectItem>
@@ -111,11 +147,19 @@ useEffect(() => {
             <div className="flex gap-4 justify-between items-center">
             <div className="space-y-2"  >
                 <Label>Latitude</Label>
-                <Input name="latitude" />
+                <Input 
+                  name="latitude" 
+                  value={locationData?.latitude?.toString() || ""}
+                  onChange={(e) => setLocationData(prev => prev ? {...prev, latitude: parseFloat(e.target.value) || null} : null)}
+                />
             </div>
             <div className="space-y-2"  >
                 <Label>Longitude</Label>
-                <Input name="longitude" />
+                <Input 
+                  name="longitude" 
+                  value={locationData?.longitude?.toString() || ""}
+                  onChange={(e) => setLocationData(prev => prev ? {...prev, longitude: parseFloat(e.target.value) || null} : null)}
+                />
             </div>
             </div>
             

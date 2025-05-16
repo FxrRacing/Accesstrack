@@ -91,7 +91,8 @@ model User {
   departmentId     String?        @db.Uuid
   Department       Department?    @relation("DepartmentUsers", fields: [departmentId], references: [id], onDelete: Cascade)
 
-  headedDepartment Department?    @relation("DepartmentHead")
+ 
+  headedDepartments Department[] @relation("HeadedDepartments")
 }
 
 model UserHistory {
@@ -307,8 +308,8 @@ model Department {
   updatedAt     DateTime @updatedAt @db.Timestamptz(6)
   
   // One-to-one relationship: Department head 
-  departmentHeadId String?   @db.Uuid @unique
-  departmentHead   User?     @relation("DepartmentHead", fields: [departmentHeadId], references: [id])
+  departmentHeadId String?   @db.Uuid
+  departmentHead   User?   @relation("HeadedDepartments", fields: [departmentHeadId], references: [id])
 
   users            User[]    @relation("DepartmentUsers")
 
@@ -355,10 +356,12 @@ model OperatingHour {
 model Door {
   id          String      @id @default(uuid()) @db.Uuid
   name        String
-  floor       Int
+  floor       String
   type        String
   location    Location    @relation(fields: [locationId], references: [id])
   locationId  String      @db.Uuid
+  status      String?
+  accessLevel String? 
 
   @@schema("public")
 }

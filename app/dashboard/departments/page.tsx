@@ -17,10 +17,7 @@ export default async function DepartmentsPage() {
     }
   )
   const users = await prisma.user.findMany({
-    where: {
-      status: 'ACTIVE',
-      departmentId: null
-    }
+   
 
   })
   //dept count is count of users in the department plus the department head

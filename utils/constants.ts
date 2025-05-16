@@ -7,6 +7,28 @@ export const SOFTWARE_STATUS_OPTIONS = [
     {label: "Other", value: "other"},
 ]
 
+export const DOOR_STATUS_OPTIONS = [
+    {label: "Unknown", value: "unknown"},
+    {label: "Open", value: "open"},
+    {label: "Maintenance", value: "maintenance"},
+    
+    {label: "Alarm Enabled", value: "alarm_enabled"},
+    {label: "Alarm Disabled", value: "alarm_disabled"},
+    {label: "No Alarm", value: "no_alarm"},
+    {label: "Other", value: "other"},
+]
+
+export const DOOR_TYPE_OPTIONS = [
+    {label: "Main Entry", value: "main_entry"},
+    {label: "Secondary Entry", value: "secondary_entry"},
+    {label: "Delivery", value: "delivery"},
+    {label: "Department Entry", value: "department_entry"},
+    {label: "Elevator", value: "elevator"},
+    {label: "Secure Door", value: "secure_door"},
+    {label: "Emergency Exit", value: "emergency_exit"},
+    {label: "Other", value: "other"},
+]
+
 export const SOFTWARE_CATEGORY_OPTIONS = [
     {label: "Productivity", value: "productivity"},
     {label: "Communication", value: "communication"},
