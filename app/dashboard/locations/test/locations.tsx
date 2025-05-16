@@ -3,11 +3,11 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Search, MapPin, Users, Star,  Share, ChevronDown } from "lucide-react"
+import { Search, Users,   ChevronDown} from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
+import { Badge } from "@/components/ui/badge"
 //import { offices } from "./data/offices"
 
 import OfficeDetailsAirbnb from "./office-details-airbnb"
@@ -15,7 +15,7 @@ import type { Door, Location, User, OperatingHour } from "@prisma/client"
 //import Image from "next/image"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import {  OfficeMapWithMarkers } from "./office-map"
+import {  GlobalMap } from "./office-map"
 
 export type Office = Location & {
   _count: {
@@ -27,7 +27,7 @@ export type Office = Location & {
 }
 
 
-export default function LocationsAirbnb( {locations}: {locations: Office[]}) {
+export default function LocationsMinimal( {locations}: {locations: Office[]}) {
   const [searchQuery, setSearchQuery] = useState("")
   const [activeFilter, setActiveFilter] = useState("all")
   const [selectedOffice, setSelectedOffice] = useState<Office | null>(null)
@@ -59,34 +59,19 @@ export default function LocationsAirbnb( {locations}: {locations: Office[]}) {
         />
       ) : (
         <div className="flex flex-col">
-          <header className="sticky top-0 z-50 border-b border-gray-200 bg-white">
+          <header className="sticky top-0 z-50 border-b ">
             <div className="flex h-16 items-center justify-between px-4 md:px-6">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-6 w-6 text-rose-500" />
-                <span className="text-xl font-bold">WorkSpaces</span>
-              </div>
+              
 
-              <div className="hidden md:flex items-center rounded-full border border-gray-200 shadow-sm">
-                <Button variant="ghost" className="rounded-l-full px-4 py-2 text-sm font-medium">
-                  Location
-                </Button>
-                <div className="h-5 w-px bg-gray-200"></div>
-                <Button variant="ghost" className="px-4 py-2 text-sm font-medium">
-                  Office Type
-                </Button>
-                <div className="h-5 w-px bg-gray-200"></div>
-                <Button variant="ghost" className="rounded-r-full pl-4 pr-2 py-2">
-                  <Search className="h-4 w-4" />
-                </Button>
-              </div>
+              
 
-              <div className="flex items-center gap-4">
+              {/* <div className="flex items-center gap-4">
                 <Button variant="ghost" className="hidden md:flex gap-2 text-sm font-medium">
                   <Share className="h-4 w-4" />
                   Share
                 </Button>
                 
-              </div>
+              </div> */}
             </div>
 
             <div className="flex md:hidden px-4 py-3 gap-2">
@@ -105,30 +90,36 @@ export default function LocationsAirbnb( {locations}: {locations: Office[]}) {
               </Button>
             </div>
 
-            <div className="border-t border-accent px-4 py-3 overflow-x-auto scrollbar-hide">
+            <div className=" px-4 py-3 overflow-x-auto scrollbar-hide">
               <Tabs defaultValue="all" className="w-full" onValueChange={setActiveFilter}>
                 <TabsList className="bg-transparent p-0 h-auto flex gap-6 w-max">
                   <TabsTrigger
                     value="all"
-                    className="px-1 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:border-b-black rounded-none"
+                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:rounded-full  data-[state=active]:border-b-black rounded-none"
                   >
                     All Offices
                   </TabsTrigger>
                   <TabsTrigger
                     value="headquarters"
-                    className="px-1 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:border-b-black rounded-none"
+                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:rounded-full  data-[state=active]:border-b-black rounded-none"
                   >
                     Headquarters
                   </TabsTrigger>
                   <TabsTrigger
+                    value="warehouse"
+                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:rounded-full  data-[state=active]:border-b-black rounded-none"
+                  >
+                    Warehouse
+                  </TabsTrigger>
+                  <TabsTrigger
                     value="regional"
-                    className="px-1 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:border-b-black rounded-none"
+                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:rounded-full  data-[state=active]:border-b-black rounded-none"
                   >
                     Regional Offices
                   </TabsTrigger>
                   <TabsTrigger
                     value="satellite"
-                    className="px-1 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:border-b-black rounded-none"
+                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:rounded-full  data-[state=active]:border-b-black rounded-none"
                   >
                     Satellite Offices
                   </TabsTrigger>
@@ -169,26 +160,25 @@ export default function LocationsAirbnb( {locations}: {locations: Office[]}) {
                       <CardDescription><div className="flex justify-between">
                       <div>
                       
-                        <p className="text-gray-500">
-                          {office.city}, {office.country}
+                        <p className="">
+                           {office.address}, {office.state}, {office.city}, {office.country}
                         </p>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 fill-black text-black" />
-                        <span className="text-sm font-medium">4.9</span>
+                        <Badge className="w-fit bg-emerald-700/30 text-emerald-400 hover:bg-emerald-700/30 hover:text-emerald-400 capitalize">{office.type}</Badge>
                       </div>
                     </div></CardDescription>
                     </CardHeader>
                     
                    <CardContent>
-                   <div className="mt-1 flex items-center text-gray-500 text-sm">
+                   <div className="mt-1 flex items-center  text-sm">
                       <Users className="h-3.5 w-3.5 mr-1" />
                       <span>{office._count.employees} employees</span>
                       <span className="mx-1">•</span>
-                      <span>{office.doors.length} access points</span>
+                      <span>{office.doors.length} access point(s)</span>
                     </div>
-                    <p className="mt-1 text-sm text-gray-500">
-                      <span className="font-medium text-gray-900">{office.type}</span> • {office.operatingHours.map((hour) => `${hour.dayOfWeek}: ${hour.openTime} - ${hour.closeTime}`).join(" • ")}
+                    <p className="mt-1 text-sm ">
+                      <span className="font-medium capitalize">{office.type}</span> • {office.operatingHours.length > 0 ? office.operatingHours.map((hour) => `${hour.dayOfWeek}: ${hour.openTime} - ${hour.closeTime}`).join(" • ") : "Monday - Friday: 8:00 AM - 5:00 PM"}
                     </p>
                    </CardContent>
                   </Card>
@@ -198,7 +188,7 @@ export default function LocationsAirbnb( {locations}: {locations: Office[]}) {
 
             <aside className="hidden lg:block h-[calc(100vh-9rem)] sticky top-[9rem] rounded-lg">
                
-                <OfficeMapWithMarkers locations={filteredOffices} />
+                <GlobalMap locations={filteredOffices} />
                 {/* <MapWithMarkers
                 locations={filteredOffices}
                 onSelectLocation={setSelectedOffice}
@@ -215,7 +205,7 @@ export default function LocationsAirbnb( {locations}: {locations: Office[]}) {
           <div className="lg:hidden p-4 md:p-6 border-t">
 map goes here
 
-                <OfficeMapWithMarkers locations={filteredOffices} /> 
+                <GlobalMap locations={filteredOffices} /> 
             {/* <OfficeMapAirbnb
               offices={filteredOffices}
               onSelectOffice={setSelectedOffice}

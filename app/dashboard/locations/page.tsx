@@ -1,14 +1,16 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { prisma } from '@/lib/prisma'
-import {  Building, Building2, ChevronRight, Clock,  MapPin, Users } from 'lucide-react'
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import {  Building } from 'lucide-react'
+
 import { GradientCard } from '@/components/ui/gradient-card'
-import Link from 'next/link'
+
+
 
 
 import AddLocation from './addLocation'
+
+import LocationsMinimal from './test/locations'
 
 export default async function LocationsPage() {
     const supabase = await createClient()
@@ -20,10 +22,13 @@ export default async function LocationsPage() {
     }
     const locations = await prisma.location.findMany({
         
-        include: {
-           _count: { select: { employees: true } },
-           employees: true
-        }
+      include: {
+        _count: { select: { employees: true } },
+        employees: true,
+        doors: true,
+        operatingHours: true,
+        
+     }
     })
     return <>
      <main className="flex-1 ">
@@ -42,7 +47,7 @@ export default async function LocationsPage() {
                 </GradientCard>
             </div>
            
-            <div className="grid gap-4 md:grid-cols-3 mb-8">
+            {/* <div className="grid gap-4 md:grid-cols-3 mb-8">
             {locations.map((location) => (
                 <Link  key={location.id} href={`/dashboard/locations/${location.id}`}>
                   <Card  className="w-full max-w-md bg-zinc-900 text-white border-none">
@@ -81,7 +86,9 @@ export default async function LocationsPage() {
               </Card>   
                 </Link>
             ))}
-            </div>
+            </div> */}
+
+<LocationsMinimal locations={locations} />
         </div>
     </main>
     </>

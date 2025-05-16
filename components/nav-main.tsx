@@ -1,6 +1,7 @@
 "use client"
 
 import { IconCirclePlusFilled, IconMail, type Icon } from "@tabler/icons-react"
+import { usePathname } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -21,6 +22,11 @@ export function NavMain({
     icon?: Icon
   }[]
 }) {
+  const pathname = usePathname()
+  // Split the pathname into segments and get the second segment (index 1)
+  const pathSegments = pathname.split('/').filter(Boolean)
+  const activeSegment = pathSegments[1] // This will be "users" in "/dashboard/users/some-id"
+  
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
@@ -44,16 +50,27 @@ export function NavMain({
           </SidebarMenuItem>
         </SidebarMenu>
         <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <Link href={item.url}>
-                <SidebarMenuButton tooltip={item.title}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          ))}
+          {items.map((item) => {
+            // Extract the last segment from the item URL to compare with active segment
+            const itemSegments = item.url.split('/').filter(Boolean)
+            const itemLastSegment = itemSegments[itemSegments.length - 1]
+            
+            const isActive = activeSegment === itemLastSegment
+            
+            return (
+              <SidebarMenuItem key={item.title}>
+                <Link href={item.url}>
+                  <SidebarMenuButton 
+                    tooltip={item.title}
+                    className={isActive ? "bg-primary/10 text-primary font-semibold border border-primary/10" : ""}
+                  >
+                    {item.icon && <item.icon className={isActive ? "font-bold" : ""} />}
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+            )
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

@@ -1,8 +1,8 @@
 import { Metadata } from "next"
 //import OfficeLocationsAirbnb from "./office-locations-airbnb"
        
-import { MapWithMarker} from "./office-map";
-import Locations from "./locations";
+
+import LocationsMinimal from "./locations";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -32,11 +32,9 @@ export default async function Test() {
     })
     return (
         <div className="flex flex-col gap-4">
-          <Locations locations={locations} />
+          <LocationsMinimal locations={locations} />
             {/* <OfficeLocationsAirbnb /> */}
-            <div className="h-[500px] w-[500px]">
-            <MapWithMarker lat={53.54992} lng={10.00678}  />
-            </div>
+            
 
 
         </div>

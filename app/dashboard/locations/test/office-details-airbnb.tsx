@@ -6,14 +6,12 @@ import { useState } from "react"
 import {
   ArrowLeft,
   MapPin,
-  Phone,
-  Mail,
+  
   Users,
   Clock,
   Building,
   Heart,
-  Share,
-  Star,
+  
   DoorOpen,
   Shield,
   
@@ -24,6 +22,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import type { Office } from "./locations"
 //import Image from "next/image"
+import { MapWithMarker } from "./office-map"
 interface OfficeDetailsAirbnbProps {
   office: Office
   onBack: () => void
@@ -40,20 +39,17 @@ export default function OfficeDetailsAirbnb({
   const [activeTab, setActiveTab] = useState("overview")
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="sticky top-0 z-50 flex h-16 items-center gap-4 border-b border-gray-200 bg-white px-4 md:px-6">
+    <div className="min-h-screen ">
+      <header className="sticky top-0 z-50 flex h-16 items-center gap-4 border-b border-secondary  px-4 md:px-6">
         <Button variant="ghost" size="icon" onClick={onBack} className="rounded-full">
           <ArrowLeft className="h-4 w-4" />
           <span className="sr-only">Back</span>
         </Button>
         <div className="flex-1">
-          <h1 className="text-lg font-semibold">{office.name}</h1>
+          <h1 className="text-lg font-semibold">Locations</h1>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="gap-2 rounded-full">
-            <Share className="h-4 w-4" />
-            <span className="hidden md:inline">Share</span>
-          </Button>
+          
           <Button variant="ghost" size="sm" className="gap-2 rounded-full" onClick={onToggleFavorite}>
             <Heart className={`h-4 w-4 ${isFavorite ? "fill-rose-500 text-rose-500" : "text-gray-600"}`} />
             <span className="hidden md:inline">Save</span>
@@ -95,7 +91,7 @@ export default function OfficeDetailsAirbnb({
         </div> */}
 
         <div className="p-4 md:p-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-gray-200 pb-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-secondary pb-6">
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-semibold">{office.name}</h1>
@@ -112,38 +108,32 @@ export default function OfficeDetailsAirbnb({
                   {office.type}
                 </Badge>
               </div>
-              <p className="text-gray-500">
+              <p className="">
                 {office.city}, {office.country}
               </p>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1">
-                <Star className="h-5 w-5 fill-black text-black" />
-                <span className="font-semibold">4.9</span>
-                <span className="text-gray-500">({office.doors.length * 5} reviews)</span>
-              </div>
-            </div>
+            
           </div>
 
           <div className="grid md:grid-cols-[2fr_1fr] gap-8 py-6">
             <div>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                <TabsList className="bg-transparent p-0 h-auto flex gap-6 w-max border-b border-gray-200 mb-6">
+                <TabsList className="bg-transparent p-0 h-auto flex gap-6 w-max border-b  mb-6 s">
                   <TabsTrigger
                     value="overview"
-                    className="px-1 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:border-black rounded-none"
+                    className="px-1 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
                   >
                     Overview
                   </TabsTrigger>
                   <TabsTrigger
                     value="doors"
-                    className="px-1 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:border-black rounded-none"
+                    className="px-1 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
                   >
                     Access Points
                   </TabsTrigger>
                   <TabsTrigger
                     value="amenities"
-                    className="px-1 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:border-black rounded-none"
+                    className="px-1 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
                   >
                     Amenities
                   </TabsTrigger>
@@ -151,8 +141,8 @@ export default function OfficeDetailsAirbnb({
 
                 <TabsContent value="overview" className="space-y-6 mt-0">
                   <div className="space-y-4">
-                    <h2 className="text-xl font-semibold">Office hosted by WorkSpaces</h2>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                   
+                    <div className="flex items-center gap-4 text-sm ">
                       <div className="flex items-center gap-1">
                         <Users className="h-4 w-4" />
                         <span>{office._count.employees} employees</span>
@@ -168,19 +158,7 @@ export default function OfficeDetailsAirbnb({
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">About this office</h3>
-                    <p className="text-gray-600">
-                      This {office.type.toLowerCase()} office is located in the heart of {office.city}, {office.country}
-                      . With {office._count.employees} employees, it&lsquo;s a{" "}
-                      {office._count.employees > 100 ? "major" : office._count.employees > 50 ? "mid-sized" : "small"} workspace that
-                      offers various amenities and facilities for productive work.
-                    </p>
-                    <p className="text-gray-600">
-                      The office features {office.doors.length} access points with different security levels, ensuring a
-                      safe and controlled environment for all employees and visitors.
-                    </p>
-                  </div>
+                  
 
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold">Contact information</h3>
@@ -189,31 +167,19 @@ export default function OfficeDetailsAirbnb({
                         <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
                         <div>
                           <p className="font-medium">Address</p>
-                          <p className="text-gray-500">{office.address}</p>
-                          <p className="text-gray-500">
+                          <p className="">{office.address}</p>
+                          <p className="">
                             {office.city}, {office.country}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-start gap-3">
-                        <Phone className="h-5 w-5 text-gray-400 mt-0.5" />
-                        <div>
-                          <p className="font-medium">Phone</p>
-                          <p className="text-gray-500">Phone</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <Mail className="h-5 w-5 text-gray-400 mt-0.5" />
-                        <div>
-                          <p className="font-medium">Email</p>
-                          <p className="text-gray-500">Email</p>
-                        </div>
-                      </div>
+                      
+                      
                       <div className="flex items-start gap-3">
                         <Clock className="h-5 w-5 text-gray-400 mt-0.5" />
                         <div>
                           <p className="font-medium">Office Hours</p>
-                          <p className="text-gray-500">Office Hours</p>
+                          <p className="">Office Hours</p>
                         </div>
                       </div>
                     </div>
@@ -223,15 +189,15 @@ export default function OfficeDetailsAirbnb({
                 <TabsContent value="doors" className="space-y-6 mt-0">
                   <div className="space-y-4">
                     <h2 className="text-xl font-semibold">Access Points</h2>
-                    <p className="text-gray-600">
+                    <p className="">
                       This office has {office.doors.length} access points with varying security levels and access
                       permissions.
                     </p>
                   </div>
 
-                  <div className="overflow-hidden rounded-xl border border-gray-200">
+                  <div className="overflow-hidden rounded-xl border border-secondary ">
                     <Table>
-                      <TableHeader className="bg-gray-50">
+                      <TableHeader className="text-primary">
                         <TableRow className="hover:bg-gray-50">
                           <TableHead>ID</TableHead>
                           <TableHead>Name</TableHead>
@@ -282,7 +248,7 @@ export default function OfficeDetailsAirbnb({
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="p-4 rounded-xl border border-gray-200 bg-gray-50">
+                    <div className="p-4 rounded-xl border border-secondary ">
                       <div className="flex items-center gap-2 mb-2">
                         <DoorOpen className="h-5 w-5 text-rose-500" />
                         <h3 className="font-semibold">Door Types</h3>
@@ -297,7 +263,7 @@ export default function OfficeDetailsAirbnb({
                       </div>
                     </div>
 
-                    <div className="p-4 rounded-xl border border-gray-200 bg-gray-50">
+                    <div className="p-4 rounded-xl border border-secondary ">
                       <div className="flex items-center gap-2 mb-2">
                         <Shield className="h-5 w-5 text-rose-500" />
                         <h3 className="font-semibold">Access Levels</h3>
@@ -314,7 +280,7 @@ export default function OfficeDetailsAirbnb({
                       </div>
                     </div>
 
-                    <div className="p-4 rounded-xl border border-gray-200 bg-gray-50">
+                    <div className="p-4 rounded-xl border border-secondary ">
                       <div className="flex items-center gap-2 mb-2">
                         <Building className="h-5 w-5 text-rose-500" />
                         <h3 className="font-semibold">Departments</h3>
@@ -361,21 +327,18 @@ export default function OfficeDetailsAirbnb({
             </div>
 
             <div className="space-y-6">
-              <div className="sticky top-24 rounded-xl border border-gray-200 p-6 shadow-sm">
+              <div className="sticky top-24 rounded-xl border border-secondary p-6 shadow-sm">
                 <div className="mb-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold">Office Summary</h3>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-black text-black" />
-                      <span className="font-medium">4.9</span>
-                    </div>
+                    
                   </div>
-                  <p className="text-gray-500">
+                  <p className="capitalize">
                     {office.type} in {office.city}
                   </p>
                 </div>
 
-                <div className="space-y-4 border-t border-b border-gray-200 py-4">
+                <div className="space-y-4 border-t border-b border-secondary py-4">
                   <div className="flex justify-between">
                     <span className="font-medium">Employees</span>
                     <span>{office._count.employees}</span>
@@ -393,10 +356,13 @@ export default function OfficeDetailsAirbnb({
                     <span>{office.operatingHours.map((hour) => `${hour.dayOfWeek}: ${hour.openTime} - ${hour.closeTime}`).join(" • ")}</span>
                   </div>
                 </div>
-
-                <div className="mt-4">
-                  <Button className="w-full bg-rose-500 hover:bg-rose-600 text-white">Contact Office Manager</Button>
+                <div className="h-96">
+                  <MapWithMarker lat={office.latitude!} lng={office.longitude!} />
                 </div>
+                {/* <div className="mt-4">
+                
+                  <Button className="w-full bg-rose-500 hover:bg-rose-600 text-white">Contact Office Managers</Button>
+                </div> */}
               </div>
             </div>
           </div>

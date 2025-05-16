@@ -1,6 +1,6 @@
 'use client'
-import {APIProvider, Map,  Marker,  useMap, useMarkerRef} from '@vis.gl/react-google-maps';
-import { useEffect, useState } from 'react';
+import {APIProvider, Map,  Marker, useMap, useMarkerRef} from '@vis.gl/react-google-maps';
+import { useEffect} from 'react';
 import { Office } from './locations';
 
 
@@ -35,7 +35,7 @@ export function MapWithMarker( {lat, lng}: {lat: number, lng: number} ) {
         <Map
           style={{width: '100%', height: '100%'}}
           center={{lat: lat, lng: lng}}
-          defaultZoom={12}
+          defaultZoom={13}
           gestureHandling={'greedy'}
           disableDefaultUI={true}
         >
@@ -46,6 +46,16 @@ export function MapWithMarker( {lat, lng}: {lat: number, lng: number} ) {
       </APIProvider>
     )
 }
+
+
+export function GlobalMap( {locations}: {locations: Office[]} ) {
+    return (
+        <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+            <OfficeMapWithMarkers locations={locations} />
+        </APIProvider>
+    )
+}
+
 
 export function OfficeMapWithMarkers( {locations}: {locations: Office[]} ) {
     const [markerRef, marker] = useMarkerRef();
@@ -82,20 +92,22 @@ export function OfficeMapWithMarkers( {locations}: {locations: Office[]} ) {
     };
 
     return (
-        <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+        
             <Map
                 style={{
                     width: '100%', 
                     height: '100%',
                     borderRadius: '1rem'
+                    
                 }}
-                defaultCenter={map?.getCenter() ?? {lat: 53.54992, lng: -97.00678}}
+                
+                defaultCenter={ {lat: 53.54992, lng: -97.00678}}
                 defaultZoom={4}
                 onDragend={handleDragEnd}
                 draggableCursor={'grabbing'}
                 gestureHandling={'auto'}
                 disableDefaultUI={false}
-                mapId="d922b319b0c7530456449626"
+                mapId="7a9e2ebecd32a903"
                 clickableIcons={true}
                 fullscreenControl={true}
             >
@@ -109,6 +121,6 @@ export function OfficeMapWithMarkers( {locations}: {locations: Office[]} ) {
                 ))}
             </Map>
            
-        </APIProvider>
+       
     )
 }

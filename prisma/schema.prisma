@@ -93,6 +93,7 @@ model User {
 
  
   headedDepartments Department[] @relation("HeadedDepartments")
+  Key Key[]
 }
 
 model UserHistory {
@@ -341,6 +342,7 @@ model Location {
   @@schema("public")
   
   Service Service[]
+  Key Key[]
 }
 model OperatingHour {
   id          String      @id @default(uuid()) @db.Uuid
@@ -364,7 +366,30 @@ model Door {
   accessLevel String? 
 
   @@schema("public")
+  Key Key[]
 }
+
+
+//physical key / key fob
+//need to be tied to a door and a user
+model Key {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  description String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  type String
+  doorId String? @db.Uuid
+  door Door? @relation(fields: [doorId], references: [id])
+  userId String? @db.Uuid
+  user User? @relation(fields: [userId], references: [id])
+  locationId String? @db.Uuid
+  location Location? @relation(fields: [locationId], references: [id])
+  @@schema("public")
+}
+
+
+
 enum DayOfWeek {
   MONDAY
   TUESDAY

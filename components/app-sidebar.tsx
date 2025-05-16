@@ -10,13 +10,13 @@ import {
   IconDatabase,
   IconFileAi,
   IconFileDescription,
-  IconFileWord,
+  //IconFileWord,
  
   IconHelp,
   IconInnerShadowTop,
   IconKey,
   IconListDetails,
-  IconReport,
+  //IconReport,
   IconSearch,
   IconSettings,
   IconTournament,
@@ -157,7 +157,7 @@ const data = {
     },
     {
       title: "Get Help",
-      url: "#",
+      url: "mailto:itrequests@fxrracing.com?subject=Access%20Track%20Help%20Request&body=Hello,%0A%0A%20I%20need%20help%20with%20Access%20Track.%20I%20am%20trying%20to...",
       icon: IconHelp,
     },
     {
@@ -168,20 +168,20 @@ const data = {
   ],
   documents: [
     {
-      name: "Data Library",
-      url: "#",
+      name: "Sharepoint",
+      url: "https://fxrracing.sharepoint.com/",
       icon: IconDatabase,
     },
-    {
-      name: "Reports",
-      url: "#",
-      icon: IconReport,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: IconFileWord,
-    },
+    // {
+    //   name: "Reports",
+    //   url: "#",
+    //   icon: IconReport,
+    // },
+    // {
+    //   name: "Word Assistant",
+    //   url: "#",
+    //   icon: IconFileWord,
+    // },
   ],
 }
 
