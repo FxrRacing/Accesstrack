@@ -21,6 +21,7 @@ export async function editUser(prevState: {message: string}, formData: FormData)
     const onboardingDate = formData.get('onboardingDate') as Date | null;
     const offboardingDate = formData.get('offboardingDate') as Date | null;
     const personalEmail = formData.get('personalEmail') as string | null;
+    
     if (!id || !authId) {
         return {message: 'User or Auth ID is required.'}
     }
@@ -35,8 +36,8 @@ if (name       != null)  updates.name        = name
 if (status     != null)  updates.status      = status
 if (reportsToId != null)  updates.reportsToId = reportsToId
 if (locationId != null)  updates.locationId  = locationId
-if (onboardingDate != null)  updates.onboardingDate  = onboardingDate
-if (offboardingDate != null)  updates.offboardingDate  = offboardingDate
+if (onboardingDate != null)  updates.onboardingDate  = onboardingDate ? new Date(onboardingDate) : null
+if (offboardingDate != null)  updates.offboardingDate  = offboardingDate ? new Date(offboardingDate) : null
 if (personalEmail != null)  updates.personalEmail  = personalEmail
     try {
         // Perform the edit user action here

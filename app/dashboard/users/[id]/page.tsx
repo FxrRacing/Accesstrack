@@ -32,6 +32,7 @@ export default async function Page({
         reportsTo: true,
         Location: true,
         headedDepartments: true,
+        Department: true,
        
       },
     })
@@ -48,6 +49,11 @@ export default async function Page({
         user: true,
         grantedBy: true,
         software: true,
+      },
+    })
+    const departments = await prisma.department.findMany({
+      orderBy: {
+        name: 'asc',
       },
     })
     const assignedSoftware = software.map((s) => ({
@@ -101,7 +107,7 @@ export default async function Page({
            <Badge>{user.status}</Badge>
         </div>
 
-<EditUser user={user as User & {reportsTo: User}}  authId={data.user.id} users={users} locations={locations} />
+<EditUser user={user as User & {reportsTo: User}}  authId={data.user.id} users={users} locations={locations} departments={departments} />
 
         ===============================
         <h1>Software</h1>
