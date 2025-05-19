@@ -59,7 +59,7 @@ export default function LocationsMinimal( {locations}: {locations: Office[]}) {
         />
       ) : (
         <div className="flex flex-col">
-          <header className="sticky top-0 z-50 border-b ">
+          <header className="sticky top-0 z-50 border-b border-secondary bg-background">
             <div className="flex h-16 items-center justify-between px-4 md:px-6">
               
 
@@ -92,34 +92,34 @@ export default function LocationsMinimal( {locations}: {locations: Office[]}) {
 
             <div className=" px-4 py-3 overflow-x-auto scrollbar-hide">
               <Tabs defaultValue="all" className="w-full" onValueChange={setActiveFilter}>
-                <TabsList className="bg-transparent p-0 h-auto flex gap-6 w-max">
+                <TabsList className="bg-background p-0 h-auto flex gap-6 w-max">
                   <TabsTrigger
                     value="all"
-                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:rounded-full  data-[state=active]:border-b-black rounded-none"
+                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border data-[state=active]:rounded-full  data-[state=active]:border-black rounded-none"
                   >
                     All Offices
                   </TabsTrigger>
                   <TabsTrigger
                     value="headquarters"
-                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:rounded-full  data-[state=active]:border-b-black rounded-none"
+                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border data-[state=active]:rounded-full  data-[state=active]:border-black rounded-none"
                   >
                     Headquarters
                   </TabsTrigger>
                   <TabsTrigger
                     value="warehouse"
-                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:rounded-full  data-[state=active]:border-b-black rounded-none"
+                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border data-[state=active]:rounded-full  data-[state=active]:border-black rounded-none"
                   >
                     Warehouse
                   </TabsTrigger>
                   <TabsTrigger
                     value="regional"
-                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:rounded-full  data-[state=active]:border-b-black rounded-none"
+                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border data-[state=active]:rounded-full  data-[state=active]:border-black rounded-none"
                   >
                     Regional Offices
                   </TabsTrigger>
                   <TabsTrigger
                     value="satellite"
-                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border-b-2 data-[state=active]:rounded-full  data-[state=active]:border-b-black rounded-none"
+                    className="px-2 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black data-[state=active]:border data-[state=active]:rounded-full  data-[state=active]:border-black rounded-none"
                   >
                     Satellite Offices
                   </TabsTrigger>

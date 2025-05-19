@@ -39,8 +39,8 @@ export default function OfficeDetailsAirbnb({
   const [activeTab, setActiveTab] = useState("overview")
 
   return (
-    <div className="min-h-screen ">
-      <header className="sticky top-0 z-50 flex h-16 items-center gap-4 border-b border-secondary  px-4 md:px-6">
+    <div className="min-h-screen bg-background">
+      <header className="sticky  bg-background top-0 z-50 flex h-16 items-center gap-4 border-b border-secondary  px-4 md:px-6">
         <Button variant="ghost" size="icon" onClick={onBack} className="rounded-full">
           <ArrowLeft className="h-4 w-4" />
           <span className="sr-only">Back</span>
@@ -91,7 +91,7 @@ export default function OfficeDetailsAirbnb({
         </div> */}
 
         <div className="p-4 md:p-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-secondary pb-6">
+          <div className="flex flex-col  bg-background md:flex-row md:items-center md:justify-between gap-4 border-b border-secondary pb-6">
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-semibold">{office.name}</h1>
@@ -118,10 +118,10 @@ export default function OfficeDetailsAirbnb({
           <div className="grid md:grid-cols-[2fr_1fr] gap-8 py-6">
             <div>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                <TabsList className="bg-transparent p-0 h-auto flex gap-6 w-max border-b  mb-6 s">
+                <TabsList className=" p-0 h-auto flex gap-6 w-max border-b  mb-6 s">
                   <TabsTrigger
                     value="overview"
-                    className="px-1 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+                    className="px-1 py-2 h-auto data-[state=active]:bg-transparent data-[state=active]: data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
                   >
                     Overview
                   </TabsTrigger>

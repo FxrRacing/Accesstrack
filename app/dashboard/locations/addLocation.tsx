@@ -99,7 +99,9 @@ useEffect(() => {
                 <Label>Address*</Label>
                 <Input 
                   placeholder="Location Address" 
-                  name="address" 
+                  name="address"
+                  disabled={true}
+                  readOnly={true}
                   value={locationData?.address || ""}
                   onChange={(e) => setLocationData(prev => prev ? {...prev, address: e.target.value} : null)}
                 />
@@ -130,7 +132,7 @@ useEffect(() => {
                     <SelectContent>
                         <SelectItem value="US">United States</SelectItem>
                         <SelectItem value="CA">Canada</SelectItem>
-                        <SelectItem value="UK">United Kingdom</SelectItem>
+                        <SelectItem value="GB">United Kingdom</SelectItem>
                         <SelectItem value="SE">Sweden</SelectItem>
                         <SelectItem value="NO">Norway</SelectItem>
                         <SelectItem value="DK">Denmark</SelectItem>
