@@ -1,6 +1,8 @@
 'use server'
 
 
+import { prisma } from "@/lib/prisma"
+import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
 const keySchema = z.object({
@@ -33,6 +35,17 @@ export async function createKey(prevState: {message: string, errors: Record<stri
   // Proceed with creating the key
   try {
     console.table(validatedFields)
+     await prisma.key.create({
+      data: {
+        name: validatedFields.data.name,
+        userId: validatedFields.data.userId,
+        type: validatedFields.data.type,
+        doorId: validatedFields.data.doorId,
+        locationId: validatedFields.data.locationId,
+        description: validatedFields.data.description || '',
+      },
+    })
+    revalidatePath('/dashboard/keys&codes')
     // Your key creation logic here
     return {
       message: 'Key created successfully',
@@ -45,6 +58,7 @@ export async function createKey(prevState: {message: string, errors: Record<stri
       errors: {}
     }
   }
+  
 }
 
 
@@ -88,6 +102,7 @@ export async function createKeyCard(prevState: {message: string, errors: Record<
     }
   }
   try {
+    console.table(validatedFields)
    
     return {
       message: 'Key card created successfully',
