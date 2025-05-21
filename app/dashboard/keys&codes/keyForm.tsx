@@ -94,7 +94,7 @@ export default function KeyForm({staff, locations}: {staff: User[], locations: L
                 </div>
                 <div className="flex flex-col gap-2">
                     <Label>Door</Label>
-                    <Select name="doorId" value={doors[0]?.id} onValueChange={(value) => setFormData({...formData, doorId: value})}>
+                    <Select name="doorId" value={formData.doorId} onValueChange={(value) => setFormData({...formData, doorId: value})}>
                         <SelectTrigger>
                             <SelectValue placeholder="Select Door" />
                         </SelectTrigger>

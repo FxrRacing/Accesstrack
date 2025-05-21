@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Door, Location, User } from "@prisma/client"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
+
 const initialState = {
     message: '',
     errors: {} as Record<string, string[]>
@@ -17,10 +19,10 @@ export default function CardForm({staff, locations}: {staff: User[], locations: 
         name: '',
         userId: '',
         type: '',
-        
+        doorIds: [] as string[],
         description: '',
         locationId: '',
-        doorId: ''
+        //doorIds: [] as string[]
     })
     const [doors, setDoors] = useState<Door[]>([])
     
@@ -80,18 +82,15 @@ export default function CardForm({staff, locations}: {staff: User[], locations: 
                     </SelectContent>
                 </Select>
                 {state.errors?.locationId && <p className="text-red-500">{state.errors.locationId[0]}</p>}
-                <Label>Door</Label>
-                <Select name="doorId" value={formData.doorId} onValueChange={(value) => setFormData({...formData, doorId: value})}>
-                    <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Door" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {doors.map((door) => (
-                            <SelectItem key={door.id} value={door.id}>{door.name}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-                {state.errors?.doorId && <p className="text-red-500">{state.errors.doorId[0]}</p>}
+                <Label>Doors</Label>
+                <div className="*:not-first:mt-2">
+                   <select name="doorIds" multiple value={formData.doorIds} onChange={(e) => setFormData({...formData, doorIds: Array.from(e.target.selectedOptions, option => option.value)})}>
+                    {doors.map((door) => (
+                        <option key={door.id} value={door.id}>{door.name}</option>
+                    ))}
+                   </select>
+                </div>
+                {state.errors?.doorIds && <p className="text-red-500">{state.errors.doorIds[0]}</p>}
                 <Label>Description</Label>
                 <Input type="text" name="description" placeholder="Description" value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} />
                 {state.errors?.description && <p className="text-red-500">{state.errors.description[0]}</p>}

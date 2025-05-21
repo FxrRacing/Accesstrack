@@ -66,7 +66,7 @@ const keyCardSchema = z.object({
   name: z.string().min(1, "Name is required"),
   userId: z.string().min(8, "User ID is required"),
   type: z.string().min(1, "Type is required"),
-  doorId: z.string().min(8, "Door ID is required"),
+  doorIds: z.array(z.string()).min(1, "At least one door is required"),
   locationId: z.string().min(8, "Location ID is required"),
   description: z.string().optional(),
 })
@@ -89,10 +89,9 @@ export async function createKeyCard(prevState: {message: string, errors: Record<
     name: formData.get('name'),
     userId: formData.get('userId'),
     type: formData.get('type'),
-    doorId: formData.get('doorId'),
+    doorIds: formData.getAll('doorIds'), // Get all door IDs from the form
     locationId: formData.get('locationId'),
     description: formData.get('description'),
-    
   })
 
   if (!validatedFields.success) {
@@ -103,7 +102,30 @@ export async function createKeyCard(prevState: {message: string, errors: Record<
   }
   try {
     console.table(validatedFields)
+    await prisma.keyCard.create({
+      data: {
+        name: validatedFields.data.name,
+        userId: validatedFields.data.userId,
+        type: validatedFields.data.type,
+        description: validatedFields.data.description || '',
+        doors: {
+          create: validatedFields.data.doorIds.map(doorId => ({
+            door: {
+              connect: { id: doorId }
+            }
+          }))
+        },
+        locations: {
+          create: {
+            location: {
+              connect: { id: validatedFields.data.locationId }
+            }
+          }
+        }
+      },
+    })
    
+    revalidatePath('/dashboard/keys&codes')
     return {
       message: 'Key card created successfully',
       errors: {}
