@@ -1,9 +1,24 @@
 
 import { Button } from "@/components/ui/button";
 import { GradientCard } from "@/components/ui/gradient-card";
+import { prisma } from "@/lib/prisma";
 import { IconKey, IconPlus } from "@tabler/icons-react";
+import KeyForm from "./keyForm";
+import CardForm from "./cardForm";
+import { Separator } from "@/components/ui/separator";
 
-export default function KeysAndCodesPage() {
+export default async function KeysAndCodesPage() {
+  const keys = await prisma.key.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  const cards = await prisma.keyCard.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+ 
     return (
         <>
         <div className="flex flex-col gap-4 p-3">
@@ -22,9 +37,33 @@ export default function KeysAndCodesPage() {
       </GradientCard>
 
       </div>
-      
+      <div className="flex flex-col gap-4 p-3">
+        <h1 className="text-2xl font-bold">Keys</h1>
+        <div className="flex flex-col gap-4">
+          {keys.map((key) => (
+            <div key={key.id}>{key.name}</div>
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 p-3">
+        <h1 className="text-2xl font-bold">Key Cards</h1>
+        <div className="flex flex-col gap-4">
+          {cards.map((card) => (
+            <div key={card.id}>{card.name}</div>
+          ))}
+        </div>
+      </div>
+
+
+<h3 className="text-2xl font-bold">Create Key</h3>
+<KeyForm />
+<Separator /> 
+<h3 className="text-2xl font-bold">Create Key Card</h3>
+<CardForm />
       </>
       
+
+    
 
       
    

@@ -126,8 +126,8 @@ export default function CommandSearch() {
             />
 
           </div>
-          <CommandDialog open={isCommandOpen} onOpenChange={setIsCommandOpen}>
-        <Command>
+          <CommandDialog open={isCommandOpen} onOpenChange={setIsCommandOpen} >
+        <Command className=" ">
            <VisuallyHidden.Root>
         <DialogTitle className="DialogTitle">Search/Command Box</DialogTitle>
         </VisuallyHidden.Root>

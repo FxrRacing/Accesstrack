@@ -138,6 +138,13 @@ useEffect(() => {
                         <SelectItem value="DK">Denmark</SelectItem>
                         <SelectItem value="FI">Finland</SelectItem>
                         <SelectItem value="HK">Hong Kong</SelectItem>
+                        <SelectItem value="AU">Australia</SelectItem>
+                        <SelectItem value="NZ">New Zealand</SelectItem>
+                        <SelectItem value="SG">Singapore</SelectItem>
+                        <SelectItem value="JP">Japan</SelectItem>
+                        <SelectItem value="KR">South Korea</SelectItem>
+                        <SelectItem value="CN">China</SelectItem>
+                        
                       
                         <SelectItem value="DE">Germany</SelectItem>
                         

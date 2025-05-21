@@ -94,6 +94,7 @@ model User {
  
   headedDepartments Department[] @relation("HeadedDepartments")
   Key Key[]
+  KeyCard KeyCard[]
 }
 
 model UserHistory {
@@ -114,7 +115,7 @@ model UserHistory {
 
 model Software {
   id                   String            @id @default(uuid()) @db.Uuid
-  name                 String
+  name                 String            @unique
   description          String?
   category             String?
   status               String?           @default("ACTIVE")
@@ -343,6 +344,7 @@ model Location {
   
   Service Service[]
   Key Key[]
+  keyCards KeyCardLocation[]
 }
 model OperatingHour {
   id          String      @id @default(uuid()) @db.Uuid
@@ -367,6 +369,8 @@ model Door {
 
   @@schema("public")
   Key Key[]
+  
+  KeyCardDoor KeyCardDoor[]
 }
 
 
@@ -387,6 +391,45 @@ model Key {
   location Location? @relation(fields: [locationId], references: [id])
   @@schema("public")
 }
+model KeyCard{
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  description String? 
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  type String
+  doors KeyCardDoor[]
+  userId String? @db.Uuid
+  user User? @relation(fields: [userId], references: [id])
+  // multiple locations can have the same keycard
+  locations KeyCardLocation[]
+  @@schema("public")
+}
+model KeyCardDoor {
+  id String @id @default(uuid()) @db.Uuid
+  keyCardId String @db.Uuid
+  doorId String @db.Uuid
+  door Door @relation(fields: [doorId], references: [id])
+  keyCard KeyCard @relation(fields: [keyCardId], references: [id])
+  @@schema("public")
+}
+model KeyCardLocation {
+  id String @id @default(uuid()) @db.Uuid
+  keyCardId String @db.Uuid
+  locationId String @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  
+  // Relations
+  keyCard KeyCard @relation(fields: [keyCardId], references: [id])
+  location Location @relation(fields: [locationId], references: [id])
+  
+  // Unique constraint to prevent duplicate associations
+  @@unique([keyCardId, locationId])
+  @@schema("public")
+}
+
+
 
 
 
