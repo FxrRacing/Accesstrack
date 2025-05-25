@@ -11,7 +11,7 @@ import {
   Mail,
   Save,
   Shield,
-  User,
+  User as UserIcon,
   KeyboardOffIcon as KeyOff,
   LogOut,
   Trash,
@@ -39,17 +39,18 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
-import { users } from "@prisma/client"
+import { User } from "@supabase/supabase-js"
+
 
 // Define the type for the authUser prop based on your data structure
 
 interface StaffDetailsProps {
-  authUser: users; // Or create a specific type that matches your Prisma users table
+  authUser: User; // Or create a specific type that matches your Prisma users table
 }
 
 export default function UserManagementClient({ authUser }: StaffDetailsProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const [userRole, setUserRole] = useState(authUser.role || "user")
+  const [userRole, setUserRole] = useState(authUser.user_metadata?.role || "user")
   const [isActive, setIsActive] = useState(!authUser.is_anonymous)
   const [adminNotes, setAdminNotes] = useState("")
 
@@ -131,7 +132,7 @@ export default function UserManagementClient({ authUser }: StaffDetailsProps) {
       })
 
       // Redirect to users list after successful deletion
-      window.location.href = "/admin/users"
+      window.location.href = "/dashboard/staff"
     } catch (error) {
       toast.error("Failed to delete user account.", {
         description: "Please try again later. " + error,
@@ -174,7 +175,7 @@ export default function UserManagementClient({ authUser }: StaffDetailsProps) {
     })
   }
 
-  const raw_user_meta_data = authUser.raw_user_meta_data as Record<string, string>;
+  const raw_user_meta_data = authUser.user_metadata as Record<string, string>;
   const displayName = raw_user_meta_data?.full_name || authUser.email || "Unknown User";
 
   const getInitials = () => {
@@ -237,11 +238,11 @@ export default function UserManagementClient({ authUser }: StaffDetailsProps) {
             )}
             <div className="flex items-center gap-1">
               <Calendar className="h-3.5 w-3.5" />
-              <span>Joined {formatDate(authUser.created_at || null)}</span>
+              <span>Joined {formatDate(new Date(authUser.created_at))}</span>
             </div>
             <div className="flex items-center gap-1">
               <Clock className="h-3.5 w-3.5" />
-              <span>Last login {formatDate(authUser.last_sign_in_at || null)}</span>
+              <span>Last login {formatDate(new Date(authUser.last_sign_in_at || ""))}</span>
             </div>
           </div>
         </div>
@@ -361,6 +362,7 @@ export default function UserManagementClient({ authUser }: StaffDetailsProps) {
                   </Tooltip>
                 </TooltipProvider>
               </Label>
+             
               <Select value={userRole} onValueChange={setUserRole}>
                 <SelectTrigger id="role" className="w-full sm:w-1/3">
                   <SelectValue placeholder="Select a role" />
@@ -418,7 +420,7 @@ export default function UserManagementClient({ authUser }: StaffDetailsProps) {
         {/* Notes */}
         <section className="space-y-4">
           <div className="flex items-center gap-2">
-            <User className="h-5 w-5 text-muted-foreground" />
+            <UserIcon className="h-5 w-5 text-muted-foreground" />
             <h2 className="text-lg font-medium">Admin Notes</h2>
           </div>
           <Separator />
@@ -460,27 +462,24 @@ export default function UserManagementClient({ authUser }: StaffDetailsProps) {
                   <p className="text-sm font-medium text-muted-foreground">User ID</p>
                   <p className="font-mono text-sm">{authUser.id}</p>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Instance ID</p>
-                  <p className="font-mono text-sm">{authUser.instance_id || "N/A"}</p>
-                </div>
+               
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Email Confirmed</p>
                   <p className="text-sm">
-                    {authUser.email_confirmed_at ? formatDate(authUser.email_confirmed_at) : "Not confirmed"}
+                    {authUser.email_confirmed_at ? formatDate(new Date(authUser.email_confirmed_at)) : "Not confirmed"}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Created At</p>
-                  <p className="text-sm">{formatDate(authUser.created_at || null)}</p>
+                  <p className="text-sm">{formatDate(new Date(authUser.created_at || ""))}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Last Updated</p>
-                  <p className="text-sm">{formatDate(authUser.updated_at || null)}</p>
+                  <p className="text-sm">{formatDate(new Date(authUser.updated_at || ""))}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Authentication</p>
-                  <p className="text-sm">{raw_user_meta_data?.provider || "Email/Password"}</p>
+                  <p className="text-sm">{authUser.app_metadata.provider || "Email/Password"}</p>
                 </div>
               </div>
             </div>
@@ -504,7 +503,7 @@ export default function UserManagementClient({ authUser }: StaffDetailsProps) {
                       <p className="font-medium">Last sign in</p>
                       <p className="text-sm text-muted-foreground">User logged in to the system</p>
                     </div>
-                    <p className="text-sm text-muted-foreground">{formatDate(authUser.last_sign_in_at || null)}</p>
+                    <p className="text-sm text-muted-foreground">{formatDate(new Date(authUser.last_sign_in_at || ""))}</p>
                   </div>
                 )}
                 {authUser.email_confirmed_at && (
@@ -513,7 +512,7 @@ export default function UserManagementClient({ authUser }: StaffDetailsProps) {
                       <p className="font-medium">Email confirmed</p>
                       <p className="text-sm text-muted-foreground">User confirmed their email address</p>
                     </div>
-                    <p className="text-sm text-muted-foreground">{formatDate(authUser.email_confirmed_at || null)}</p>
+                    <p className="text-sm text-muted-foreground">{formatDate(new Date(authUser.email_confirmed_at || ""))}</p>
                   </div>
                 )}
                 {authUser.created_at && (
@@ -522,7 +521,7 @@ export default function UserManagementClient({ authUser }: StaffDetailsProps) {
                       <p className="font-medium">Account created</p>
                       <p className="text-sm text-muted-foreground">User account was created</p>
                     </div>
-                    <p className="text-sm text-muted-foreground">{formatDate(authUser.created_at || null)}</p>
+                    <p className="text-sm text-muted-foreground">{formatDate(new Date(authUser.created_at || ""))}</p>
                   </div>
                 )}
                 {!authUser.last_sign_in_at && !authUser.email_confirmed_at && !authUser.created_at && (

@@ -69,7 +69,7 @@ export async function revokeAccess(id: string) {
             id: id,
         },
     })
-    console.log(user)
+    //console.log(user)
 if (!user) {
     throw new Error('User not found')
    // return { message: 'User not found' }
@@ -84,11 +84,14 @@ const raw_user_meta_data = user?.raw_user_meta_data
             raw_user_meta_data: {
                 ...(typeof raw_user_meta_data === 'object' && raw_user_meta_data !== null ? raw_user_meta_data : {}),
                 is_active: false,
+                role: "user"
             },
         },
     })
     console.log('revoked access for user', id)
-    revalidatePath('/dashboard/staff', 'layout')
+    revalidatePath(`/dashboard/staff/${id}`)
+    revalidatePath('/dashboard/staff')
+    
 }
 
 export async function grantAccess(id: string) {
@@ -110,19 +113,17 @@ export async function grantAccess(id: string) {
             raw_user_meta_data: {
                 ...(typeof raw_user_meta_data === 'object' && raw_user_meta_data !== null ? raw_user_meta_data : {}),
                 is_active: true,
-                role:"test"
+                role: "admin"
             },
         },
     })
     
-    const user2 = await prisma.users.findUnique({
-        where: {
-            id: id,
-        },
-    })
-    console.log(user2)
+   
     
-    revalidatePath('/dashboard/staff', 'layout')
+    revalidatePath(`/dashboard/staff/${id}`)
+    
+    revalidatePath('/dashboard/staff')
+    console.log('done')
 }
 
 
@@ -137,7 +138,7 @@ export async function deleteStaff(id: string) {
         console.error('Error deleting user:', error)
         throw new Error('Failed to delete user')
     }
-    revalidatePath('/dashboard/staff', 'layout')
+    revalidatePath('/dashboard/staff')
     redirect('/dashboard/staff')
 }
 

@@ -4,6 +4,7 @@
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
+import { useMockService } from "@/lib/devToolsStore"
 
 const keySchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -13,6 +14,9 @@ const keySchema = z.object({
   locationId: z.string().min(8, "Location ID is required"),
   description: z.string().optional(),
 })
+
+
+//if mock mode is on, return a mock response 
 
 
 export async function createKey(prevState: {message: string, errors: Record<string, string[]>}, formData: FormData) {
@@ -94,6 +98,7 @@ export async function createKeyCard(prevState: {message: string, errors: Record<
     description: formData.get('description'),
   })
 
+  
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,

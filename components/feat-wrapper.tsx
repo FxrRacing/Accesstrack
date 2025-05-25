@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useDevToolsStore } from '@/lib/devtoolsStore';
+import { useDevToolsStore } from '@/lib/devToolsStore';
 import { mockService } from '@/lib/mockService';
 
 
@@ -11,7 +11,7 @@ export default function DevToolbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const params = useSearchParams();
-
+  
   const {
     showJsonDump,
     showIds,
@@ -72,7 +72,7 @@ export default function DevToolbar() {
           onClick={() => setOpen(true)}
           className="bg-black text-white px-3 py-1 rounded-full shadow-md"
         >
-          Dev
+          🛠️ Dev
         </button>
       )}
 

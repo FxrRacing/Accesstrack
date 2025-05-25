@@ -1,27 +1,9 @@
-import { prisma } from "@/lib/prisma";
-
-import { notFound } from "next/navigation";
-import { banAccess, grantAccess } from "../actions";
-import { revokeAccess } from "../actions";
-import { deleteStaff } from "../actions";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectTrigger, SelectItem, SelectValue } from "@/components/ui/select";
-import { TEAM_OPTIONS } from "@/utils/constants";
-import PermissionsProvider from "@/utils/providers/permissions";
-import { Suspense } from "react";
-import { SkeletonCard } from "@/components/skeleton-card";
-import { Label } from "@/components/ui/label";
-//import StaffDetails from "./staff-details";
-
-import { serviceRoleClient } from "@/utils/supabase/admin";
-
-import { Separator } from "@/components/ui/separator";
 import Link from "next/link"
 import { ArrowLeft, BadgeInfo, Calendar, Clock, KeyRound, Mail, Shield, UserIcon, Phone } from "lucide-react"
 
-
+import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
-
+import { Label } from "@/components/ui/label"
 import { TooltipProvider } from "@/components/ui/tooltip"
 
 import { UserActionButtons } from "./user-action-buttons"
@@ -29,113 +11,42 @@ import { RoleSelector } from "./role-selector"
 import { FeatureAccessToggles } from "./feature-access-toggles"
 import { AdminNotesEditor } from "./admin-notes-editor"
 import { SaveChangesButton } from "./save-changes-buttons"
-import { User } from "@supabase/supabase-js";
 
+// Define the type for the authUser prop based on your data structure
+import { type User } from "@supabase/supabase-js"
 
-export default async function Page({
-    params,
-  }: {
-    params: Promise<{ id: string }>;
-  }) {
-    const { id } = await params;
-
-   
-   const staffUser = await serviceRoleClient.auth.admin.getUserById(id)
-    const staff = await prisma.userProfiles.findUnique({
-        where: {
-            id: id,
-        },
-    });
-if (!staffUser) {
-    return notFound();
+interface StaffDetailsProps {
+  authUser: User // Or create a specific type that matches your Prisma users table
 }
-    if (!staff) {
-        return notFound();
+
+export default function UserManagement({ authUser }: StaffDetailsProps) {
+  const isActive = !authUser.is_anonymous
+  const raw_user_meta_data = authUser.user_metadata as Record<string, string>
+  const displayName = raw_user_meta_data?.full_name || authUser.email || "Unknown User"
+  const userRole = authUser.user_metadata?.role || "user"
+
+  const getInitials = () => {
+    const fullName = raw_user_meta_data?.full_name
+    if (fullName) {
+      return fullName
+        .split(" ")
+        .map((name: string) => name[0])
+        .join("")
     }
+    return authUser.email?.[0] || "U"
+  }
 
-    
-    const revokeAccessWithId = revokeAccess.bind(null, id);
-    const grantAccessWithId = grantAccess.bind(null, id);
-    const deleteStaffWithId = deleteStaff.bind(null, id);  
-    const banAccessWithId = banAccess.bind(null, id);
-    const authUser = staffUser.data.user as User
-    async function RevokeUser() {
-        //select a time frame to revoke the user for
-        return <Suspense fallback={<SkeletonCard />}>
-            <Label>Select a time frame to revoke the user for</Label>
-           <form action={banAccessWithId}>
-           <Select>
-            <SelectTrigger>
-                <SelectValue placeholder="Select time frame" />
-            </SelectTrigger>
-            <SelectContent>
-                <SelectItem value="1">1 Hour</SelectItem>
-                <SelectItem value="2">2 Hours</SelectItem>
-                <SelectItem value="3">3 Hours</SelectItem>
-                <SelectItem value="4">4 Hours</SelectItem>
-                <SelectItem value="5">5 Hours</SelectItem>
-            </SelectContent>    
-    
-           </Select>
-           <button type="submit">Revoke Access</button>
-           </form>
-        </Suspense>
-    }
+  const formatDate = (date: Date | null | undefined) => {
+    if (!date) return "N/A"
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+  }
 
-    const isActive = !authUser.is_anonymous
-    const raw_user_meta_data = authUser.user_metadata as Record<string, string>
-    const displayName = raw_user_meta_data?.full_name || authUser.email || "Unknown User"
-   
-  
-    const getInitials = () => {
-      const fullName = raw_user_meta_data?.full_name
-      if (fullName) {
-        return fullName
-          .split(" ")
-          .map((name: string) => name[0])
-          .join("")
-      }
-      return authUser.email?.[0] || "U"
-    }
-  
-    const formatDate = (date: Date | null | undefined) => {
-      if (!date) return "N/A"
-      return new Date(date).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      })
-    }
-
-    return (
-            <div>
-
-                <div className="flex flex-row gap-4">
-                <form action={revokeAccessWithId}>
-<Button type="submit">Revoke Access</Button>
-</form>
-<form action={grantAccessWithId}>
-<Button type="submit">Grant Access</Button>
-</form>
-<p>Role: {raw_user_meta_data?.role}</p>
-<form action={deleteStaffWithId}>
-<Button type="submit">Delete Staff</Button>
-</form>
-
-<PermissionsProvider requiredPermission="grant">
-<GrantRole />
-
-
-</PermissionsProvider>
-<form action={banAccessWithId}>
-<Button type="submit">Revoke/Ban Access</Button>
-</form>
-{/* <PermissionsProvider requiredPermission="view"> */}
-<RevokeUser />
-{/* </PermissionsProvider> */}
-                </div>
-            
-                <div className="container mx-auto max-w-3xl py-8">
+  return (
+    <div className="container mx-auto max-w-3xl py-8">
       {/* Sticky header with save button */}
       <div className="sticky top-0 z-10 -mx-4 mb-6 bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex items-center justify-between">
@@ -215,7 +126,7 @@ if (!staffUser) {
                 </TooltipProvider>
               </Label>
 
-              <RoleSelector initialRole={authUser.user_metadata?.role} userId={authUser.id} />
+              <RoleSelector initialRole={userRole} userId={authUser.id} />
             </div>
 
             <div className="space-y-3">
@@ -337,77 +248,5 @@ if (!staffUser) {
         </section>
       </div>
     </div>
-
-            <Separator/>
-                {/* <StaffDetails authUser={authUser.data.user as User} /> */}
-
-            <h1 className="text-2xl font-bold">Staff Details</h1>
-            <h1>staff details for {authUser.user_metadata?.full_name}</h1>
-            <p>email: {authUser.email}</p>
-            <p>phone: {authUser.user_metadata?.phone || "N/A"}</p>
-==========
-<p>auth user details </p>
-<p>first name: {raw_user_meta_data?.first_name}</p>
-<p>last name: {raw_user_meta_data?.last_name}</p>
-<p>email: {authUser.email}</p>
-<p>email confirmed at: {new Date(authUser.email_confirmed_at || "").toISOString() || "N/A"}</p>
-<p>created at: {new Date(authUser.created_at || "").toISOString() || "N/A"}</p>
-<p>updated at: {new Date(authUser.updated_at || "").toISOString() || "N/A"}</p>
--------
-<p>last sign in at: {new Date(authUser.last_sign_in_at || "").toISOString()}</p>
-<p>has access should be bool: {raw_user_meta_data?.is_active?.toString()}</p>
-<p>is active: {raw_user_meta_data?.is_active ? 'true' : 'false'}</p>
-
-
-json: <pre>{JSON.stringify(authUser, null, 2)}</pre>
-
-<div className="flex flex-row gap-4">
-
-</div>
-        </div>
-    )
+  )
 }
-
-
-
-
-
-async function GrantRole() {
-    return<>
-    <form>
-        <label htmlFor="role">Role</label>
-       <Select>
-        <SelectTrigger>
-            <SelectValue placeholder="Select Role" />
-        </SelectTrigger>
-        <SelectContent>
-            {TEAM_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-            ))}
-           
-          
-        </SelectContent>
-       </Select>
-        <button type="submit">Grant Role</button>
-    </form>
-    </>
-}
-
-
-// const removeAssignedSoftwareWithIds = removeAssignedSoftware.bind(null, id, software.software.id);
-//         const grantedBy= await findRealUser(software.grantedById);
-        
-//         return (
-//           <div key={software.id}>
-//             <Link href={`/dashboard/software/${software.software.id}`} prefetch={true}>
-//               <h2>{`---> ${software.software.name}`}</h2>
-//             </Link>
-//             <p className="text-green-700">{software.software.description}</p>
-//             <p className="text-green-700">Granted By: {grantedBy.email}</p>
-//             <p className="text-green-700">Access Level: {software.accessLevel}</p>
-//             <p className="text-green-700">Role: {software.role}</p>
-           
-//             <form action={removeAssignedSoftwareWithIds} className="flex flex-col gap-4">
-//               <button type="submit">Remove</button>
-//             </form>
-//           </div>
