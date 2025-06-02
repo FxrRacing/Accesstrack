@@ -17,6 +17,7 @@ export default async function StaffPage() {
   //staff.map(staff => staff.id)
   const { data, error } = await supabase.auth.getUser();
 
+  
   if (error || !data?.user) {
     redirect("/login");
   }

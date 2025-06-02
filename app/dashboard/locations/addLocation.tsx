@@ -100,10 +100,14 @@ useEffect(() => {
                 <Input 
                   placeholder="Location Address" 
                   name="address"
-                  disabled={true}
                   readOnly={true}
                   value={locationData?.address || ""}
-                  onChange={(e) => setLocationData(prev => prev ? {...prev, address: e.target.value} : null)}
+                  hidden
+                />
+                <input 
+                  type="hidden" 
+                  name="address" 
+                  value={locationData?.address || ""} 
                 />
             </div>
             <div className="space-y-2">

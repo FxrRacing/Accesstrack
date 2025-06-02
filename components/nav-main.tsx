@@ -55,7 +55,7 @@ export function NavMain({
             
             return (
               <SidebarMenuItem key={item.title}>
-                <Link href={item.url}>
+                <Link href={item.url} prefetch={true}>
                   <SidebarMenuButton 
                     tooltip={item.title}
                     className={isActive ? "bg-primary/10 text-primary font-semibold border border-primary/10" : ""}

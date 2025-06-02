@@ -42,7 +42,8 @@ export const columns: ColumnDef<User>[] = [
       },
       //name = firstName + lastName
       {
-        accessorKey: "user_metadata.full_name",
+        accessorKey: "name",
+
         header: ({ column }) => {
             return (
               <Button
@@ -54,6 +55,10 @@ export const columns: ColumnDef<User>[] = [
               </Button>
             )
           },
+          cell: ({ row }) => {
+            const name = row.original.user_metadata.full_name
+            return name ? name : 'N/A'
+        }
         
       },
       {
@@ -85,6 +90,10 @@ export const columns: ColumnDef<User>[] = [
       {
         accessorKey: "user_metadata.team",
         header: "Team",
+        cell: ({ row }) => {
+            const team = row.original.user_metadata.team
+            return team ? team : 'N/A'
+        }
       },
       
     

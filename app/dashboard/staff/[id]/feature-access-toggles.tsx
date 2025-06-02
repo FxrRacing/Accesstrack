@@ -14,9 +14,9 @@ export function FeatureAccessToggles({ userId }: FeatureAccessTogglesProps) {
     { name: "User Management", defaultEnabled: false },
     { name: "Billing Management", defaultEnabled: false },
     { name: "API Access", defaultEnabled: false },
-    { name: "Report Generation", defaultEnabled: true },
+    { name: "Report Generation", defaultEnabled: false },
   ]
-
+console.log({userId})
   const [enabledFeatures, setEnabledFeatures] = useState<Record<string, boolean>>(
     features.reduce(
       (acc, feature) => {

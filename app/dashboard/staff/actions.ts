@@ -88,10 +88,10 @@ const raw_user_meta_data = user?.raw_user_meta_data
             },
         },
     })
-    console.log('revoked access for user', id)
+    //console.log('revoked access for user', id)
     revalidatePath(`/dashboard/staff/${id}`)
     revalidatePath('/dashboard/staff')
-    
+
 }
 
 export async function grantAccess(id: string) {

@@ -12,7 +12,7 @@ import {
   getFilteredRowModel,
   VisibilityState,
 } from "@tanstack/react-table"
-import { useRouter } from 'next/navigation'
+//import { useRouter } from 'next/navigation'
 import { Input } from "@/components/ui/input"
 import {
   Table,
@@ -34,6 +34,7 @@ import {
 import { DownloadIcon } from "@radix-ui/react-icons"
 
 import {  Software } from "@prisma/client"
+import Link from "next/link"
   
 
 
@@ -71,7 +72,7 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   })
-  const router = useRouter()
+  //const router = useRouter()
   return (
     <div>
         <div className="flex items-center py-4 justify-between">
@@ -160,15 +161,18 @@ export function DataTable<TData, TValue>({
               >
                 {row.getVisibleCells().map((cell) => (
                     
-                  <TableCell key={cell.id}  className="cursor-pointer" onClick={() => {
-                    router.push(`/dashboard/software/${(row.original as Software).id}`)
-                  }} >
-                 
+                  <TableCell key={cell.id}  className="cursor-pointer" 
+                  // onClick={
+                  //   () => {
+                  //   router.push(`/dashboard/software/${(row.original as Software).id}`)
+                  // }} 
+                  >
+                 <Link href={`/dashboard/software/${(row.original as Software).id}`} prefetch={true}>
                     {flexRender(
                       cell.column.columnDef.cell,
                       cell.getContext() // Directly use `getContext` without modifying `key`
                     )}
-                   
+                    </Link>
                  
                 </TableCell>
                

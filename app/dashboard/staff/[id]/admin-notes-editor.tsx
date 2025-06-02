@@ -14,7 +14,7 @@ export function AdminNotesEditor({ initialNotes, userId }: AdminNotesEditorProps
   return (
     <Textarea
       id="notes"
-      placeholder="Add private notes about this user (only visible to admins)"
+      placeholder={`Add private notes about this user (only visible to admins) last updated by ${userId}`}
       className="h-20 resize-none"
       value={adminNotes}
       onChange={(e) => setAdminNotes(e.target.value)}

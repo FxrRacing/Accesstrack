@@ -14,6 +14,7 @@ export async function addLocation(prevState: { message: string }, formData: Form
     const latitude = formData.get('latitude') as string
     const longitude = formData.get('longitude') as string
     const type = formData.get('type') as string
+    
     const data = {
         name,
         address,

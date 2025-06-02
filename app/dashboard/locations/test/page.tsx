@@ -6,6 +6,7 @@ import LocationsMinimal from "./locations";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
     title: "FXR Locations - Office Location Explorer",
@@ -32,7 +33,9 @@ export default async function Test() {
     })
     return (
         <div className="flex flex-col gap-4">
+          <Suspense fallback={<div>Loading...</div>}>
           <LocationsMinimal locations={locations} />
+          </Suspense>
             {/* <OfficeLocationsAirbnb /> */}
             
 
