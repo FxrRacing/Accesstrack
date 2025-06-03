@@ -94,7 +94,7 @@ export function LocationSuggestions({ onSelect, label = "Search Location" }: Loc
         fields: ['displayName', 'formattedAddress', 'location', 'addressComponents']
       });
       
-      console.log("Selected place:", place);
+      //console.log("Selected place:", place);
       setInputValue(place.formattedAddress || '');
       setSuggestions([]);
       

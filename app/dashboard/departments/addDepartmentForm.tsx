@@ -17,7 +17,7 @@ export default function AddDepartmentForm({users}: {users: User[]}) {
         <>
         <Dialog>
             <DialogTrigger asChild>
-                <Button className=" rounded-full">
+                <Button className=" rounded-full hover:cursor-pointer">
                     <IconCirclePlus className="h-4 w-4" />
                     Create Department
                 </Button>

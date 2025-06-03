@@ -308,6 +308,7 @@ model Department {
   description   String?
   createdAt     DateTime @default(now()) @db.Timestamptz(6)
   updatedAt     DateTime @updatedAt @db.Timestamptz(6)
+  color         String?
   
   // One-to-one relationship: Department head 
   departmentHeadId String?   @db.Uuid
