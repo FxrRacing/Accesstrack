@@ -23,6 +23,15 @@ import { StatusTypes } from "@/types/types";
 import { Card, CardContent, CardTitle, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatDate } from "date-fns";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 export default async function Page({
   params,
@@ -220,15 +229,28 @@ export default async function Page({
             {editedBy && <p>Edited By: {editedBy.name}</p>}
           </TabsContent>
           <TabsContent value="billing">
-            <p>Billing</p>
-            <p>Amount: {software.amount}</p>
-            <p>
-              Payment Due Date: {software.paymentDueDate?.toLocaleDateString()}
-            </p>
-            <p> License Type: {software.licenseType}</p>
-            <p> Currency: {software.currency}</p>
-            <p> Payment Method: {software.paymentMethod}</p>
-            <p> Price Per User: {software.pricePerUser}</p>
+
+
+            <Card className=" border shadow-sm md:col-span-2 ">
+            <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-medium ">Billing</CardTitle>
+                    <Button variant="ghost" size="sm" className="h-8 px-2  hover:bg-slate-50">
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardHeader>
+              <CardContent>
+               
+                <p>Amount: {software.amount}</p>
+                <p>
+                  Payment Due Date: {software.paymentDueDate?.toLocaleDateString()}
+                </p>
+                <p> License Type: {software.licenseType}</p>
+                <p> Currency: {software.currency}</p>
+              </CardContent>
+            </Card>
+           
           </TabsContent>
           <TabsContent value="users">
             <p>Users</p>
@@ -252,24 +274,56 @@ export default async function Page({
             </Suspense>
           </TabsContent>
           <TabsContent value="shared-accounts">
-            <Suspense fallback={<div>Loading Shared Accounts...</div>}>
-              <p className="text-xl">Shared Accounts</p>
+            <Card className=" border shadow-sm md:col-span-2 ">
+            <CardHeader className="pb-0">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-medium ">Shared Accounts</CardTitle>
+                    <Button variant="ghost" size="sm" className="h-8 px-2  hover:bg-slate-50">
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardHeader>
+              <CardContent>
+              <Suspense fallback={<div>Loading Shared Accounts...</div>}>
+             
+
+
+              <Table >
+                <TableCaption>A list of your recent invoices.</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Account</TableHead>
+                    <TableHead>Access Level</TableHead>
+                    <TableHead>Assigned At</TableHead>
+                    <TableHead className="text-right">Created By</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
 
               {sharedAccounts.map((sharedAccount) => (
-                <div key={sharedAccount.id} className="flex flex-col gap-2">
+                 
+                  <TableRow key={sharedAccount.id} >
                   <Link
-                    href={`/dashboard/shared-accounts/${sharedAccount.sharedAccountId}`}
-                    prefetch={true}
-                  >
-                    {sharedAccount.sharedAccount.name}
-                  </Link>
-                  <p>{sharedAccount.accessLevel}</p>
-                  <p>{sharedAccount.assignedAt.toLocaleDateString()}</p>
-                  <p>{sharedAccount.createdBy.fullName}</p>
-                  <p>{sharedAccount.role}</p>
-                </div>
-              ))}
+                href={`/dashboard/shared-accounts/${sharedAccount.sharedAccountId}`}
+                prefetch={true}
+              >
+                    <TableCell className="font-medium">{sharedAccount.sharedAccount.name}</TableCell>
+                    <TableCell>{sharedAccount.accessLevel}</TableCell>
+                    <TableCell>{sharedAccount.assignedAt.toLocaleDateString()}</TableCell>
+                    <TableCell className="text-right">{sharedAccount.createdBy.fullName}</TableCell>
+                    </Link>
+                  </TableRow>
+                  
+                  
+                ))}
+                </TableBody>
+              </Table>
+                
+              
             </Suspense>
+              </CardContent>
+            </Card>
+           
           </TabsContent>
         </Tabs>
       </div>

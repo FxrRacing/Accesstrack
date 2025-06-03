@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { prisma } from '@/lib/prisma'
-import {  Badge, Building, Building2, ChevronRight, Clock,  MapPin, Users } from 'lucide-react'
-import Link from 'next/link'
+
 import { GradientCard } from '@/components/ui/gradient-card'
+import { Building } from 'lucide-react'
 
 
 
@@ -11,7 +11,9 @@ import { GradientCard } from '@/components/ui/gradient-card'
 import AddLocation from './addLocation'
 
 import LocationsMinimal from './test/locations'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+
+
+
 
 export default async function LocationsPage() {
     const supabase = await createClient()
@@ -48,46 +50,89 @@ export default async function LocationsPage() {
                 </GradientCard>
             </div>
            
-                    <div className="grid gap-4 md:grid-cols-3 mb-8">
-                    {locations.map((location) => (
-                        <Link  key={location.id} href={`/dashboard/locations/${location.id}`}>
-                          <Card  className="w-full max-w-md bg-zinc-900 text-white border-none">
-                        <CardHeader className="pb-2">
-                          <Badge className="w-fit bg-emerald-700/30 text-emerald-400 hover:bg-emerald-700/30 hover:text-emerald-400 capitalize">
-                          {location.type}
-                          </Badge>
-                          <h2 className="text-2xl font-bold mt-4">{location.name}</h2>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                          <div className="flex items-center gap-3">
-                            <MapPin className="h-5 w-5 text-zinc-400 shrink-0" />
-                            <span className="text-zinc-300">{location.city}, {location.state}</span>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <Building2 className="h-5 w-5 text-zinc-400 shrink-0" />
-                            <span className="text-zinc-300">{location.address}</span>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <Users className="h-5 w-5 text-zinc-400 shrink-0" />
-                            <span className="text-zinc-300">{location._count.employees}</span>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <Clock className="h-5 w-5 text-zinc-400 shrink-0" />
-                            <span className="text-zinc-300">Mon-Fri: 8:00 AM - 6:00 PM</span>
-                          </div>
-                        </CardContent>
-                        <div className="mx-6 h-px bg-zinc-800" />
-                        <CardFooter className="justify-between py-4">
-                          <span className="text-zinc-300">5 access points</span>
-                          <button className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
-                            View Details
-                            <ChevronRight className="h-4 w-4" />
-                          </button>
-                        </CardFooter>
-                      </Card>   
-                        </Link>
-                    ))}
-                    </div>
+
+            {/* <div className="grid grid-cols-5 gap-4 h-[calc(100vh-20rem)]">
+              <div className="col-span-3 ">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {locations.map((location) => (
+        <Link href={`/dashboard/locations/${location.id}`} prefetch={true} key={location.id}>
+        <div
+          
+          className="group relative overflow-hidden rounded-xl bg-zinc-800 border-2 border-zinc-700 transition-all hover:border-emerald-400/50 hover:border-2"
+        >
+          <div className="absolute top-0 right-0 p-3 opacity-0 transition-opacity group-hover:opacity-100">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 rounded-full bg-zinc-800/90 border-zinc-600 text-zinc-100 hover:bg-emerald-500 hover:text-zinc-900"
+              
+            >
+              <ArrowUpRight className="h-4 w-4" />
+              <span className="sr-only">View details</span>
+            </Button>
+          </div>
+
+          <div className="p-6">
+            <div
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium mb-3 ${
+                location.type === "Headquarters"
+                  ? "bg-emerald-500/20 text-emerald-400"
+                  : location.type === "Regional"
+                    ? "bg-amber-500/20 text-amber-400"
+                    : "bg-zinc-500/20 text-zinc-400"
+              }`}
+            >
+              {location.type}
+            </div>
+
+            <h3 className="text-lg font-semibold text-zinc-100 mb-1">{location.name}</h3>
+            <div className="flex items-center text-zinc-400 mb-4">
+              <MapPin className="h-3.5 w-3.5 mr-1" />
+              <p className="text-sm">
+                {location.city}, {location.country}
+              </p>
+            </div>
+
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center text-zinc-300">
+                <Building2 className="h-4 w-4 text-zinc-500 mr-2" />
+                <span>{location.address}</span>
+              </div>
+              <div className="flex items-center text-zinc-300">
+                <Users className="h-4 w-4 text-zinc-500 mr-2" />
+                <span>{location._count.employees} employees</span>
+              </div>
+              <div className="flex items-center text-zinc-300">
+                <Clock className="h-4 w-4 text-zinc-500 mr-2" />
+                <span>Mon-Fri: 8:00 AM - 6:00 PM</span>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-zinc-700">
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-zinc-400">{location.doors.length} access points</div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                  
+                >
+                  View Details
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+        </Link>
+      ))}
+    </div>
+              </div>
+              <div className="col-span-2 h-full">
+              <GlobalMap locations={locations} />
+              </div>
+            </div> */}
+
+
 
 <LocationsMinimal locations={locations} />
         </div>

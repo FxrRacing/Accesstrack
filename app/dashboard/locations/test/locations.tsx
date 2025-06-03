@@ -3,7 +3,8 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Search, Users,   ChevronDown} from "lucide-react"
+import { Search, Users,   ChevronDown, ArrowUpRight, MapPin, Building2, Clock} from "lucide-react"
+import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -14,7 +15,7 @@ import OfficeDetailsAirbnb from "./office-details-airbnb"
 import type { Door, Location, User, OperatingHour } from "@prisma/client"
 //import Image from "next/image"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+
 import {  GlobalMap } from "./office-map"
 
 export type Office = Location & {
@@ -131,57 +132,76 @@ export default function LocationsMinimal( {locations}: {locations: Office[]}) {
           <div className="grid lg:grid-cols-[1fr_500px] xl:grid-cols-[1fr_600px]">
             <main className="p-4 md:p-6">
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-                {filteredOffices.map((office) => (
-                  <Card key={office.id} onClick={() => setSelectedOffice(office)} className="group cursor-pointer">
-                    {/* <div className="relative aspect-[4/3] overflow-hidden rounded-xl mb-3">
-                      <Image
-                        src={office.id === 1 ? "/office-exterior.jpeg" : "/office-workspace.jpeg"}
-                        alt={office.name}
-                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                        width={1000}
-                        height={1000}
-                      />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-3 top-3 h-8 w-8 rounded-full bg-white/70 backdrop-blur-sm hover:bg-white/90"
-                        onClick={(e) => toggleFavorite(office.id, e)}
-                      >
-                        <Heart
-                          className={`h-4 w-4 ${
-                            favoriteOffices.includes(office.id) ? "fill-rose-500 text-rose-500" : "text-gray-600"
-                          }`}
-                        />
-                        <span className="sr-only">Favorite</span>
-                      </Button>
-                    </div> */}
-                    <CardHeader>
-                      <CardTitle>{office.name}</CardTitle>
-                      <CardDescription><div className="flex justify-between">
-                      <div>
-                      
-                        <p className="">
-                           {office.address}, {office.state}, {office.city}, {office.country}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Badge className="w-fit bg-emerald-700/30 text-emerald-400 hover:bg-emerald-700/30 hover:text-emerald-400 capitalize">{office.type}</Badge>
-                      </div>
-                    </div></CardDescription>
-                    </CardHeader>
-                    
-                   <CardContent>
-                   <div className="mt-1 flex items-center  text-sm">
-                      <Users className="h-3.5 w-3.5 mr-1" />
-                      <span>{office._count.employees} employees</span>
-                      <span className="mx-1">•</span>
-                      <span>{office.doors.length} access point(s)</span>
-                    </div>
-                    <p className="mt-1 text-sm ">
-                      <span className="font-medium capitalize">{office.type}</span> • {office.operatingHours.length > 0 ? office.operatingHours.map((hour) => `${hour.dayOfWeek}: ${hour.openTime} - ${hour.closeTime}`).join(" • ") : "Monday - Friday: 8:00 AM - 5:00 PM"}
-                    </p>
-                   </CardContent>
-                  </Card>
+                {filteredOffices.map((location) => (
+                   <Link href={`/dashboard/locations/${location.id}`} prefetch={true} key={location.id}>
+                   <div
+                     
+                     className="group relative overflow-hidden rounded-xl bg-zinc-800 border-2 border-zinc-700 transition-all hover:border-emerald-400/50 hover:border-2"
+                   >
+                     <div className="absolute top-0 right-0 p-3 opacity-0 transition-opacity group-hover:opacity-100">
+                       <Button
+                         variant="outline"
+                         size="icon"
+                         className="h-8 w-8 rounded-full bg-zinc-800/90 border-zinc-600 text-zinc-100 hover:bg-emerald-500 hover:text-zinc-900"
+                         
+                       >
+                         <ArrowUpRight className="h-4 w-4" />
+                         <span className="sr-only">View details</span>
+                       </Button>
+                     </div>
+           
+                     <div className="p-6">
+                       <Badge
+                         className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium mb-3 ${
+                           location.type === "Headquarters"
+                             ? "bg-emerald-500/20 text-emerald-400"
+                             : location.type === "Regional"
+                               ? "bg-amber-500/20 text-amber-400"
+                               : "bg-zinc-500/20 text-zinc-400"
+                         }`}
+                       >
+                         {location.type}
+                       </Badge>
+           
+                       <h3 className="text-lg font-semibold text-zinc-100 mb-1">{location.name}</h3>
+                       <div className="flex items-center text-zinc-400 mb-4">
+                         <MapPin className="h-3.5 w-3.5 mr-1" />
+                         <p className="text-sm">
+                           {location.city}, {location.country}
+                         </p>
+                       </div>
+           
+                       <div className="space-y-3 text-sm">
+                         <div className="flex items-center text-zinc-300">
+                           <Building2 className="h-4 w-4 text-zinc-500 mr-2" />
+                           <span>{location.address}</span>
+                         </div>
+                         <div className="flex items-center text-zinc-300">
+                           <Users className="h-4 w-4 text-zinc-500 mr-2" />
+                           <span>{location._count.employees} employees</span>
+                         </div>
+                         <div className="flex items-center text-zinc-300">
+                           <Clock className="h-4 w-4 text-zinc-500 mr-2" />
+                           <span>Mon-Fri: 8:00 AM - 6:00 PM</span>
+                         </div>
+                       </div>
+           
+                       <div className="mt-6 pt-4 border-t border-zinc-700">
+                         <div className="flex items-center justify-between">
+                           <div className="text-sm text-zinc-400">{location.doors.length} access points</div>
+                           <Button
+                             variant="ghost"
+                             size="sm"
+                             className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                             
+                           >
+                             View Details
+                           </Button>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                   </Link>
                 ))}
               </div>
             </main>
@@ -203,7 +223,7 @@ export default function LocationsMinimal( {locations}: {locations: Office[]}) {
           </div>
 
           <div className="lg:hidden p-4 md:p-6 border-t">
-map goes here
+
 
                 <GlobalMap locations={filteredOffices} /> 
             {/* <OfficeMapAirbnb
