@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import AddDoor from "./addDoor";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -15,12 +15,17 @@ import {
  
   Users,
 } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapWithMarker } from "../test/office-map";
 import { TableBody, TableCell, Table, TableHeader, TableRow, TableHead } from "@/components/ui/table";
+
+function isValidUUID(uuid: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid);
+}
 export default async function Page({
   params,
 }: {
@@ -35,6 +40,9 @@ export default async function Page({
   }
 
   const { id } = await params;
+  if (!isValidUUID(id)) {
+    return notFound();
+  }
   const location = await prisma.location.findUnique({
     where: {
       id: id,
@@ -63,19 +71,22 @@ export default async function Page({
       operatingHours: true,
     },
   });
-  const departments = await prisma.department.findMany({});
   if (!location) {
-    redirect("/dashboard/locations");
+    return notFound();
   }
+  const departments = await prisma.department.findMany({});
+  
   const isFavorite = false;
   return (
     <>
       <div>
         <header className="sticky  bg-background top-0 z-50 flex h-16 items-center gap-4 border-b border-secondary  px-4 md:px-6">
-          <Button variant="ghost" size="icon" className="rounded-full">
+          <Link href="/dashboard/locations" prefetch={true}>
+          <Button variant="ghost" size="icon" className="rounded-full" >
             <ArrowLeft className="h-4 w-4" />
             <span className="sr-only">Back</span>
           </Button>
+          </Link>
           <div className="flex-1">
             <h1 className="text-lg font-semibold">Locations</h1>
           </div>
@@ -209,7 +220,7 @@ export default async function Page({
                     <Table>
                       <TableHeader className="text-primary">
                         <TableRow className="hover:bg-gray-50">
-                          <TableHead>ID</TableHead>
+                         
                           <TableHead>Name</TableHead>
                           <TableHead>Type</TableHead>
                           <TableHead className="hidden md:table-cell">Access Level</TableHead>
@@ -220,7 +231,7 @@ export default async function Page({
                       <TableBody>
                         {location.doors.map((door) => (
                           <TableRow key={door.id} className="hover:bg-gray-50">
-                            <TableCell className="font-medium">{door.id}</TableCell>
+                           
                             <TableCell>{door.name}</TableCell>
                             <TableCell>
                               <Badge
@@ -256,7 +267,7 @@ export default async function Page({
                       </TableBody>
                     </Table>
                   </div>
-
+<Separator className="my-4" />
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="p-4 rounded-xl border border-secondary ">
                       <div className="flex items-center gap-2 mb-2">
@@ -290,22 +301,7 @@ export default async function Page({
                       </div>
                     </div>
 
-                    <div className="p-4 rounded-xl border border-secondary ">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Building className="h-5 w-5 text-rose-500" />
-                        <h3 className="font-semibold">Departments</h3>
-                      </div>
-                      <div className="space-y-2">
-                        {/* {Array.from(new Set(office.doors.map((door) => door.department))).map((dept) => (
-                          <div key={dept} className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600">{dept}</span>
-                            <Badge variant="outline">
-                              {office.doors.filter((door) => door.department === dept).length}
-                            </Badge>
-                          </div>
-                        ))} */}
-                      </div>
-                    </div>
+                   
                   </div>
                         </CardContent>
                         </Card>
@@ -333,19 +329,23 @@ export default async function Page({
                     <Table>
                       <TableHeader className="text-primary">
                         <TableRow className="hover:bg-gray-50">
-                          <TableHead>ID</TableHead>
+                        
                           <TableHead>Name</TableHead>
-                          <TableHead>Type</TableHead>
-                          <TableHead className="hidden md:table-cell">Access Level</TableHead>
-                          <TableHead className="hidden md:table-cell">Floor</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead className="hidden md:table-cell">Job Title</TableHead>
+                          
                           <TableHead>Status</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {location.employees.map((employee) => (
                           <TableRow key={employee.id} className="hover:bg-gray-50">
-                            <TableCell className="font-medium">{employee.id}</TableCell>
+                           
                             <TableCell>{employee.name}</TableCell>
+                            <TableCell>{employee.email}</TableCell>
+                            <TableCell>{employee.jobTitle}</TableCell>
+                            
+                            <TableCell>{employee.status}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
