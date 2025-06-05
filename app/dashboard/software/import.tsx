@@ -8,6 +8,8 @@ import { AlertCircle, Check, ChevronDown,  ChevronUp, Download, FileText, FileUp
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { useState, useRef } from "react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { toast } from "sonner"
+
 
 
 
@@ -20,6 +22,9 @@ export default function ImportSoftware() {
     const [isDragging, setIsDragging] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+    const [isImporting, setIsImporting] = useState(false)
+    // const [isOpen, setIsOpen] = useState(false)
+   
     // const tableRef = useRef<HTMLDivElement>(null)
     // const [mounted, setMounted] = useState(false)
 
@@ -71,26 +76,23 @@ export default function ImportSoftware() {
         setIsDragging(false)
       }
     
-    const downloadSample = () => {
-        const sampleData =
-          "id,name,description,category,price,license_type\n" +
-          "59554e3d-ccb6-4bad-9157-c5c6efa3df87,Zoom,Video Conferencing,Collaboration,14.99,SaaS\n" +
-          "a6b0f365-c5fe-40bb-9366-2da4d8a887c2,Workday,Enterprise solution for human capital management,HR & Finance,299.99,Enterprise\n" +
-          "cda6e236-7c16-493c-91c0-469a7ff2c23c,Bloomberg Terminal,The gold standard for trading and market data,Market Data,2499.99,Professional\n" +
-          "daffed57-83f3-42b3-80f2-8982c7d5a7e9,Slack,Communication for everyone,Collaboration,8.99,SaaS\n" +
-          "f9d53003-1c05-4758-ad16-48e2e8b7a6c2,Refinitiv Eikon,Market data and analytics platform,Market Data,1999.99,Professional\n" +
-          "fe769674-65d0-4528-92af-2f2d8e5c9a1b,Tableau,Data Visualization and Analytics,Business Intelligence,70.00,Per User"
-    
-        const blob = new Blob([sampleData], { type: "text/csv" })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement("a")
-        a.href = url
-        a.download = "sample_data.csv"
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-        URL.revokeObjectURL(url)
-      }
+      const downloadSample = async () => {
+        const res = await fetch("/api/software/sample");
+        if (!res.ok) {
+          setError("Failed to fetch sample data");
+          return;
+        }
+        const csv = await res.text();
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "software_sample_data.csv";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      };
       const triggerFileInput = () => {
         fileInputRef.current?.click()
       }
@@ -100,6 +102,55 @@ export default function ImportSoftware() {
       setFile(file)
       parseCSV(file)
     }
+    }
+
+    const mockImportAction = async () => {
+      if (!file || !preview.length) return
+  
+      try {
+        setIsImporting(true)
+  
+        // Log the import action details
+        console.group("CSV Import Action")
+        console.log("File name:", file.name)
+        console.log("File size:", (file.size / 1024).toFixed(2) + " KB")
+        console.log("Total rows to import:", preview.length - 1)
+  
+        // Log the headers
+        console.log("Headers:", preview[0])
+  
+        // Log a sample of the data (first 3 rows)
+        console.log("Sample data:", preview.slice(1, 4))
+  
+        // Simulate API call with timeout
+        console.log("Starting import process...")
+  
+        // Simulate a delay for processing
+        await new Promise((resolve) => setTimeout(resolve, 1500))
+  
+        // Log success message
+        console.log("Import completed successfully!")
+        console.log(`${preview.length - 1} rows imported to database`)
+        console.groupEnd()
+  
+        // Show success toast
+        toast.success(`${preview.length - 1} rows were successfully imported.`)
+  
+        // Close the dialog
+        // setIsOpen(false)
+  
+        // Reset state after closing
+        setTimeout(() => {
+          setFile(null)
+          setPreview([])
+          setError(null)
+        }, 300)
+      } catch (error) {
+        console.error("Import failed:", error)
+        setError("An error occurred during import")
+      } finally {
+        setIsImporting(false)
+      }
     }
     return (
         <>
@@ -328,12 +379,51 @@ export default function ImportSoftware() {
 
 
                 <DialogFooter className="flex flex-row justify-between gap-2 w-full">
-                    <Button variant="outline">
-                        Cancel
-                    </Button>
-                    <Button>
-                        Import
-                    </Button>
+                <Button variant="outline" className="flex-1 py-3 font-medium rounded-xl" onClick={() => {
+                    setFile(null)
+                    setPreview([])
+                    setError(null)
+                }}>
+              Cancel
+            </Button>
+                    <Button
+              className={`
+                flex-1 py-3 font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2
+                ${file ? "bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white" : "bg-gray-100 text-gray-400"}
+              `}
+              disabled={!file || isImporting}
+              onClick={mockImportAction}
+            >
+              {isImporting ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Importing...
+                </>
+              ) : file ? (
+                "Import data"
+              ) : (
+                "Upload a file"
+              )}
+            </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

@@ -60,7 +60,7 @@ export async function signinWithAzure(){
     provider: 'azure',
     options: {
      scopes: 'email profile',
-     redirectTo: 'http://localhost:3000/auth/callback',
+     redirectTo: 'http://10.50.101.193:3000/auth/callback',
     }
   })
 
