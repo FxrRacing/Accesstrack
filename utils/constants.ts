@@ -75,16 +75,23 @@ export const ROLE_OPTIONS = [
     {label: "Support", value: "support"},
     {label: "HR", value: "hr"},
     {label: "Other", value: "other"},
+    {label: "Super Admin", value: "super_admin"},
+    {label: "IT", value: "it"},
 ]
 
 
 export const EMPLOYMENT_TYPE_OPTIONS = [
-    {label: "Full Time Employee", value: "full_time"},
-    {label: "Part Time Employee", value: "part_time"},
+    {label: "Employee", value: "employee"},
     {label: "Contractor", value: "contractor"},
     {label: "Intern", value: "intern"},
     {label: "Other", value: "other"},
-        ]
+]
+
+export const EMPLOYEE_TYPE_CLASS_OPTIONS = [
+    {label: "Full Time", value: "full_time"},
+    {label: "Part Time", value: "part_time"},
+    {label: "Other", value: "other"},
+]
 
 export const EMPLOYMENT_STATUS_OPTIONS = [
     {label: "Active", value: "active"},

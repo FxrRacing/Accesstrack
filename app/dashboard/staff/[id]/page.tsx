@@ -12,8 +12,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { TEAM_OPTIONS } from "@/utils/constants";
-import PermissionsProvider from "@/utils/providers/permissions";
+
 import { Suspense } from "react";
 import { SkeletonCard } from "@/components/skeleton-card";
 import { Label } from "@/components/ui/label";
@@ -40,11 +39,13 @@ import { Badge } from "@/components/ui/badge";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { UserActionButtons } from "./user-action-buttons";
-import { RoleSelector } from "./role-selector";
+
 //import { FeatureAccessToggles } from "./feature-access-toggles"
 import { AdminNotesEditor } from "./admin-notes-editor";
 import { SaveChangesButton } from "./save-changes-buttons";
 import { User } from "@supabase/supabase-js";
+import GrantRole from "./grant-roles";
+import PermissionsProvider from "@/utils/providers/permissions";
 
 export default async function Page({
   params,
@@ -134,9 +135,7 @@ export default async function Page({
           <Button type="submit">Delete Staff</Button>
         </form>
 
-        <PermissionsProvider requiredPermission="grant">
-          <GrantRole />
-        </PermissionsProvider>
+       
         <form action={banAccessWithId}>
           <Button type="submit">Revoke/Ban Access</Button>
         </form>
@@ -228,19 +227,18 @@ export default async function Page({
               <h2 className="text-lg font-medium">Role & Permissions</h2>
             </div>
             <Separator />
-            <div className="space-y-6 pt-2">
+            <div className="space-y-6 pt-2 space-y-2">
               <div className="space-y-2">
-                <Label htmlFor="role" className="flex items-center gap-1">
-                  User Role
-                  <TooltipProvider>
-                    <BadgeInfo className="h-3.5 w-3.5 text-muted-foreground" />
-                  </TooltipProvider>
-                </Label>
-
-                <RoleSelector
-                  initialRole={authUser.user_metadata?.role}
-                  userId={authUser.id}
-                />
+                
+                
+              
+                <PermissionsProvider requiredPermission="grant" replaceWith={<p>You are not authorized to grant roles</p>}>
+          
+          <GrantRole id={id} grantedById={authUser.id} initialRole={authUser.user_metadata?.role} />
+       
+        </PermissionsProvider>
+                
+             
               </div>
 
               {/* <div className="space-y-3">
@@ -425,28 +423,6 @@ export default async function Page({
   );
 }
 
-async function GrantRole() {
-  return (
-    <>
-      <form>
-        <label htmlFor="role">Role</label>
-        <Select>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Role" />
-          </SelectTrigger>
-          <SelectContent>
-            {TEAM_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <button type="submit">Grant Role</button>
-      </form>
-    </>
-  );
-}
 
 // const removeAssignedSoftwareWithIds = removeAssignedSoftware.bind(null, id, software.software.id);
 //         const grantedBy= await findRealUser(software.grantedById);

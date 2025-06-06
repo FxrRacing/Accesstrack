@@ -11,8 +11,8 @@ export default function AddSharedAccountForm({id, availableSharedAccounts, authI
     return <div>
         <h1>Add Shared Account</h1>
         <form action={formAction}>
-            <input type="text" name="userId" value={id} hidden />
-            <input type="text" name="authId" value={authId} hidden />
+            <input type="text" name="userId"  readOnly value={id} hidden />
+            <input type="text" name="authId" readOnly value={authId} hidden />
             <select name="sharedAccountId">
                 {availableSharedAccounts.map((sharedAccount) => (
                     <option key={sharedAccount.id} value={sharedAccount.id}>{sharedAccount.name}</option>

@@ -20,10 +20,7 @@ export default function EditUser({user, authId, users, locations, departments}: 
         if(error && error.message){
           toast.error(error.message)
         } 
-        else if(user.id) {
-          toast.success('User updated successfully')
-          
-        }
+        
       }else{
         toast.success('Updating user...')
       }
