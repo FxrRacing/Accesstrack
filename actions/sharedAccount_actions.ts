@@ -1,26 +1,42 @@
 'use server'
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+//import { redirect } from "next/navigation";
 import { z } from "zod";
 
 
-export async function createSharedAccount(formData: FormData) {
+const createSharedAccountSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    email: z.string().email("Invalid email address"),
+    location: z.string().min(1, "Location is required"),
+    type: z.string().min(1, "Type is required"),
+    status: z.string().min(1, "Status is required"),
+    updatedBy: z.string().min(1, "Updated by is required"),
+})
+
+
+export async function createSharedAccount(prevState: { message: string, errors: Record<string, string[]> | null }, formData: FormData) {
     'use server'
     // Mutate data
-    const name = formData.get('name') as string | null;
-    const email = formData.get('email') as string | null;
-    const location = formData.get('location') as string | null;
-const type = formData.get('type') as string | null;
-const status = formData.get('status') as string | null;
-const updatedBy = formData.get('updatedBy') as string | null;
+    const validatedFields = createSharedAccountSchema.safeParse({
+        name: formData.get('name'),
+        email: formData.get('email'),
+        location: formData.get('location'),
+        type: formData.get('type'),
+        status: formData.get('status'),
+        updatedBy: formData.get('updatedBy'),
+    })
 
+    if (!validatedFields.success) {
+        return { message: 'All fields are required.', errors: validatedFields.error.flatten().fieldErrors };
+    }
 
-if (!name || !email || !location || !type || !status || !updatedBy) {
-    throw new Error('All fields are required.');
-}
+    const { name, email, location, type, status, updatedBy } = validatedFields.data;
+
+let id = '';
 const normalizedName = name.toLowerCase().replace(/\s+/g, '');
 try {
-    await prisma.sharedAccount.create({
+    const sharedAccount = await prisma.sharedAccount.create({
         data: {
             name,
             normalizedName,
@@ -31,11 +47,15 @@ try {
             updatedById: updatedBy,
         },
     });
+    id = sharedAccount.id;
     revalidatePath('/dashboard/shared-accounts');
-} catch (error) {
+    
+    return { message: 'success', id, errors: null };
+} catch (error) {   
     console.error('Error creating shared account:', error);
-    throw new Error('Failed to create shared account.');
+    return { message: 'Failed to create shared account.', errors: null };
 }
+
 }
 
 export async function assignSoftware(formData: FormData) {
@@ -75,9 +95,9 @@ export async function assignSoftware(formData: FormData) {
                 role: result.data.role,
             },
            })
-            revalidatePath(`/dashboard/shared-accounts/${result.data.sharedAccountId}`);
-            revalidatePath('/dashboard/shared-accounts');
+           revalidatePath(`/dashboard/shared-accounts/${result.data.sharedAccountId}`);
     } catch (error) {
+        console.error('Error assigning software:', error);
         if (error instanceof z.ZodError) {
             // Get the first error message
             const errorMessage = error.errors.map(e => e.message).join(", ");
@@ -85,7 +105,57 @@ export async function assignSoftware(formData: FormData) {
         }
         throw error;
     }
+   
+    revalidatePath('/dashboard/shared-accounts');
 }
+
+export async function removeAssignedSoftware(prevState: {message: string}, formData: FormData) {
+    try {
+            const id = formData.get('id') as string;
+            const sharedAccountId = formData.get('sharedAccountId') as string;
+            const authId = formData.get('authId') as string;
+            const softwareId = formData.get('softwareId') as string;
+
+       console.table({id, sharedAccountId, authId, softwareId})
+
+        const existingSharedAccountSoftware = await prisma.sharedAccountSoftware.findFirst({
+            where: {
+                id: id
+            },
+            include: {
+                software: true
+            }
+        })
+        
+        if (!existingSharedAccountSoftware) {
+            return { message: 'Software not found in shared account.' };
+        }
+        await prisma.sharedAccountSoftware.delete({
+            where: {
+                id: id
+            }
+        })
+        await prisma.sharedAccountHistory.create({
+            data: {
+                action: "Removed Software from Shared Account",
+                sharedAccountId: sharedAccountId,
+                field: "software",
+                oldValue: existingSharedAccountSoftware.software.name,
+                newValue: null, 
+                updatedById: authId,
+            },
+        })
+        revalidatePath(`/dashboard/shared-accounts/${sharedAccountId}`)
+        revalidatePath('/dashboard/shared-accounts')
+        revalidatePath(`/dashboard/software/${softwareId}`)
+        return { message: 'Software removed from shared account.' };
+    } catch (error) {
+        console.error('Error removing assigned software:', error);
+        return { message: 'Failed to remove assigned software.' };
+    }
+}
+
+
 
 
 export async function addUserToSharedAccount(prevState: {message: string}, formData: FormData) {
@@ -109,12 +179,16 @@ export async function addUserToSharedAccount(prevState: {message: string}, formD
             return { message: 'Invalid form data', errors: result.error.message };
         }
         console.table(result.data);
-        await prisma.sharedAccountUser.create({
+       
+       const sharedAccountUser = await prisma.sharedAccountUser.create({
             data: {
                 sharedAccountId: result.data.sharedAccountId,
                 userId: result.data.userId,
                 createdById: result.data.authId,
             },
+            include: {
+                user: true
+            }
     })
     await prisma.sharedAccountHistory.create({
         data: {
@@ -122,7 +196,7 @@ export async function addUserToSharedAccount(prevState: {message: string}, formD
             sharedAccountId: result.data.sharedAccountId,
             field: "users",
             oldValue: null,
-            newValue: result.data.userId,
+            newValue: sharedAccountUser.user.name,
             updatedById: result.data.authId,
         },
     })

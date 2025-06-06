@@ -172,18 +172,18 @@ model UserSoftware {
 
 model SoftwareAccess {
   id              String        @id @default(uuid()) @db.Uuid
-  sharedAccountId String       @db.Uuid
-  softwareId      String       @db.Uuid
+  sharedAccountId String        @db.Uuid
+  softwareId      String        @db.Uuid
   access          Boolean
   lastEdited      DateTime      @default(now()) @db.Timestamptz(6)
-  lastEditedBy    String       @db.Uuid
+  lastEditedBy    String        @db.Uuid
   permissions     String[]
   accessLevel     String
   role            String
   uid             String
   grantedById     String         @db.Uuid
   software        Software      @relation(fields: [softwareId], references: [id])
-  sharedAccount   SharedAccount @relation(fields: [sharedAccountId], references: [id])
+  sharedAccount   SharedAccount @relation(fields: [sharedAccountId], references: [id], onDelete: Cascade)
   
   @@schema("public")
 }
@@ -228,17 +228,14 @@ model SharedAccount {
   userCount        Int                     @default(0)
   status           String                  @default("Active")
   
-  // Relation to the auth user who last updated this shared account
- updatedBy          UserProfiles?            @relation("SharedAccountUpdate", fields: [updatedById], references: [id])
-  // History of shared account changes
+  // Relations without onDelete here
+  updatedBy          UserProfiles?            @relation("SharedAccountUpdate", fields: [updatedById], references: [id])
   histories        SharedAccountHistory[]
-  // Assignments of this shared account to Software (via join table)
   assignmentsSoftware SharedAccountSoftware[]
-  // Assignments of this shared account to Users (via join table)
   assignmentsUser     SharedAccountUser[]
+  SoftwareAccess SoftwareAccess[]
 
   @@schema("public")
-  SoftwareAccess SoftwareAccess[]
 }
 
 model SharedAccountHistory {

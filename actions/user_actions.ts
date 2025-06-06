@@ -2,7 +2,7 @@
 import { prisma } from '@/lib/prisma';
 import { User } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
+
 
 
 
@@ -118,12 +118,12 @@ let id = ''
         revalidatePath(`/dashboard/org-chart`);
         revalidatePath(`/dashboard/users`);
         id = user.id
-        
+        return {message: 'User created successfully.', id: id}
     } catch (error) {
         console.error('Error creating user:', error);
         throw new Error('Failed to create user.');
     }
-    redirect(`/dashboard/users/${id}`);
+    
 }
 export async function deleteUser(id: string) {
     'use server'

@@ -6,6 +6,9 @@ import Link from "next/link";
 
 import { notFound, redirect } from "next/navigation";
 import Users from "./users";
+import DeleteButton from "./delete-button";
+import { Suspense } from "react";
+import UnassignSoftwareButton from "./unassign-software-button";
 
 export default async function Page({
     params,
@@ -56,6 +59,11 @@ export default async function Page({
 
     return <>
     <div className="flex flex-col gap-4 p-3">
+      <Suspense fallback={<div>Loading Delete Button...</div>}>
+    <DeleteButton id={id} />
+    </Suspense>
+    
+
         <h1>Shared Account: {id}</h1>
         <p>Name: {sharedAccount.name}</p>
         <p>Email: {sharedAccount.email}</p>
@@ -75,6 +83,7 @@ export default async function Page({
              <Link href={`/dashboard/software/${software.softwareId}`} prefetch={true}>{software.software.name}</Link>
               <p>{software.accessLevel}</p>
               <p>{software.role}</p>
+              <UnassignSoftwareButton id={software.id} sharedAccountId={sharedAccount.id} authId={data.user.id} softwareId={software.softwareId} />
             </div>
           ))}
           {availableSoftware.length === 0 && <p>There are no available software to assign to this shared account</p>}
