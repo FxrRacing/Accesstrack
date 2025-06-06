@@ -78,7 +78,7 @@ type Props = {
   
     // 2) Grab the role out of your metadata
     const userRole = data.user.user_metadata.role as Role;
-  
+  console.log(userRole)
     // 3) Lookup allowed actions for that role
     const allowed = permissionsByRole[userRole] || [];
   

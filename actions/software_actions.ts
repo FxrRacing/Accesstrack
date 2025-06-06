@@ -41,7 +41,7 @@ export async function createSoftware(prevState: {message: string},formData: Form
       return { message: 'success' }
     } catch (error) {
         console.error('Error creating software:', error);
-        return { message: 'Please enter a valid email' }
+        return { message: 'Error creating software.' }
     }
 }
 

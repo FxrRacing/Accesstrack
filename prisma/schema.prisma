@@ -44,6 +44,7 @@ model UserProfiles {
  
   SharedAccountHistory SharedAccountHistory[]
   Invites Invites[]
+    Software Software[] @relation("TeamOwner")
 }
 
 model Invites{
@@ -137,6 +138,10 @@ model Software {
   iconUrl              String?
   assignedToId          String?           @db.Uuid
   accountReps          AccountRep[]
+
+  teamOwnerId          String?           @db.Uuid
+  teamOwner            UserProfiles?     @relation("TeamOwner", fields: [teamOwnerId], references: [id], onDelete: Cascade)
+
   // Relation to the auth user who last updated the notes:
   notesLastUpdatedBy   UserProfiles? @relation("NotesLastUpdatedBy", fields: [notesLastUpdatedById], references: [id])
   // Relation to the auth user who last updated the software:

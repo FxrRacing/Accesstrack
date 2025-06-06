@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Suspense } from "react";
 
 import { CalendarClock, Globe, Info, Settings, Shield, Tag, Users } from "lucide-react";
-import { ExternalLink } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -32,6 +32,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import OwnerProfile, { SoftwareWithTeamOwner } from "./owner-profile";
+import { BillingTab } from "./tabs/billing";
 
 export default async function Page({
   params,
@@ -51,10 +53,14 @@ export default async function Page({
     where: {
       id: id,
     },
+    include: {
+      teamOwner: true,
+    },
   });
   if (!software) {
     return notFound();
   }
+  
   let editedBy;
   if (software.updatedById) {
     editedBy = await prisma.user.findUnique({
@@ -93,6 +99,7 @@ export default async function Page({
     include: {
       sharedAccount: true,
       createdBy: true,
+     
     },
   });
 
@@ -117,16 +124,17 @@ export default async function Page({
               {software.category}
             </Badge>
           </div>
+          
           <div className="flex gap-2">
+            <OwnerProfile software={software as SoftwareWithTeamOwner} />
+            
             <Drawer software={software} />
             <Button variant="outline" size="sm">
               <Settings className="mr-2 h-4 w-4 " />
               Configure
             </Button>
-            <Button variant="default" size="sm">
-              <ExternalLink className="mr-2 h-4 w-4" />
-              Open Shopify
-            </Button>
+           
+           
           </div>
         </div>
 
@@ -182,7 +190,7 @@ export default async function Page({
                       <div className="flex items-center">
                         <Globe className="h-4 w-4 text-slate-400 mr-1.5" />
                         <a
-                          href={`https://${software.website}`}
+                          href={`https://${software.website || "#"}`}
                           className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
                         >
                           {software.website}
@@ -229,7 +237,7 @@ export default async function Page({
             {editedBy && <p>Edited By: {editedBy.name}</p>}
           </TabsContent>
           <TabsContent value="billing">
-
+            <BillingTab software={software} />
 
             <Card className=" border shadow-sm md:col-span-2 ">
             <CardHeader className="pb-2">

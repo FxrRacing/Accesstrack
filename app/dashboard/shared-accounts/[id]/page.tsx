@@ -9,118 +9,138 @@ import Users from "./users";
 import DeleteButton from "./delete-button";
 import { Suspense } from "react";
 import UnassignSoftwareButton from "./unassign-software-button";
+import PermissionsProvider from "@/utils/providers/permissions";
 
 export default async function Page({
-    params,
-  }: {
-    params: Promise<{ id: string }>;
-  }) {
-    const supabase = await createClient()
-  
-    const { data, error } = await supabase.auth.getUser()
-    
-    if (error || !data?.user) {
-      redirect('/login')
-    }
-  
-    const { id } = await params;
-    const sharedAccount = await prisma.sharedAccount.findUnique({
-        where: {
-            id: id,
-        },
-    });
-    if (!sharedAccount) {
-        return notFound()
-    }
-    const alreadyAssignedSoftware = await prisma.sharedAccountSoftware.findMany({
-      where: {
-        sharedAccountId: sharedAccount.id,
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error || !data?.user) {
+    redirect("/login");
+  }
+
+  const { id } = await params;
+  const sharedAccount = await prisma.sharedAccount.findUnique({
+    where: {
+      id: id,
+    },
+  });
+  if (!sharedAccount) {
+    return notFound();
+  }
+  const alreadyAssignedSoftware = await prisma.sharedAccountSoftware.findMany({
+    where: {
+      sharedAccountId: sharedAccount.id,
+    },
+    include: {
+      software: true,
+    },
+  });
+  const alreadyAssignedSoftwareIds = alreadyAssignedSoftware.map(
+    (s) => s.softwareId
+  );
+
+  const availableSoftware = await prisma.software.findMany({
+    where: {
+      id: {
+        notIn: alreadyAssignedSoftwareIds,
       },
-      include: {
-        software: true,
-      },
-    });
-    const alreadyAssignedSoftwareIds = alreadyAssignedSoftware.map((s) => s.softwareId);
-    
-    const availableSoftware = await prisma.software.findMany(
-      {
-        where: {
-          id: {
-            notIn: alreadyAssignedSoftwareIds,
-          },
-        },
-      }
+    },
+  });
 
-     
-    );
-
-    
-    
-
-    return <>
-    <div className="flex flex-col gap-4 p-3">
-      <Suspense fallback={<div>Loading Delete Button...</div>}>
-    <DeleteButton id={id} />
-    </Suspense>
-    
+  return (
+    <>
+      <div className="flex flex-col gap-4 p-3">
+        <PermissionsProvider requiredPermission="delete" replaceWith={<p></p>}>
+          <Suspense fallback={<div>Loading Delete Button...</div>}>
+            <DeleteButton id={id} />
+          </Suspense>
+        </PermissionsProvider>
 
         <h1>Shared Account: {id}</h1>
         <p>Name: {sharedAccount.name}</p>
         <p>Email: {sharedAccount.email}</p>
         <p>Location: {sharedAccount.location}</p>
-     
+
         <p>Type: {sharedAccount.type}</p>
         <p>Status: {sharedAccount.status}</p>
         <p>Created At: {sharedAccount.createdAt.toLocaleDateString()}</p>
         <p>Updated At: {sharedAccount.updatedAt.toLocaleDateString()}</p>
-    </div>
-    <div className="flex flex-col gap-4 p-3">
+      </div>
+      <div className="flex flex-col gap-4 p-3">
         <h1 className="text-xl font-bold">Software</h1>
         <div className="flex flex-col gap-4">
-         
           {alreadyAssignedSoftware.map((software) => (
             <div key={software.id}>
-             <Link href={`/dashboard/software/${software.softwareId}`} prefetch={true}>{software.software.name}</Link>
+              <Link
+                href={`/dashboard/software/${software.softwareId}`}
+                prefetch={true}
+              >
+                {software.software.name}
+              </Link>
               <p>{software.accessLevel}</p>
               <p>{software.role}</p>
-              <UnassignSoftwareButton id={software.id} sharedAccountId={sharedAccount.id} authId={data.user.id} softwareId={software.softwareId} />
+              <UnassignSoftwareButton
+                id={software.id}
+                sharedAccountId={sharedAccount.id}
+                authId={data.user.id}
+                softwareId={software.softwareId}
+              />
             </div>
           ))}
-          {availableSoftware.length === 0 && <p>There are no available software to assign to this shared account</p>}
+          {availableSoftware.length === 0 && (
+            <p>
+              There are no available software to assign to this shared account
+            </p>
+          )}
         </div>
-
-<br />
+        <br />
         =================
-       <p className="text-xl font-bold">Assign Software</p>
+        <p className="text-xl font-bold">Assign Software</p>
         =================
         <form action={assignSoftware} className="flex flex-col gap-4">
-         
-
-          <input type="text" name="sharedAccountId" readOnly value={sharedAccount.id} hidden />
+          <input
+            type="text"
+            name="sharedAccountId"
+            readOnly
+            value={sharedAccount.id}
+            hidden
+          />
           <label>Software</label>
           <select name="softwareId">
-                {availableSoftware.map((software) => (
-                    <option key={software.id} value={software.id}>{software.name}</option>
-                ))}
-            </select>
-            <input type="text" name="grantedById" readOnly value={data.user.id} hidden />
+            {availableSoftware.map((software) => (
+              <option key={software.id} value={software.id}>
+                {software.name}
+              </option>
+            ))}
+          </select>
+          <input
+            type="text"
+            name="grantedById"
+            readOnly
+            value={data.user.id}
+            hidden
+          />
           <label>Access Level</label>
-          <input type="text" name="accessLevel" defaultValue="admin"  />
+          <input type="text" name="accessLevel" defaultValue="admin" />
           <label>Role</label>
-          <input type="text" name="role" defaultValue="admin"  />
+          <input type="text" name="role" defaultValue="admin" />
           <button type="submit">Assign</button>
         </form>
-
-    </div>
-    <div className="flex flex-col gap-4 p-3">
+      </div>
+      <div className="flex flex-col gap-4 p-3">
         <h1>Users</h1>
-       
+
         <Users id={id} authId={data.user.id} />
-    </div>
-
-
-    <br />
-    =============== 
-    <History id={id} />
+      </div>
+      <br />
+      ===============
+      <History id={id} />
     </>
-} ;
+  );
+}
