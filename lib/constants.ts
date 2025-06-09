@@ -1,4 +1,4 @@
-export const PaymentFrequency = {
+export const paymentFrequency = {
     WEEKLY: "WEEKLY",
     BIWEEKLY: "BIWEEKLY",
     SEMIMONTHLY: "SEMIMONTHLY",
@@ -7,14 +7,14 @@ export const PaymentFrequency = {
     ANNUALLY: "ANNUALLY",
   } 
   
-  export const PaymentMethod = {
-    CREDIT_CARD: "CREDIT_CARD",
-    DEBIT_CARD: "DEBIT_CARD",
-    BANK_TRANSFER: "BANK_TRANSFER",
-    CHECK: "CHECK",
-    PAYPAL: "PAYPAL",
-    OTHER: "OTHER",
-  } as const
+//   export const paymentMethodOptions = {
+//     CREDIT_CARD: "CREDIT_CARD",
+//     DEBIT_CARD: "DEBIT_CARD",
+//     BANK_TRANSFER: "BANK_TRANSFER",
+//     CHECK: "CHECK",
+//     PAYPAL: "PAYPAL",
+//     OTHER: "OTHER",
+//   } as const
 
  export  const statusOptions = [
     { label: "Active", value: "active" },
@@ -24,7 +24,26 @@ export const PaymentFrequency = {
     { label: "Expired", value: "expired" },
    
   ]
-  
+
+  export const paymentFrequencyOptions = [
+    { label: "WEEKLY", value: "WEEKLY" },
+    { label: "BIWEEKLY", value: "BIWEEKLY" },
+    { label: "SEMIMONTHLY", value: "SEMIMONTHLY" },
+    { label: "MONTHLY", value: "MONTHLY" },
+    { label: "QUARTERLY", value: "QUARTERLY" },
+    { label: "ANNUALLY", value: "ANNUALLY" },
+  ]
+
+  export const paymentMethodOptions = [
+    { label: "Canadian Credit Card", value: "CANADIAN_CREDIT_CARD" },
+    { label: "Canadian Debit Card", value: "CANADIAN_DEBIT_CARD" },
+    { label: "US Credit Card", value: "US_CREDIT_CARD" },
+    { label: "US Debit Card", value: "US_DEBIT_CARD" },
+    { label: "Bank Transfer", value: "BANK_TRANSFER" },
+    { label: "Check", value: "CHECK" },
+    { label: "PayPal", value: "PAYPAL" },
+    { label: "Other", value: "OTHER" },
+  ]
   export const currencyOptions = [
     { label: "USD ($)", value: "USD" },
     { label: "EUR (€)", value: "EUR" },

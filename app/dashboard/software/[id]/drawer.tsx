@@ -1,5 +1,5 @@
 "use client";
-import { Software } from "@prisma/client";
+import { PaymentFrequency, Software } from "@prisma/client";
 import {  useForm } from "react-hook-form"
 import { editSoftware } from "@/actions/software_actions";
 import { z } from "zod"
@@ -41,7 +41,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 import { Check, ChevronsUpDown } from "lucide-react";
-import { statusOptions, PaymentFrequency, licenseTypeOptions, currencyOptions, categoryOptions} from "@/lib/constants";
+import { statusOptions,  licenseTypeOptions, currencyOptions, categoryOptions} from "@/lib/constants";
 
 const FormSchema = z.object({
   
