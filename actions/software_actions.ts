@@ -120,63 +120,109 @@ export async function editSoftware(formData: FormData) {
   }
 
 
-  export async function assignUserToSoftware(prevState: {message: string},formData: FormData) {
-   
-    //we are not logged in so we will use a default user id
-    const softwareId = formData.get('softwareId') as string | null;
-    const grantedById = formData.get('grantedById') as string| null;
-    const accessLevel = formData.get('accessLevel') as string | null;
-    const role = formData.get('role') as string | null;
-    const userId = formData.get('userId') as string | null;
-    if (!softwareId || !grantedById || !accessLevel || !role || !userId)  {
-        return {message: 'All fields are required.'}
-    }
-
-  console.table({
-    softwareId,
-    grantedById,
-    accessLevel,
-    role,
-    userId,
-  });
-
-  const alreadyAssigned = await prisma.userSoftware.findFirst({
-    where: { userId, softwareId },
-  });
-  
-  if (alreadyAssigned) {
-    return {message: 'This user already has access to this software.'}
-  }
+  export async function assignUserToSoftware(prevState: {message: string, success: boolean}, formData: FormData) {
     try {
-        const userSoftware = await prisma.userSoftware.create({
-            data: {
-                userId: userId,
-                softwareId: softwareId,
-                grantedById: grantedById,
-                accessLevel: accessLevel, // Replace 'default' with the appropriate value
-                role: role, // Replace 'user' with the appropriate value
-            },
+      // Get assignments from form data
+      const assignments = formData.getAll('assignments').map(assignment => JSON.parse(assignment as string)) as Array<{
+        userId: string;
+        role: string;
+        accessLevel: string;
+      }>;
+      const softwareId = formData.get('softwareId') as string;
+      const grantedById = formData.get('grantedById') as string;
+
+      // Validate required fields
+      if (!assignments.length) {
+        return {
+          success: false,
+          message: 'Please select at least one user'
+        };
+      }
+
+      if (!softwareId || !grantedById) {
+        return {
+          success: false,
+          message: 'Missing required fields: software ID or granted by ID'
+        };
+      }
+
+      // Execute transaction
+      await prisma.$transaction(async (tx) => {
+        for (const assignment of assignments) {
+          try {
+            // Check if user is already assigned
+            const alreadyAssigned = await tx.userSoftware.findFirst({
+              where: { 
+                userId: assignment.userId, 
+                softwareId 
+              },
+              include: {
+                user: true
+              }
+            });
+
+            if (alreadyAssigned) {
+              throw new Error(`User ${alreadyAssigned.user.name} already has access to this software.`);
+            }
+
+            // Create user software assignment
+            const userSoftware = await tx.userSoftware.create({
+              data: {
+                userId: assignment.userId,
+                softwareId,
+                grantedById,
+                accessLevel: assignment.accessLevel,
+                role: assignment.role,
+              },
+              include: {
+                user: true
+              }
+            });
+
+            // Create history entry
+            await tx.softwareHistory.create({
+              data: {
+                softwareId,
+                action: 'Assigned User',
+                field: 'users',
+                oldValue: null,
+                newValue: userSoftware.user.name,
+                updatedBy: grantedById,
+              }
+            });
+          } catch (error) {
+            console.error('Error processing assignment:', error);
+            throw error;
+          }
+        }
+
+        // Update user count
+        const userCount = await tx.userSoftware.count({
+          where: { softwareId }
         });
-        //valudate the current userCount is correct,  count it 
-        const userCount = await prisma.userSoftware.count({
-            where: { softwareId: softwareId }
+
+        await tx.software.update({
+          where: { id: softwareId },
+          data: { userCount }
         });
-        
-  
-        await prisma.software.update({
-            where: { id: softwareId },
-            data: { userCount: userCount },
-        });
-        //increment the userCount of the software
-      
-        console.log('User Software created:', userSoftware);
-        revalidatePath(`/dashboard/software/${softwareId}`);
-        return {message: 'success'}
+      });
+
+      // Revalidate paths
+      revalidatePath(`/dashboard/software/${softwareId}`);
+      revalidatePath('/dashboard/software');
+
+      return {
+        success: true,
+        message: `Successfully assigned ${assignments.length} user${assignments.length === 1 ? '' : 's'} to the software`
+      };
     } catch (error) {
-        console.error('Error creating User Software:', error);
-        return {message: 'Failed to create User Software.'}
+      console.error('Error in assignUserToSoftware:', error);
+      return {
+        success: false,
+        message: `Failed to assign users: ${error instanceof Error ? error.message : 'Unknown error'}`
+      };
     }
-}
+  }
 
 export async function updateSoftware(
   prevState: { message: string },
@@ -217,9 +263,11 @@ export async function updateSoftware(
         paymentFrequency[formData.get('paymentFrequency') as keyof typeof paymentFrequency] as PrismaPaymentFrequency : 
         undefined,
       paymentMethod: formData.get('paymentMethod') as PaymentMethod,
+      accountRep: formData.get('accountRep') as string,
+      notes: formData.get('notes') as string,
     }
 
-   // console.table(newData)
+   console.table(newData)
     // Find changed fields and build history entries in one pass
     const { updates, changes } = Object.entries(newData).reduce((acc, [key, value]) => {
       const field = key as SoftwareField

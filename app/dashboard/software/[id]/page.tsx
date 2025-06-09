@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
-import Link from "next/link";
+
 import { Drawer } from "./drawer";
 
 
@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { Suspense } from "react";
 
-import { CalendarClock, Globe, Info, Settings, Shield, Tag, Users } from "lucide-react";
+import { CalendarClock, Globe, Info, Plus, Settings, Shield, Tag, Users } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -23,17 +23,12 @@ import { StatusTypes } from "@/types/types";
 import { Card, CardContent, CardTitle, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatDate } from "date-fns";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+
 import OwnerProfile, { SoftwareWithTeamOwner } from "./owner-profile";
 import { BillingTab } from "./tabs/billing";
+import Overview from "./tabs/overview";
+import { columns, SharedAccountSoftwareWithRelations } from "./components/shared-accounts-table/columns";
+import { DataTable } from "./components/shared-accounts-table/data-table";
 
 export default async function Page({
   params,
@@ -154,7 +149,7 @@ export default async function Page({
             </TabsTrigger>
           </TabsList>
           <TabsContent value="overview">
-           
+            <Overview software={software} />
             <Card className=" border shadow-sm md:col-span-2 ">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
@@ -261,71 +256,82 @@ export default async function Page({
            
           </TabsContent>
           <TabsContent value="users">
-            <p>Users</p>
-
-            <Suspense fallback={<div>Loading Users...</div>}>
+          <Card className="border shadow-sm md:col-span-2">
+      <CardHeader className="pb-4 border-b border-gray-100">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Info className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <CardTitle className="text-lg font-semibold text-gray-900">Users</CardTitle>
+              <p className="text-sm text-gray-500 mt-1">
+                Manage software users
+              </p>
+            </div>
+          </div>
+          <Suspense fallback={<div>Loading Users...</div>}>
               {/* Assign software */}
-              <p>Assign Software</p>
+            
               {availableUsers.length > 0 ? (
                 <AssignForm
                   id={id}
                   availableUsers={availableUsers}
                   authId={data.user.id}
+                  trigger={<Button variant="outline" size="sm"> <Plus className="h-4 w-4 mr-2" />Add Users</Button>}
                 />
               ) : (
                 <p>There are no available users to assign to this software</p>
               )}
-              =========================================
+              </Suspense>
+        </div>
+      </CardHeader>
+
+      <CardContent className="pt-4">
+            <Suspense fallback={<div>Loading Users...</div>}>
+              {/* Assign software */}
+             
+              
               <UserManagement users={users} />
             
               
             </Suspense>
+            </CardContent>
+            </Card>
           </TabsContent>
           <TabsContent value="shared-accounts">
-            <Card className=" border shadow-sm md:col-span-2 ">
-            <CardHeader className="pb-0">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-medium ">Shared Accounts</CardTitle>
-                    <Button variant="ghost" size="sm" className="h-8 px-2  hover:bg-slate-50">
-                      <Settings className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardHeader>
-              <CardContent>
+           
+            <Card className="border shadow-sm md:col-span-2">
+      <CardHeader className="pb-4 border-b border-gray-100">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Info className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <CardTitle className="text-lg font-semibold text-gray-900">Shared Accounts</CardTitle>
+              <p className="text-sm text-gray-500 mt-1">
+                Manage shared accounts
+              </p>
+            </div>
+          </div>
+          <Suspense fallback={<div>Loading Users...</div>}>
+              {/* Assign software */}
+            <p>Shared Accounts</p>
+            
+              </Suspense>
+        </div>
+      </CardHeader>
+      <CardContent>
               <Suspense fallback={<div>Loading Shared Accounts...</div>}>
+              <DataTable columns={columns} data={sharedAccounts as unknown as SharedAccountSoftwareWithRelations[]} />
+
+
+             
              
 
 
-              <Table >
-                <TableCaption>A list of your recent invoices.</TableCaption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[100px]">Account</TableHead>
-                    <TableHead>Access Level</TableHead>
-                    <TableHead>Assigned At</TableHead>
-                    <TableHead className="text-right">Created By</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-
-              {sharedAccounts.map((sharedAccount) => (
-                 
-                  <TableRow key={sharedAccount.id} >
-                  <Link
-                href={`/dashboard/shared-accounts/${sharedAccount.sharedAccountId}`}
-                prefetch={true}
-              >
-                    <TableCell className="font-medium">{sharedAccount.sharedAccount.name}</TableCell>
-                    <TableCell>{sharedAccount.accessLevel}</TableCell>
-                    <TableCell>{sharedAccount.assignedAt.toLocaleDateString()}</TableCell>
-                    <TableCell className="text-right">{sharedAccount.createdBy.fullName}</TableCell>
-                    </Link>
-                  </TableRow>
-                  
-                  
-                ))}
-                </TableBody>
-              </Table>
+              
                 
               
             </Suspense>

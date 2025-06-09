@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Software, User, UserSoftware } from "@prisma/client"
-import UserList from "@/hooks/user-management"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -278,11 +278,8 @@ export default function UserManagement({
   const hasActiveFilters = selectedRoles.length > 0 || selectedAccessLevels.length > 0
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-center">
-        <h1 className="text-2xl font-bold">Staff with access </h1>
-        <UserList />
-      </div>
+    <div className="container mx-auto py-0 space-y-6">
+     
 
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
         <div className="w-full md:w-auto flex flex-col md:flex-row gap-2">
