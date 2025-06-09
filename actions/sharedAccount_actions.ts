@@ -2,6 +2,7 @@
 import { Role } from "@/lib/constants";
 import { AccessLevel } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
+import { SharedAccount } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 //import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -15,6 +16,9 @@ const createSharedAccountSchema = z.object({
     status: z.string().min(1, "Status is required"),
     updatedBy: z.string().min(1, "Updated by is required"),
 })
+
+
+
 
 
 export async function createSharedAccount(prevState: { message: string, errors: Record<string, string[]> | null }, formData: FormData) {
@@ -409,11 +413,15 @@ export type UserRoleAssignment = {
       await prisma.$transaction(async (tx) => {
         for (const assignment of assignments) {
           try {
-            await tx.sharedAccountUser.create({
+           
+           const sharedAccountUser = await tx.sharedAccountUser.create({
               data: {
                 sharedAccountId: assignment.sharedAccountId,
                 userId: assignment.userId,
                 createdById: assignment.authId,
+              },
+              include: {
+                user: true
               }
             })
             await tx.sharedAccountHistory.create({
@@ -422,7 +430,7 @@ export type UserRoleAssignment = {
                 sharedAccountId: assignment.sharedAccountId,
                 field: "users",
                 oldValue: null,
-                newValue: assignment.userId,
+                newValue: sharedAccountUser.user.name,
                 updatedById: assignment.authId,
               }
             })
@@ -458,3 +466,78 @@ export type UserRoleAssignment = {
       }
     }
   }
+
+
+  export async function editSharedAccount(prevState: {message: string, success: boolean}, formData: FormData) {
+    const id = formData.get('id') as string;
+    const authId = formData.get('authId') as string;
+    
+    if (!id || !authId) {
+        return {message: 'Shared Account or Auth ID is required.' , success: false}
+    }
+
+    try {
+        const oldVersion = await prisma.sharedAccount.findUnique({
+            where: { id },
+        })
+
+        if (!oldVersion) {
+            return {message: 'Shared Account not found.' , success: false}
+        }
+
+        // Get all form fields at once
+        const newData = {
+            name: formData.get('name') as string,
+            email: formData.get('email') as string,
+            location: formData.get('location') as string,
+            type: formData.get('type') as string,
+            status: formData.get('status') as string,
+            updatedById: formData.get('updatedBy') as string,
+        }
+
+        // Find changed fields in one pass
+        const updates = Object.entries(newData).reduce((acc, [key, value]) => {
+            if (value !== null && value !== oldVersion[key as keyof typeof oldVersion]) {
+                (acc as Record<string, string>)[key] = value as string
+            }
+            return acc
+        }, {} as Partial<SharedAccount>)
+
+        if (Object.keys(updates).length === 0) {
+            return { message: 'No changes detected.', success: true }
+        }
+
+        // Use transaction for atomic updates
+        await prisma.$transaction(async (tx) => {
+            // Update shared account
+            await tx.sharedAccount.update({
+                where: { id },
+                data: updates,
+            })
+
+            // Create history entries
+            await Promise.all(
+                Object.entries(updates).map(([key, value]) =>
+                    tx.sharedAccountHistory.create({
+                        data: {
+                            action: "Updated Shared Account",
+                            sharedAccountId: id,
+                            field: key,
+                            oldValue: oldVersion[key as keyof typeof oldVersion] as string || null,
+                            newValue: value as string,
+                            updatedById: authId,
+                        },
+                    })
+                )
+            )
+        })
+
+        revalidatePath(`/dashboard/shared-accounts/${id}`)
+        revalidatePath('/dashboard/shared-accounts')
+        
+        return { message: 'Shared account updated successfully.', success: true }
+    } catch (error) {
+        console.error('Error editing shared account:', error)
+        return { message: 'Failed to edit shared account.', success: false }
+    }
+}

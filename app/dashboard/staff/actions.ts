@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma';
 import {  serviceRoleClient } from '@/utils/supabase/admin';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { Role } from '@/utils/providers/permissions';
+import { Role } from '@/types/permissions';
 
 
 

@@ -17,10 +17,12 @@ export const PaymentFrequency = {
   } as const
 
  export  const statusOptions = [
-    { label: "Active", value: "ACTIVE" },
-    { label: "Inactive", value: "INACTIVE" },
-    { label: "Pending", value: "PENDING" },
-    { label: "Cancelled", value: "CANCELLED" },
+    { label: "Active", value: "active" },
+    { label: "Inactive", value: "inactive" },
+    { label: "Pending", value: "pending" },
+    { label: "Cancelled", value: "cancelled" },
+    { label: "Expired", value: "expired" },
+   
   ]
   
   export const currencyOptions = [
@@ -52,3 +54,18 @@ export const PaymentFrequency = {
 export type Role = "admin" | "editor" | "viewer" | "contributor" | "owner" | "user"
 
 export type AccessLevel = "view-only" | "edit" | "full-access" | "owner" | "user" | "delete"
+
+
+export const accountTypeOptions = [
+    { label: "Factory Ride", value: "factory-ride" },
+    { label: "FXR", value: "fxr" },
+    { label: "Adrenaline", value: "adrenaline" },
+    { label: "Outlook", value: "outlook" },
+    { label: "Gmail", value: "gmail" },
+    { label: "Yahoo", value: "yahoo" },
+    { label: "Hotmail", value: "hotmail" },
+    { label: "AOL", value: "aol" },
+    { label: "iCloud", value: "icloud" },
+  
+    { label: "Other", value: "other" },
+]

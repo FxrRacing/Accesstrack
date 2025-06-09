@@ -36,6 +36,9 @@ export async function getImage(url: string) {
             case "aol":
                 cleanedDomain = "aol.com";
                 break;
+            case "hotmail":
+                cleanedDomain = "hotmail.com";
+                break;
             case "icloud":
                 cleanedDomain = "icloud.com";
                 break;

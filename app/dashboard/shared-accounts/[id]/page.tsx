@@ -1,18 +1,19 @@
-import { assignSoftware } from "@/actions/sharedAccount_actions";
+
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
 import History from "./history";
-import Link from "next/link";
+
 
 import { notFound, redirect } from "next/navigation";
 import Users from "./users";
-import DeleteButton from "./delete-button";
+import { User } from "@supabase/supabase-js";
+
 import { Suspense } from "react";
-import UnassignSoftwareButton from "./unassign-software-button";
-import PermissionsProvider from "@/utils/providers/permissions";
+
+
 import { Tabs } from "@/components/ui/tabs";
 import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BadgeCheck, Calendar, Info, MapPin, Settings } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StatusTypes } from "@/types/types";
@@ -21,11 +22,14 @@ import { retrieveLogo } from "@/utils/image-service";
 import EditableOverview from "./editable-overview";
 
 import { CardTitle } from "@/components/ui/card";
-import { Mail } from "lucide-react";
+import { BadgeCheck, Calendar, Info, Mail, MapPin,  } from "lucide-react";
 import { CardHeader } from "@/components/ui/card";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+
 import { CardContent } from "@/components/ui/card";
+import PermissionsProvider from "@/utils/providers/permissions";
+import SoftwareTab from "./tabs/software";
+
 
 
 export default async function Page({
@@ -50,25 +54,17 @@ export default async function Page({
   if (!sharedAccount) {
     return notFound();
   }
-  const alreadyAssignedSoftware = await prisma.sharedAccountSoftware.findMany({
-    where: {
-      sharedAccountId: sharedAccount.id,
-    },
-    include: {
-      software: true,
-    },
-  });
-  const alreadyAssignedSoftwareIds = alreadyAssignedSoftware.map(
-    (s) => s.softwareId
-  );
-
-  const availableSoftware = await prisma.software.findMany({
-    where: {
-      id: {
-        notIn: alreadyAssignedSoftwareIds,
+  const locations = await prisma.location.findMany(
+    {
+      orderBy: {
+        name: "asc",
       },
-    },
-  });
+    }
+  )
+  
+ 
+
+ 
   const iconUrl = await retrieveLogo(sharedAccount?.type || "");
 
   return (
@@ -115,22 +111,16 @@ export default async function Page({
           </TabsList>
           <TabsContent value="overview">
             <Card className=" border shadow-sm md:col-span-2 ">
-
-              <EditableOverview sharedAccount={sharedAccount} /> 
-----------------------------------
-              <CardHeader className="pb-2">
+<PermissionsProvider requiredPermission="edit" 
+replaceWith={
+<>
+  <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium flex items-center gap-1">
                     <Info className="w-4 h-4" />
                     Overview
                   </CardTitle>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 px-2  hover:bg-slate-50"
-                  >
-                    <Settings className="h-4 w-4" />
-                  </Button>
+                  
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
@@ -177,86 +167,17 @@ export default async function Page({
                   </div>
                 </div>
               </CardContent>
+  </>}>
+              <EditableOverview sharedAccount={sharedAccount} authUser={data.user as  User} locations={locations} /> 
+              </PermissionsProvider>
+
+              
             </Card>
           </TabsContent>
 
           <TabsContent value="software">
             <Card className=" border shadow-sm md:col-span-2 ">
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium ">
-                    Software
-                  </CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="flex flex-col gap-4 p-3">
-                  <h1 className="text-xl font-bold">Software</h1>
-                  <div className="flex flex-col gap-4">
-                    {alreadyAssignedSoftware.map((software) => (
-                      <div key={software.id}>
-                        <Link
-                          href={`/dashboard/software/${software.softwareId}`}
-                          prefetch={true}
-                        >
-                          {software.software.name}
-                        </Link>
-                        <p>{software.accessLevel}</p>
-                        <p>{software.role}</p>
-                        <UnassignSoftwareButton
-                          id={software.id}
-                          sharedAccountId={sharedAccount.id}
-                          authId={data.user.id}
-                          softwareId={software.softwareId}
-                        />
-                      </div>
-                    ))}
-                    {availableSoftware.length === 0 && (
-                      <p>
-                        There are no available software to assign to this shared
-                        account
-                      </p>
-                    )}
-                  </div>
-                  <br />
-                  =================
-                  <p className="text-xl font-bold">Assign Software</p>
-                  =================
-                  <form action={assignSoftware} className="flex flex-col gap-4">
-                    <input
-                      type="text"
-                      name="sharedAccountId"
-                      readOnly
-                      value={sharedAccount.id}
-                      hidden
-                    />
-                    <label>Software</label>
-                    <select name="softwareId">
-                      {availableSoftware.map((software) => (
-                        <option key={software.id} value={software.id}>
-                          {software.name}
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      type="text"
-                      name="grantedById"
-                      readOnly
-                      value={data.user.id}
-                      hidden
-                    />
-                    <label>Access Level</label>
-                    <input
-                      type="text"
-                      name="accessLevel"
-                      defaultValue="admin"
-                    />
-                    <label>Role</label>
-                    <input type="text" name="role" defaultValue="admin" />
-                    <button type="submit">Assign</button>
-                  </form>
-                </div>
-              </CardContent>
+            <SoftwareTab sharedAccount={sharedAccount} data={data} />
             </Card>
           </TabsContent>
           <TabsContent value="users">
@@ -272,15 +193,6 @@ export default async function Page({
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
-      <div className="flex flex-col gap-4 p-3">
-        <PermissionsProvider requiredPermission="delete" replaceWith={<p></p>}>
-          <Suspense fallback={<div>Loading Delete Button...</div>}>
-            <DeleteButton id={id} />
-          </Suspense>
-        </PermissionsProvider>
-
-        
       </div>
       
     </>

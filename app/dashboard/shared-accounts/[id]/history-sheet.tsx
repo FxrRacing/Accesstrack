@@ -4,8 +4,9 @@ import { SharedAccount, SharedAccountHistory, UserProfiles } from "@prisma/clien
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import {GradientAvatar} from "./gradient-avatar"
-import { Clock } from "lucide-react"
+import { Clock, } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
+
 export type HistoryWithUser = SharedAccountHistory & { updatedBy: UserProfiles, sharedAccount: SharedAccount }
 type props = {
     history: HistoryWithUser[]
@@ -22,6 +23,7 @@ export default function HistorySheet({history}: props) {
         if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`
         return `${Math.floor(diffInSeconds / 86400)} days ago`
       }
+      
     
     return <div>
         <Sheet>
@@ -32,6 +34,54 @@ export default function HistorySheet({history}: props) {
       <SheetDescription>
         View the history of changes to this account.
       </SheetDescription>
+      {/* <div className="flex justify-end">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="mt-4">Filter <Filter className="ml-2 h-4 w-4" /></Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <div className="flex flex-col gap-2 space-y-2">
+              <div className="flex items-center gap-2">
+              <Checkbox id="name" />
+              <Label htmlFor="name">Name</Label>
+              </div>
+              <div className="flex items-center gap-2">
+              <Checkbox id="email" />
+              <Label htmlFor="email">Email</Label>
+              </div>
+              <div className="flex items-center gap-2">
+              <Checkbox id="location" />
+              <Label htmlFor="location">Location</Label>
+              </div>
+              <div className="flex items-center gap-2">
+              <Checkbox id="type" />
+              <Label htmlFor="type">Type</Label>
+              </div>
+
+              
+               <Separator className="my-2" />
+               <div className="flex items-center gap-2">
+              <Checkbox id="today" />
+              <Label htmlFor="today">Today</Label>
+              </div>
+              <div className="flex items-center gap-2">
+              <Checkbox id="yesterday" />
+              <Label htmlFor="yesterday">Yesterday</Label>
+              </div>
+              
+              <div className="flex items-center gap-2">
+              <Checkbox id="this-week" />
+              <Label htmlFor="this-week">This Week</Label>
+              </div>
+              <div className="flex items-center gap-2">
+              <Checkbox id="this-month" />
+              <Label htmlFor="this-month">This Month</Label>
+              </div>
+            
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div> */}
     </SheetHeader>
    <ScrollArea className="h-[calc(100vh-8rem)]">
    <div className="flex flex-col gap-2">

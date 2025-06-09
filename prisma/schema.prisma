@@ -138,6 +138,7 @@ model Software {
   iconUrl              String?
   assignedToId          String?           @db.Uuid
   accountReps          AccountRep[]
+  purchaseDate         DateTime?
 
   teamOwnerId          String?           @db.Uuid
   teamOwner            UserProfiles?     @relation("TeamOwner", fields: [teamOwnerId], references: [id], onDelete: Cascade)

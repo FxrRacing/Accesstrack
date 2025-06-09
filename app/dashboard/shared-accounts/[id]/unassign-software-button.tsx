@@ -1,7 +1,7 @@
 'use client'
 import { removeAssignedSoftware } from "@/actions/sharedAccount_actions";
 import { Button } from "@/components/ui/button";
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2,  } from "lucide-react";
 
 import { useActionState,  } from "react";
 import { toast } from "sonner";
@@ -19,6 +19,9 @@ export default function UnassignSoftwareButton({id, sharedAccountId, authId, sof
         <input type="hidden" name="softwareId" value={softwareId} />
         {state.message && toast.success(state.message)}
 
-        <Button type="submit" disabled={pending} className=" hover:bg-red-600" onClick={() => toast.success('Removing Software from Shared Account...')}>{pending ? <Loader2 className="animate-spin" /> : <Trash2 className="w-4 h-4" />}</Button>
+        <Button type="submit" disabled={pending} className=" hover:bg-red-600" 
+        onClick={() => toast.success('Removing Software from Shared Account...')}>
+            {pending ? <Loader2 className="animate-spin" /> : <></>} Unassign
+        </Button>
     </form>
 }
