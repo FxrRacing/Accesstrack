@@ -12,12 +12,13 @@ import UnassignSoftwareButton from "./unassign-software-button";
 import PermissionsProvider from "@/utils/providers/permissions";
 import { Tabs } from "@/components/ui/tabs";
 import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, MapPin, Settings } from "lucide-react";
+import { BadgeCheck, Calendar, Info, MapPin, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StatusTypes } from "@/types/types";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { retrieveLogo } from "@/utils/image-service";
+import EditableOverview from "./editable-overview";
 
 import { CardTitle } from "@/components/ui/card";
 import { Mail } from "lucide-react";
@@ -25,6 +26,7 @@ import { CardHeader } from "@/components/ui/card";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
+
 
 export default async function Page({
   params,
@@ -113,9 +115,13 @@ export default async function Page({
           </TabsList>
           <TabsContent value="overview">
             <Card className=" border shadow-sm md:col-span-2 ">
+
+              <EditableOverview sharedAccount={sharedAccount} /> 
+----------------------------------
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium ">
+                  <CardTitle className="text-sm font-medium flex items-center gap-1">
+                    <Info className="w-4 h-4" />
                     Overview
                   </CardTitle>
                   <Button
@@ -128,6 +134,7 @@ export default async function Page({
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
+               
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="mb-1 text-muted-foreground">Name</p>
@@ -135,15 +142,16 @@ export default async function Page({
                   </div>
                   <div>
                     <p className="mb-1 text-muted-foreground flex items-center gap-1">
-                      Email <Mail className="w-4 h-4" />
+                      Email 
                     </p>
-                    <p className="text-sm">{sharedAccount.email}</p>
+                    <p className="text-sm flex items-center gap-1"> <Mail className="w-4 h-4" />{sharedAccount.email}</p>
                   </div>
                   <div>
                     <p className="mb-1 text-muted-foreground flex items-center gap-1">
                       Type{" "}
                     </p>
-                    <p className="text-sm">
+                    <p className="text-sm flex items-center gap-1">
+                      <BadgeCheck className="w-4 h-4" />
                       <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200">
                         {sharedAccount.type}
                       </Badge>
@@ -151,25 +159,21 @@ export default async function Page({
                   </div>
                   <div>
                     <p className="mb-1 text-muted-foreground flex items-center gap-1">
-                      Location <MapPin className="w-4 h-4" />
+                      Location 
                     </p>
-                    <p className="text-sm">{sharedAccount.location}</p>
+                    <p className="text-sm flex items-center gap-1"> <MapPin className="w-4 h-4" />{sharedAccount.location}</p>
                   </div>
                   <div>
                     <p className="mb-1 text-muted-foreground flex items-center gap-1">
-                      Created At <Calendar className="w-4 h-4" />
+                      Created At 
                     </p>
-                    <p className="text-sm">
-                      {sharedAccount.createdAt.toLocaleDateString()}
-                    </p>
+                    <p className="text-sm flex items-center gap-1"> <Calendar className="w-4 h-4" /> {sharedAccount.createdAt.toLocaleDateString()}</p>
                   </div>
                   <div>
                     <p className="mb-1 text-muted-foreground flex items-center gap-1">
-                      Last Updated <Calendar className="w-4 h-4" />
+                      Last Updated 
                     </p>
-                    <p className="text-sm">
-                      {sharedAccount.updatedAt.toLocaleDateString()}
-                    </p>
+                    <p className="text-sm flex items-center gap-1"> <Calendar className="w-4 h-4" /> {sharedAccount.updatedAt.toLocaleDateString()}</p>
                   </div>
                 </div>
               </CardContent>
@@ -276,21 +280,9 @@ export default async function Page({
           </Suspense>
         </PermissionsProvider>
 
-        <h1>Shared Account: {id}</h1>
-        <p>Name: {sharedAccount.name}</p>
-        <p>Email: {sharedAccount.email}</p>
-        <p>Location: {sharedAccount.location}</p>
-
-        <p>Type: {sharedAccount.type}</p>
-        <p>Status: {sharedAccount.status}</p>
-        <p>Created At: {sharedAccount.createdAt.toLocaleDateString()}</p>
-        <p>Updated At: {sharedAccount.updatedAt.toLocaleDateString()}</p>
+        
       </div>
-      <div className="flex flex-col gap-4 p-3">
-        <h1>Users</h1>
-      </div>
-      <br />
-      ===============
+      
     </>
   );
 }

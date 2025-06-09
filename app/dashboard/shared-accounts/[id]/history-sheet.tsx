@@ -43,7 +43,7 @@ export default function HistorySheet({history}: props) {
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
                       <div>
-                        <span className="font-medium">@{history.updatedBy.email?.replace(" ", "")}</span>
+                        <span className="font-medium">@{history.updatedBy.fullName?.replace(" ", "")}</span>
                         <span className="text-muted-foreground ml-2">{formatRelativeTime(history.updatedOn)}</span>
                       </div>
                     </div>
