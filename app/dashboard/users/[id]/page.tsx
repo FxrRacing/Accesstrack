@@ -39,7 +39,7 @@ export default async function Page({
     if (!user) {
       return notFound()
     }
- console.log(user)
+ 
 
     const software = await prisma.userSoftware.findMany({
       where: {

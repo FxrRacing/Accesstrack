@@ -46,3 +46,9 @@ export const PaymentFrequency = {
     { label: "Web", value: "WEB" },
     { label: "Network", value: "NETWORK" },
   ]
+
+  
+
+export type Role = "admin" | "editor" | "viewer" | "contributor" | "owner" | "user"
+
+export type AccessLevel = "view-only" | "edit" | "full-access" | "owner" | "user" | "delete"
