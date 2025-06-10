@@ -187,7 +187,7 @@ export async function editSoftware(formData: FormData) {
                 field: 'users',
                 oldValue: null,
                 newValue: userSoftware.user.name,
-                updatedBy: grantedById,
+                updatedById: grantedById,
               }
             });
           } catch (error) {
@@ -229,20 +229,18 @@ export async function updateSoftware(
   formData: FormData
 ) {
   const id = formData.get('id') as string
+  const authId = formData.get('authId') as string
+  console.log(authId)
 
   try {
     // Get current software data
     const currentSoftware = await prisma.software.findUnique({
       where: { id },
-      
     })
 
     if (!currentSoftware) {
       return { message: 'Software not found', success: false }
     }
-
-    // At the start of processing
-   
 
     // Parse form data into clean update object
     const newData: Partial<Software> = {
@@ -267,7 +265,6 @@ export async function updateSoftware(
       notes: formData.get('notes') as string,
     }
 
-   console.table(newData)
     // Find changed fields and build history entries in one pass
     const { updates, changes } = Object.entries(newData).reduce((acc, [key, value]) => {
       const field = key as SoftwareField
@@ -278,44 +275,7 @@ export async function updateSoftware(
         return acc
       }
       
-      // Special handling for dates
-      // if (field === 'purchaseDate') {
-      //   switch (true) {
-      //     case value === null:
-      //       // New value is null, old value exists
-      //       (acc.updates as Record<string, unknown>)[field] = null
-      //       acc.changes.push({
-      //         field,
-      //         oldValue: currentValue ? new Date(currentValue).toISOString() : '',
-      //         newValue: ''
-      //       })
-      //       return acc
-      //     case currentValue === null:
-      //       // Old value is null, new value exists
-      //       (acc.updates as Record<string, unknown>)[field] = value
-      //       acc.changes.push({
-      //         field,
-      //         oldValue: '',
-      //         newValue: new Date(value).toISOString()
-      //       })
-      //       return acc
-      //     default:
-      //       // Both values exist, compare them
-      //       const currentDate = new Date(currentValue).toISOString()
-      //       const newDate = new Date(value).toISOString()
-      //       if (currentDate !== newDate) {
-      //         (acc.updates as Record<string, unknown>)[field] = value
-      //         acc.changes.push({
-      //           field,
-      //           oldValue: currentDate,
-      //           newValue: newDate
-      //         })
-      //       }
-      //       return acc
-      //   }
-      // }
-      
-      // Compare other values as strings for consistency
+      // Compare values as strings for consistency
       const currentStr = currentValue?.toString() || ''
       const newStr = value?.toString() || ''
       
@@ -332,33 +292,12 @@ export async function updateSoftware(
       updates: {} as Partial<Software>, 
       changes: [] as Array<{ field: string; oldValue: string; newValue: string }> 
     })
-     
-
-    // console.log('Form Data:', {
-    //   purchaseDate: formData.get('purchaseDate'),
-    //   hasPurchaseDate: formData.has('purchaseDate'),
-    //   currentPurchaseDate: currentSoftware.purchaseDate
-    // })
-    // // After processing
-    // console.log('Processed Data:', {
-    //   purchaseDate: newData.purchaseDate,
-    //   currentPurchaseDate: currentSoftware.purchaseDate
-    // })
-
-    // During comparison
-    // console.log('Date Comparison:', {
-    //   field: 'purchaseDate',
-    //   currentDate: currentSoftware.purchaseDate,
-    //   newDate: newData.purchaseDate,
-    //   isEqual: currentSoftware.purchaseDate === newData.purchaseDate
-    // })
 
     // If no changes, return early
     if (changes.length === 0) {
       return { message: 'No changes detected', success: true }
     }
     
-   // console.log(newData)
     await prisma.$transaction(async (tx) => {
       // Update software
       await tx.software.update({
@@ -374,12 +313,13 @@ export async function updateSoftware(
           field: change.field,
           oldValue: change.oldValue,
           newValue: change.newValue,
-          updatedBy: id,
+          updatedById: authId,
         }))
       })
     })
 
     revalidatePath(`/dashboard/software/${id}`)
+    revalidatePath(`/dashboard/software/`)
     return { 
       message: 'Software updated successfully', 
       success: true 

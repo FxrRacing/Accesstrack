@@ -23,9 +23,10 @@ const initialState = {
 
 interface BillingTabProps {
   software: Software
+  authId: string
 }
 
-export function BillingTab({ software }: BillingTabProps) {
+export function BillingTab({ software, authId }: BillingTabProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [state, formAction, pending] = useActionState(updateSoftware, initialState)
 
@@ -71,7 +72,7 @@ export function BillingTab({ software }: BillingTabProps) {
           <form action={formAction}>
             <div className="grid grid-cols-2 gap-4 text-sm mb-4">
               <input type="hidden" name="id" value={software.id} />
-              
+              <input type="hidden" name="authId" value={authId} />
               <div className="flex flex-col gap-1">
                 <Label>Amount <BadgeDollarSign className="h-4 w-4 mr-1.5" /></Label>
                 <Input 

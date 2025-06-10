@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 
-import { Drawer } from "./drawer";
 
+import History from "./history";
 
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
@@ -121,13 +121,10 @@ export default async function Page({
           </div>
           
           <div className="flex gap-2">
-            <OwnerProfile software={software as SoftwareWithTeamOwner} />
+            <OwnerProfile software={software as SoftwareWithTeamOwner} authId={data.user.id} />
             
-            <Drawer software={software} />
-            <Button variant="outline" size="sm">
-              <Settings className="mr-2 h-4 w-4 " />
-              Configure
-            </Button>
+            {/* <Drawer software={software} /> */}
+            <History id={id} /> 
            
            
           </div>
@@ -149,7 +146,7 @@ export default async function Page({
             </TabsTrigger>
           </TabsList>
           <TabsContent value="overview">
-            <Overview software={software} />
+            <Overview software={software} authId={data.user.id} />
             <Card className=" border shadow-sm md:col-span-2 ">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
@@ -232,7 +229,7 @@ export default async function Page({
             {editedBy && <p>Edited By: {editedBy.name}</p>}
           </TabsContent>
           <TabsContent value="billing">
-            <BillingTab software={software} />
+            <BillingTab software={software} authId={data.user.id} />
 
             <Card className=" border shadow-sm md:col-span-2 ">
             <CardHeader className="pb-2">

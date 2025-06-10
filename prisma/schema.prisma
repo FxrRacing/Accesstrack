@@ -45,6 +45,7 @@ model UserProfiles {
   SharedAccountHistory SharedAccountHistory[]
   Invites Invites[]
     Software Software[] @relation("TeamOwner")
+    SoftwareHistory SoftwareHistory[]
 }
 
 model Invites{
@@ -139,6 +140,7 @@ model Software {
   assignedToId          String?           @db.Uuid
   accountReps          AccountRep[]
   purchaseDate         DateTime?
+  employeeNumber       String?
 
   teamOwnerId          String?           @db.Uuid
   teamOwner            UserProfiles?     @relation("TeamOwner", fields: [teamOwnerId], references: [id], onDelete: Cascade)
@@ -202,7 +204,8 @@ model SoftwareHistory {
   field      String
   newValue   String?
   oldValue   String?
-  updatedBy  String
+  updatedById  String  @db.Uuid
+  updatedBy    UserProfiles @relation(fields: [updatedById], references: [id])
   updatedOn  DateTime @default(now()) @db.Timestamptz(6)
   software   Software @relation(fields: [softwareId], references: [id], onDelete: Cascade)
 

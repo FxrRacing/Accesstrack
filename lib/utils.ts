@@ -23,3 +23,5 @@ export function formatCurrency(amount: number, currency: SupportedCurrency = 'US
 export function formatPaymentFrequency(frequency: PaymentFrequency) {
   return frequency.charAt(0).toUpperCase() + frequency.slice(1).toLowerCase()
 }
+
+

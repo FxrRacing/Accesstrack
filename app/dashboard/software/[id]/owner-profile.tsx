@@ -12,8 +12,9 @@ import PermissionsProvider from "@/utils/providers/permissions";
 export type SoftwareWithTeamOwner = Software & {
     teamOwner: UserProfiles
 }
-export default function OwnerProfile({software}: {software: SoftwareWithTeamOwner}) {
+export default function OwnerProfile({software, authId}: {software: SoftwareWithTeamOwner, authId: string}) {
    if (!software.teamOwner) {
+    console.log(authId)
     return <p>No team owner</p>
    }
    const userNameInitials = software.teamOwner.fullName?.split(" ").map((name) => name[0]).join("");

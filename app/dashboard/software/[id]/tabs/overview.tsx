@@ -37,9 +37,10 @@ const initialState = {
 
 interface OverviewTabProps {
   software: Software;
+  authId: string;
 }
 
-export default function Overview({ software }: OverviewTabProps) {
+export default function Overview({ software, authId }: OverviewTabProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [state, formAction, pending] = useActionState(
     updateSoftware,
@@ -90,6 +91,7 @@ export default function Overview({ software }: OverviewTabProps) {
             <form action={formAction}>
               <div className="grid grid-cols-2 gap-4 text-sm mb-4">
                 <input type="hidden" name="id" value={software.id} />
+                <input type="hidden" name="authId" value={authId} />
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm mb-4">
                 <div className="flex flex-col gap-1">
