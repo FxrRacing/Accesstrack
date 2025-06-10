@@ -102,7 +102,6 @@ export default function HistorySheet({history}: props) {
    <ScrollArea className="h-[calc(100vh-8rem)]">
    <div className="flex flex-col gap-2">
         {history.map((history) => (
-            <>
             <div key={history.id} className="space-y-4 p-4">
                 <div className="flex gap-4 px-6 py-2 space-y-4">
                   <GradientAvatar seed={history.updatedById} size={40} />
@@ -134,17 +133,14 @@ export default function HistorySheet({history}: props) {
                         </p>
                       )}
 
-<Link href={`/dashboard/users/${history.updatedById}`} className="text-xs text-muted-foreground mt-2" prefetch={true}>
-                      <p className="text-xs text-muted-foreground mt-2">User ID: {history.updatedBy.fullName}</p>
+                      <Link href={`/dashboard/users/${history.updatedById}`} className="text-xs text-muted-foreground mt-2" prefetch={true}>
+                        <p className="text-xs text-muted-foreground mt-2">User ID: {history.updatedBy.fullName}</p>
                       </Link>
                     </div>
                   </div>
                 </div>
                 <Separator />
               </div>
-            
-            
-            </>
         ))}
     </div>
    </ScrollArea>

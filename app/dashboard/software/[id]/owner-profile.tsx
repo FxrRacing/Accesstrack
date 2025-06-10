@@ -1,21 +1,40 @@
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import { Eye } from "lucide-react";
-import { ArrowLeftRight } from "lucide-react";
+
 import { Software, UserProfiles,  } from "@prisma/client";
-import { UserMinus } from "lucide-react";
+
 import {  PopoverTrigger } from "@/components/ui/popover";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import PermissionsProvider from "@/utils/providers/permissions";
+import { prisma } from "@/lib/prisma";
+
+import { TeamOwnerDialog } from "./components/team-owner";
+import RemoveOwner from "./components/remove-owner";
+
 
 
 export type SoftwareWithTeamOwner = Software & {
     teamOwner: UserProfiles
 }
-export default function OwnerProfile({software, authId}: {software: SoftwareWithTeamOwner, authId: string}) {
+export default async function OwnerProfile({software, authId}: {software: SoftwareWithTeamOwner, authId: string}) {
+  const potentialOwners = await prisma.userProfiles.findMany({
+    where: software.teamOwner
+      ? { id: { not: software.teamOwner.id } }
+      : undefined
+  });
+
+
+
    if (!software.teamOwner) {
-    console.log(authId)
-    return <p>No team owner</p>
+// 
+return (
+  <TeamOwnerDialog
+      software={software}
+      potentialOwners={potentialOwners}
+      authId={authId}
+    />
+);
    }
    const userNameInitials = software.teamOwner.fullName?.split(" ").map((name) => name[0]).join("");
    
@@ -41,16 +60,16 @@ export default function OwnerProfile({software, authId}: {software: SoftwareWith
         </Button>
         </PermissionsProvider>
         <PermissionsProvider requiredPermission="edit" replaceWith={<p></p>}>
-        <Button variant="ghost" className="justify-start text-sm" >
-          <ArrowLeftRight className="mr-2 h-4 w-4" />
-          Change IT Ownership
-        </Button>
+        <TeamOwnerDialog
+      software={software}
+      potentialOwners={potentialOwners}
+      authId={authId}
+    />
+        
+        
         </PermissionsProvider>
         <PermissionsProvider requiredPermission="delete" replaceWith={<p></p>}>
-        <Button variant="ghost" className="justify-start text-sm text-destructive" >
-          <UserMinus className="mr-2 h-4 w-4" />
-          Remove IT Owner
-        </Button>
+        <RemoveOwner software={software} authId={authId} />
         </PermissionsProvider>
       </div>
     </PopoverContent>   

@@ -7,9 +7,14 @@ export async function GET() {
   if (!row) {
     return NextResponse.json({ error: "No data found" }, { status: 404 });
   }
-
+ 
   // Exclude 'iconUrl' from the CSV
-  const headers = Object.keys(row).filter((key) => key !== "iconUrl" && !key.includes("id") && !key.includes("createdAt") && !key.includes("updatedAt") && !key.includes("Id") );
+  const headers = Object.keys(row).filter((key) => 
+    key !== "iconUrl" && 
+    !key.includes("createdAt") && 
+    !key.includes("updatedAt") && 
+    (key === "id" || !key.includes("Id"))
+  );
     //name description category status are required
     
   const values = headers.map((key) => {

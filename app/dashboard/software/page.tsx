@@ -8,9 +8,20 @@ import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import ImportSoftware from "./import";
 import Link from "next/link";
-export default async function SoftwarePage() {  
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
+
+export default async function SoftwarePage( ) {  
+    const supabase = await createClient()
+
+    const { data, error } = await supabase.auth.getUser()
+    
+    if (error || !data?.user) {
+      redirect('/login')
+    }
    const software= await prisma.software.findMany({});
    const teamOwners = await prisma.userProfiles.findMany({})
+   
     return (
         <>
         <main className="flex-1 ">
@@ -33,7 +44,7 @@ export default async function SoftwarePage() {
                 badge="Import"
                 icon={<FileUp className="h-20 w-20" strokeWidth={1.5} />}
                 >
-               <ImportSoftware />     
+               <ImportSoftware authId={data.user.id} />     
                 </GradientCard>     
             </div>
             <DataTable columns={columns} data={software} /> 
