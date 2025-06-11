@@ -125,12 +125,12 @@ type UserWithReportsTo = User & { reportsTo: User | null }
             
             },
           {
-            accessorKey: "location",
+            accessorKey: "Location.name",
             header: "Location",
             filterFn: (row, columnId, filterValue: string[]) => {
               return filterValue.length ? filterValue.includes(row.getValue(columnId)) : true;
             },
-            cell: ({ row }) => <div>{row.getValue("location")}</div>,
+            cell: ({ row }) => <div>{row.getValue("Location.name")}</div>,
             enableGlobalFilter: false,
         },
        

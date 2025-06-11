@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 
 import CreateUserForm from "./create-user-form";
 import { UsersTable } from "./table";
-import { User } from "@prisma/client";
+
 import { UserPlus} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -10,7 +10,7 @@ import { FileUp } from "lucide-react";
 import { GradientCard } from "@/components/ui/gradient-card";
 
 export default async function UsersPage() {
-  const users: (User & { reportsTo: User | null })[] =
+  const users =
     await prisma.user.findMany({
       orderBy: {
         name: "asc",
@@ -22,7 +22,11 @@ export default async function UsersPage() {
       },
     });
 
-    const locations = await prisma.location.findMany();
+    const locations = await prisma.location.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    });
     const departments = await prisma.department.findMany();
   return (
     <main className="flex-1 ">

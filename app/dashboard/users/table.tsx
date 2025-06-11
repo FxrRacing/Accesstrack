@@ -11,8 +11,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-    type FilterFn,
-
+  type FilterFn,
 } from "@tanstack/react-table"
 import { ChevronDown, FileDown, X } from "lucide-react"
 
@@ -29,13 +28,15 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { columns } from "./columns"
-import { User } from "@prisma/client"
+import { Location, User } from "@prisma/client"
 import Link from "next/link"
 
-interface UsersTableProps {
-  data: (User & { reportsTo: User | null })[]
+type UserWithReportsTo = User & { reportsTo: User | null, Location: Location | null }
+
+interface UsersTableProps { 
+  data: UserWithReportsTo[]
 }
-const fuzzyFilter: FilterFn<User & { reportsTo: User | null }> = (row, columnId, value, addMeta) => {
+const fuzzyFilter: FilterFn<UserWithReportsTo> = (row, columnId, value, addMeta) => {
     // If no search value, return all rows
     if (!value || value === "") return true
    
@@ -63,6 +64,13 @@ const fuzzyFilter: FilterFn<User & { reportsTo: User | null }> = (row, columnId,
     // Special handling for reportsTo relation
     if (columnId === "reportsTo.name" && row.original.reportsTo) {
       const nameValue = row.original.reportsTo.name.toLowerCase()
+      if (nameValue.includes(searchValue)) {
+        addMeta({ score: 1 }) // low score for reports to
+        return true
+      }
+    }
+    if (columnId === "Location.name" && row.original.Location) {
+      const nameValue = row.original.Location.name.toLowerCase()
       if (nameValue.includes(searchValue)) {
         addMeta({ score: 1 }) // low score for reports to
         return true
@@ -206,9 +214,8 @@ export function UsersTable({ data }: UsersTableProps) {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     filterFns: {
-        fuzzy: fuzzyFilter, //define as a filter function that can be used in column definitions
-      },
-    globalFilterFn: fuzzyFilter,
+      fuzzy: fuzzyFilter,
+    },
     state: {
       sorting,
       columnFilters,
