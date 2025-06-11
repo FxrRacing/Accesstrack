@@ -4,12 +4,23 @@ import CreateUserForm from "./create-user-form";
 import { UsersTable } from "./table";
 
 import { UserPlus} from "lucide-react";
-import { Button } from "@/components/ui/button";
+
 
 import { FileUp } from "lucide-react";
 import { GradientCard } from "@/components/ui/gradient-card";
 
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
+import ImportUsers from "./import";
+
 export default async function UsersPage() {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase.auth.getUser()
+  
+  if (error || !data?.user) {
+    redirect('/login')
+  }
   const users =
     await prisma.user.findMany({
       orderBy: {
@@ -52,10 +63,7 @@ export default async function UsersPage() {
             gradientFrom="from-indigo-500"
             gradientTo="to-purple-600"
           >
-            <Button className="bg-black text-white hover:bg-black/90 rounded-full px-6">
-              <FileUp className="mr-2 h-4 w-4" />
-              Import Users
-            </Button>
+            <ImportUsers authId={data.user.id} />
           </GradientCard>
         </div>
 

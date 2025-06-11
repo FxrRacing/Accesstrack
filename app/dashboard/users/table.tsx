@@ -69,7 +69,7 @@ const fuzzyFilter: FilterFn<UserWithReportsTo> = (row, columnId, value, addMeta)
         return true
       }
     }
-    if (columnId === "Location.name" && row.original.Location) {
+    if (columnId === "location" && row.original.Location) {
       const nameValue = row.original.Location.name.toLowerCase()
       if (nameValue.includes(searchValue)) {
         addMeta({ score: 1 }) // low score for reports to
@@ -122,8 +122,8 @@ export function UsersTable({ data }: UsersTableProps) {
 
   // Status options are fixed (active/inactive)
   const statusOptions = [
-    { label: "Active", value: "ACTIVE" },
-    { label: "Inactive", value: "INACTIVE" },
+    { label: "Active", value: "active" },
+    { label: "Inactive", value: "inactive" },
   ]
 
   // Selected filter values

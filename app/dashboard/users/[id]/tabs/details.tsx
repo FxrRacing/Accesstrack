@@ -1,7 +1,7 @@
 'use client'
 import { Department, Location, User } from "@prisma/client";
 
-import { Building2, MapPin, BadgeCheck, Mail, Pencil, User as UserIcon } from "lucide-react";
+import { Building2, MapPin, BadgeCheck, Mail, Pencil, User as UserIcon, CalendarMinus, CalendarPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -35,10 +35,8 @@ export default function Details({user, locations, departments, authId, users}: {
         email: user.email || "",
         type: user.type || "",
         reportsToId: user.reportsToId || "",
-        onboardingDate: user.onboardingDate || "",
-        offboardingDate: user.offboardingDate || "",
-
-      
+        onboardingDate: user.onboardingDate ? new Date(user.onboardingDate).toISOString().split('T')[0] : "",
+        offboardingDate: user.offboardingDate ? new Date(user.offboardingDate).toISOString().split('T')[0] : "",
     });
     
 
@@ -63,7 +61,7 @@ export default function Details({user, locations, departments, authId, users}: {
         </div>)
     }
     
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         setForm({ ...form, [e.target.name]: e.target.value });
     }
 
@@ -79,8 +77,8 @@ export default function Details({user, locations, departments, authId, users}: {
         formData.set("department", form.department);
         formData.set("location", form.location);
         formData.set("reportsToId", form.reportsToId);
-        formData.set("onboardingDate", form.onboardingDate.toString());
-        formData.set("offboardingDate", form.offboardingDate.toString());
+        formData.set("onboardingDate", form.onboardingDate || "");
+        formData.set("offboardingDate", form.offboardingDate || "");
      
         formAction(formData);
     }
@@ -148,6 +146,29 @@ export default function Details({user, locations, departments, authId, users}: {
                 <p className="text-neutral-900 font-medium text-sm">{user.email}</p>
               </div>
             </div>
+            {user.onboardingDate && (
+              <div className="group animate-fade-in-up">
+                <Label className="text-xs font-medium text-neutral-500 uppercase tracking-wide">Onboarding Date</Label>
+                <div className="flex items-center gap-2 mt-1 p-3 rounded-lg bg-green-50 border border-green-200 transition-all duration-300 group-hover:bg-green-100 hover-lift">
+                  <CalendarPlus className="h-4 w-4 text-green-600" />
+                  <p className="text-neutral-900 font-medium text-sm">
+                    {new Date(user.onboardingDate).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {user.offboardingDate && (
+              <div className="group animate-fade-in-up">
+                <Label className="text-xs font-medium text-neutral-500 uppercase tracking-wide">Offboarding Date</Label>
+                <div className="flex items-center gap-2 mt-1 p-3 rounded-lg bg-red-50 border border-red-200 transition-all duration-300 group-hover:bg-red-100 hover-lift">
+                  <CalendarMinus className="h-4 w-4 text-red-600" />
+                  <p className="text-neutral-900 font-medium text-sm">
+                    {new Date(user.offboardingDate).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            )}
             
           </div>
         ) : (
@@ -225,8 +246,9 @@ export default function Details({user, locations, departments, authId, users}: {
                 </Label>
                 <Input
                   id="onboardingDate"
+                  name="onboardingDate"
                   type="date"
-                  value={form.onboardingDate.toString()}
+                  value={form.onboardingDate}
                   onChange={handleChange}
                   className="border-neutral-200 focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 focus-ring"
                 />
@@ -237,8 +259,9 @@ export default function Details({user, locations, departments, authId, users}: {
                 </Label>
                 <Input
                   id="offboardingDate"
+                  name="offboardingDate"
                   type="date"
-                  value={form.offboardingDate.toString()}
+                  value={form.offboardingDate}
                   onChange={handleChange}
                   className="border-neutral-200 focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 focus-ring"
                 />

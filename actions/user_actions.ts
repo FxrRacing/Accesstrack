@@ -119,7 +119,7 @@ console.table({
         throw new Error('All fields are required.');
     }
    if (reportsTo === "N/A") {reportsTo = null}
-let id = ''
+//let id = ''
     try {
         // Perform the edit user action here
         const user = await prisma.user.create({
@@ -153,8 +153,8 @@ let id = ''
         revalidatePath(`/dashboard/users/${user.id}`);
         revalidatePath(`/dashboard/org-chart`);
         revalidatePath(`/dashboard/users`);
-        id = user.id
-        return {message: 'User created successfully.', id: id}
+       // id = user.id
+        return 
     } catch (error) {
         console.error('Error creating user:', error);
         throw new Error('Failed to create user.');
