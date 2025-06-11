@@ -200,7 +200,7 @@ export default function EmployeeProfile() {
             <div className="relative group">
               <Avatar className="h-16 w-16 border-2 border-white shadow-vercel-lg ring-1 ring-neutral-200 transition-all duration-500 group-hover:ring-blue-300 group-hover:shadow-vercel-xl hover-lift animate-pulse-glow">
                 <AvatarImage src="/placeholder.svg?height=64&width=64" alt={employee.name} />
-                <AvatarFallback className="text-lg gradient-amber-subtle text-white font-medium">
+                <AvatarFallback className="text-lg gradient-blue-subtle text-white font-medium">
                   {employee.name
                     .split(" ")
                     .map((n) => n[0])

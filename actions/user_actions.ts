@@ -8,14 +8,14 @@ import { revalidatePath } from 'next/cache';
 
 export async function editUser(prevState: {message: string, success: boolean}, formData: FormData) {
   
-    const jacob = formData.get('jacob') as string | null;
-    console.log(jacob)
+   
     // Mutate data
     const name = formData.get('name') as string | null;
     const departmentId = formData.get('departmentId') as string | null;
     const jobTitle = formData.get('jobTitle') as string | null;
     const email = formData.get('email') as string | null;
     const locationId = formData.get('locationId') as string | null;
+    const type = formData.get('type') as string | null;
     const status = formData.get('status') as string | null;
     const id = formData.get('id') as string | null;
     const reportsToId = formData.get('reportsToId') as string | null;
@@ -28,10 +28,14 @@ export async function editUser(prevState: {message: string, success: boolean}, f
         return {message: 'User or Auth ID is required.', success: false}
     }
 
+    // Fetch the current user before update
+    const currentUser = await prisma.user.findUnique({ where: { id: id! } });
+
     const updates : Partial<User> = {
     }
 if (departmentId != null)  updates.departmentId  = departmentId
 if (email      != null)  updates.email       = email
+if (type       != null)  updates.type        = type
 // if (location   != null)  updates.locationId    = location
 if (jobTitle   != null)  updates.jobTitle    = jobTitle
 if (name       != null)  updates.name        = name
@@ -41,7 +45,9 @@ if (locationId != null)  updates.locationId  = locationId
 if (onboardingDate != null)  updates.onboardingDate  = onboardingDate ? new Date(onboardingDate) : null
 if (offboardingDate != null)  updates.offboardingDate  = offboardingDate ? new Date(offboardingDate) : null
 if (personalEmail != null)  updates.personalEmail  = personalEmail
+
     try {
+        if (reportsToId === "N/A") {updates.reportsToId = null}
         // Perform the edit user action here
        
         console.table(updates)
@@ -50,6 +56,23 @@ if (personalEmail != null)  updates.personalEmail  = personalEmail
             data: updates,
         });
       
+        // Compare and create history entries
+        const changes = Object.entries(updates).map(([field, newValue]) => {
+            const oldValue = (currentUser as User)?.[field as keyof User];
+            return {
+                userId: id!,
+                action: 'updated',
+                field,
+                oldValue: oldValue !== undefined && oldValue !== null ? String(oldValue) : null,
+                newValue: newValue !== undefined && newValue !== null ? String(newValue) : null,
+                updatedById: authId!,
+            };
+        });
+
+        if (changes.length > 0) {
+            await prisma.userHistory.createMany({ data: changes });
+        }
+
         console.log('User updated:', user);
         revalidatePath(`/dashboard/users/${user.id}`);
         revalidatePath(`/dashboard/org-chart`);
@@ -113,6 +136,17 @@ let id = ''
                 onboardingDate: onboardingDate ? new Date(onboardingDate) : null,
                 offboardingDate: offboardingDate ? new Date(offboardingDate) : null,
             },
+        });
+        // Add history entry
+        await prisma.userHistory.create({
+            data: {
+                userId: user.id,
+                action: 'created',
+                field: 'all',
+                oldValue: null,
+                newValue: 'User created',
+                updatedById: user.id, // or use authId if available
+            }
         });
         console.log('User created:', user);
         //you will want to revalidate to the new user page
@@ -199,7 +233,7 @@ export async function assignSoftware(formData: FormData) {
     }
 }
 
-export async function removeAssignedSoftware(userId: string, softwareId: string) {
+export async function removeAssignedSoftware(userId: string, softwareId: string, authId: string) {
     'use server';
     try {
        await prisma.userSoftware.delete({
@@ -211,10 +245,53 @@ export async function removeAssignedSoftware(userId: string, softwareId: string)
         },
       });
       
+      // Add history entry
+      await prisma.userHistory.create({
+        data: {
+            userId: userId,
+            action: 'removed_software',
+            field: 'software',
+            oldValue: softwareId,
+            newValue: null,
+            updatedById: authId, 
+        }
+      });
+      
       revalidatePath(`/dashboard/software/${softwareId}`);  
     } catch (error) {
       console.error('Error deleting User Software:', error);
       throw new Error('Failed to delete User Software.');
+    }
+  }
+  export async function removeUserFromSharedAccount(userId: string, sharedAccountId: string, authId: string) {
+    'use server';
+    try {
+      await prisma.sharedAccountUser.delete({
+      where:{
+        sharedAccountId_userId: {
+          sharedAccountId: sharedAccountId,
+          userId: userId,
+        },
+      },
+      });
+      await prisma.sharedAccount.update({
+        where: { id: sharedAccountId },
+        data: { userCount: { decrement: 1 } },
+      });
+      await prisma.userHistory.create({
+        data: {
+          userId: userId,
+          action: 'removed_shared_account',
+          field: 'shared_account',
+          oldValue: sharedAccountId,
+          newValue: null,
+          updatedById: authId,
+        },
+      });
+      revalidatePath(`/dashboard/users/${userId}`);
+    } catch (error) {
+      console.error('Error deleting User from Shared Account:', error);
+      throw new Error('Failed to delete User from Shared Account.');
     }
   }
   

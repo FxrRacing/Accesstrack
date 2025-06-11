@@ -7,9 +7,9 @@ type EmploymentStatus = "active" | "inactive" | "onboarding" | "terminated" | "o
 const statusStyles: Record<EmploymentStatus, { text: string; textColor: string; bgColor: string; dotColor: string }> = {
   active: {
     text: "Active",
-    textColor: "text-green-600 dark:text-green-400",
-    bgColor: "bg-green-600/10 dark:bg-green-400/10",
-    dotColor: "bg-green-600 dark:bg-green-400",
+    textColor: "text-green-500 dark:text-green-400",
+    bgColor: "bg-green-400/10 dark:bg-green-700/10",
+    dotColor: "bg-green-400 dark:bg-green-700",
   },
   inactive: {
     text: "Inactive",

@@ -1,6 +1,6 @@
 'use client'
 import { editUser } from "@/actions/user_actions";
-import { EMPLOYMENT_STATUS_OPTIONS } from "@/utils/constants";
+import {  EMPLOYMENT_STATUS_OPTIONS, EMPLOYMENT_TYPE_OPTIONS} from "@/utils/constants";
 import { Department, User } from "@prisma/client";
 import { useActionState, useEffect } from "react";
 import { Location } from "@prisma/client";
@@ -40,6 +40,15 @@ export default function EditUser({user, authId, users, locations, departments}: 
                     </option>
                   ))}
             </select>
+            <label htmlFor="type">Employment Type</label>
+            <select name="type" className="border-2 border-gray-300 p-2">
+                {EMPLOYMENT_TYPE_OPTIONS.map((option: { value: string; label: string }) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+            </select>
+            
             <label htmlFor="jobTitle">Job Title</label>
             <input type="text" name="jobTitle" defaultValue={user.jobTitle || ''} className="border-2 border-gray-300 p-2" />
             <label htmlFor="email">Email</label>
