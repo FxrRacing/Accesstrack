@@ -42,7 +42,7 @@ export async function signinWithAzure(){
   // Determine the redirect URL based on environment
   const redirectUrl = process.env.NODE_ENV === "production" 
     ? `${process.env.NEXT_PUBLIC_URL}/auth/callback`
-    : 'http://localhost:3000/auth/callback'
+    : 'https://fxr-access-track.vercel.app/auth/callback'
 
   //console.log("Using redirect URL:", redirectUrl)
   
