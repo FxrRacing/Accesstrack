@@ -10,10 +10,7 @@ datasource db {
   directUrl = env("DIRECT_URL")
   schemas   = ["auth", "public", "storage"]
 }
-
-//public 
-//public 
-
+//public
 model UserProfiles {
     id        String   @id @db.Uuid
     username  String?  @unique
@@ -477,7 +474,14 @@ enum PaymentMethod {
 
 
 
+
+
+
+
 //end of public
+
+
+
 
 
 

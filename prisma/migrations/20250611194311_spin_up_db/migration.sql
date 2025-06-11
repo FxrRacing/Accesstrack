@@ -36,6 +36,9 @@ CREATE TABLE "public"."User" (
     "reportsToId" UUID,
     "type" TEXT,
     "status" TEXT NOT NULL DEFAULT 'ACTIVE',
+    "onboardingDate" TIMESTAMPTZ(6),
+    "offboardingDate" TIMESTAMPTZ(6),
+    "departmentId" UUID,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -76,7 +79,11 @@ CREATE TABLE "public"."Software" (
     "pricePerUser" DOUBLE PRECISION,
     "updatedById" UUID,
     "website" TEXT,
-    "faviconUrl" TEXT,
+    "iconUrl" TEXT,
+    "assignedToId" UUID,
+    "purchaseDate" TIMESTAMP(3),
+    "employeeNumber" TEXT,
+    "teamOwnerId" UUID,
 
     CONSTRAINT "Software_pkey" PRIMARY KEY ("id")
 );
@@ -119,7 +126,7 @@ CREATE TABLE "public"."SoftwareHistory" (
     "field" TEXT NOT NULL,
     "newValue" TEXT,
     "oldValue" TEXT,
-    "updatedBy" TEXT NOT NULL,
+    "updatedById" UUID NOT NULL,
     "updatedOn" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "SoftwareHistory_pkey" PRIMARY KEY ("id")
@@ -192,6 +199,33 @@ CREATE TABLE "public"."SharedAccountUser" (
 );
 
 -- CreateTable
+CREATE TABLE "public"."Service" (
+    "id" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "contactID" UUID NOT NULL,
+    "locationId" UUID NOT NULL,
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'active',
+
+    CONSTRAINT "Service_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."Department" (
+    "id" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL,
+    "color" TEXT,
+    "departmentHeadId" UUID,
+
+    CONSTRAINT "Department_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "public"."Location" (
     "id" UUID NOT NULL,
     "type" TEXT NOT NULL,
@@ -222,11 +256,61 @@ CREATE TABLE "public"."OperatingHour" (
 CREATE TABLE "public"."Door" (
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
-    "floor" INTEGER NOT NULL,
+    "floor" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "locationId" UUID NOT NULL,
+    "status" TEXT,
+    "accessLevel" TEXT,
 
     CONSTRAINT "Door_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."Key" (
+    "id" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL,
+    "type" TEXT NOT NULL,
+    "doorId" UUID,
+    "userId" UUID,
+    "locationId" UUID,
+
+    CONSTRAINT "Key_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."KeyCard" (
+    "id" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL,
+    "type" TEXT NOT NULL,
+    "userId" UUID,
+
+    CONSTRAINT "KeyCard_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."KeyCardDoor" (
+    "id" UUID NOT NULL,
+    "keyCardId" UUID NOT NULL,
+    "doorId" UUID NOT NULL,
+
+    CONSTRAINT "KeyCardDoor_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."KeyCardLocation" (
+    "id" UUID NOT NULL,
+    "keyCardId" UUID NOT NULL,
+    "locationId" UUID NOT NULL,
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL,
+
+    CONSTRAINT "KeyCardLocation_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -235,14 +319,6 @@ CREATE TABLE "public"."_SoftwareHistory" (
     "B" UUID NOT NULL,
 
     CONSTRAINT "_SoftwareHistory_AB_pkey" PRIMARY KEY ("A","B")
-);
-
--- CreateTable
-CREATE TABLE "public"."_AuthUserToSoftware" (
-    "A" UUID NOT NULL,
-    "B" UUID NOT NULL,
-
-    CONSTRAINT "_AuthUserToSoftware_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateIndex
@@ -255,10 +331,10 @@ CREATE UNIQUE INDEX "User_email_key" ON "public"."User"("email");
 CREATE UNIQUE INDEX "User_name_key" ON "public"."User"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_personalEmail_key" ON "public"."User"("personalEmail");
+CREATE INDEX "UserHistory_userId_idx" ON "public"."UserHistory"("userId");
 
 -- CreateIndex
-CREATE INDEX "UserHistory_userId_idx" ON "public"."UserHistory"("userId");
+CREATE UNIQUE INDEX "Software_name_key" ON "public"."Software"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "UserSoftware_userId_softwareId_key" ON "public"."UserSoftware"("userId", "softwareId");
@@ -282,10 +358,10 @@ CREATE UNIQUE INDEX "SharedAccountUser_sharedAccountId_userId_key" ON "public"."
 CREATE UNIQUE INDEX "OperatingHour_locationId_dayOfWeek_key" ON "public"."OperatingHour"("locationId", "dayOfWeek");
 
 -- CreateIndex
-CREATE INDEX "_SoftwareHistory_B_index" ON "public"."_SoftwareHistory"("B");
+CREATE UNIQUE INDEX "KeyCardLocation_keyCardId_locationId_key" ON "public"."KeyCardLocation"("keyCardId", "locationId");
 
 -- CreateIndex
-CREATE INDEX "_AuthUserToSoftware_B_index" ON "public"."_AuthUserToSoftware"("B");
+CREATE INDEX "_SoftwareHistory_B_index" ON "public"."_SoftwareHistory"("B");
 
 -- AddForeignKey
 ALTER TABLE "public"."Invites" ADD CONSTRAINT "Invites_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "public"."user_profiles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -297,16 +373,25 @@ ALTER TABLE "public"."User" ADD CONSTRAINT "User_reportsToId_fkey" FOREIGN KEY (
 ALTER TABLE "public"."User" ADD CONSTRAINT "User_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "public"."Location"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "public"."User" ADD CONSTRAINT "User_departmentId_fkey" FOREIGN KEY ("departmentId") REFERENCES "public"."Department"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "public"."UserHistory" ADD CONSTRAINT "UserHistory_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "public"."user_profiles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."UserHistory" ADD CONSTRAINT "UserHistory_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "public"."Software" ADD CONSTRAINT "Software_teamOwnerId_fkey" FOREIGN KEY ("teamOwnerId") REFERENCES "public"."user_profiles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "public"."Software" ADD CONSTRAINT "Software_notesLastUpdatedById_fkey" FOREIGN KEY ("notesLastUpdatedById") REFERENCES "public"."user_profiles"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Software" ADD CONSTRAINT "Software_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "public"."user_profiles"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."Software" ADD CONSTRAINT "Software_assignedToId_fkey" FOREIGN KEY ("assignedToId") REFERENCES "public"."user_profiles"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."UserSoftware" ADD CONSTRAINT "UserSoftware_grantedById_fkey" FOREIGN KEY ("grantedById") REFERENCES "public"."user_profiles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -321,7 +406,10 @@ ALTER TABLE "public"."UserSoftware" ADD CONSTRAINT "UserSoftware_userId_fkey" FO
 ALTER TABLE "public"."SoftwareAccess" ADD CONSTRAINT "SoftwareAccess_softwareId_fkey" FOREIGN KEY ("softwareId") REFERENCES "public"."Software"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."SoftwareAccess" ADD CONSTRAINT "SoftwareAccess_sharedAccountId_fkey" FOREIGN KEY ("sharedAccountId") REFERENCES "public"."SharedAccount"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."SoftwareAccess" ADD CONSTRAINT "SoftwareAccess_sharedAccountId_fkey" FOREIGN KEY ("sharedAccountId") REFERENCES "public"."SharedAccount"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."SoftwareHistory" ADD CONSTRAINT "SoftwareHistory_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "public"."user_profiles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."SoftwareHistory" ADD CONSTRAINT "SoftwareHistory_softwareId_fkey" FOREIGN KEY ("softwareId") REFERENCES "public"."Software"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -357,19 +445,46 @@ ALTER TABLE "public"."SharedAccountUser" ADD CONSTRAINT "SharedAccountUser_userI
 ALTER TABLE "public"."SharedAccountUser" ADD CONSTRAINT "SharedAccountUser_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "public"."user_profiles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "public"."Service" ADD CONSTRAINT "Service_contactID_fkey" FOREIGN KEY ("contactID") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."Service" ADD CONSTRAINT "Service_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "public"."Location"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."Department" ADD CONSTRAINT "Department_departmentHeadId_fkey" FOREIGN KEY ("departmentHeadId") REFERENCES "public"."User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "public"."OperatingHour" ADD CONSTRAINT "OperatingHour_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "public"."Location"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Door" ADD CONSTRAINT "Door_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "public"."Location"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "public"."Key" ADD CONSTRAINT "Key_doorId_fkey" FOREIGN KEY ("doorId") REFERENCES "public"."Door"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."Key" ADD CONSTRAINT "Key_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."Key" ADD CONSTRAINT "Key_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "public"."Location"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."KeyCard" ADD CONSTRAINT "KeyCard_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."KeyCardDoor" ADD CONSTRAINT "KeyCardDoor_doorId_fkey" FOREIGN KEY ("doorId") REFERENCES "public"."Door"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."KeyCardDoor" ADD CONSTRAINT "KeyCardDoor_keyCardId_fkey" FOREIGN KEY ("keyCardId") REFERENCES "public"."KeyCard"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."KeyCardLocation" ADD CONSTRAINT "KeyCardLocation_keyCardId_fkey" FOREIGN KEY ("keyCardId") REFERENCES "public"."KeyCard"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."KeyCardLocation" ADD CONSTRAINT "KeyCardLocation_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "public"."Location"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "public"."_SoftwareHistory" ADD CONSTRAINT "_SoftwareHistory_A_fkey" FOREIGN KEY ("A") REFERENCES "public"."Software"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."_SoftwareHistory" ADD CONSTRAINT "_SoftwareHistory_B_fkey" FOREIGN KEY ("B") REFERENCES "public"."SoftwareHistory"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."_AuthUserToSoftware" ADD CONSTRAINT "_AuthUserToSoftware_A_fkey" FOREIGN KEY ("A") REFERENCES "public"."Software"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."_AuthUserToSoftware" ADD CONSTRAINT "_AuthUserToSoftware_B_fkey" FOREIGN KEY ("B") REFERENCES "public"."user_profiles"("id") ON DELETE CASCADE ON UPDATE CASCADE;

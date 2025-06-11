@@ -86,7 +86,7 @@ export default function CreateUserForm({users, locations, departments,authId}: {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="department">Department</Label>
-                <Select name="departmentId" defaultValue={departments[0].id}>
+                <Select name="departmentId" defaultValue={departments.length > 0 ? departments[0].id : ""}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select department" />
                   </SelectTrigger>
@@ -108,7 +108,7 @@ export default function CreateUserForm({users, locations, departments,authId}: {
               <div className="space-y-2">
                 <Label htmlFor="location">Location</Label>
                   
-                    <Select name="locationId" defaultValue={locations[0].id}>
+                    <Select name="locationId" defaultValue={locations.length > 0 ? locations[0].id : ""}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select location" />
                       </SelectTrigger>
