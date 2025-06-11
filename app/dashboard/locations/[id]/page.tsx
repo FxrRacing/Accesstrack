@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
 import { notFound, redirect } from "next/navigation";
-import AddDoor from "./addDoor";
+//import AddDoor from "./addDoor";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -74,7 +74,7 @@ export default async function Page({
   if (!location) {
     return notFound();
   }
-  const departments = await prisma.department.findMany({});
+  //const departments = await prisma.department.findMany({});
   
   const isFavorite = false;
   return (
@@ -384,7 +384,7 @@ export default async function Page({
             </div>
           </div>
 
-          <p className="text-sm">
+          {/* <p className="text-sm">
             Employees:{" "}
             {location.employees.map((employee) => (
               <p key={employee.id}>{employee.name}</p>
@@ -413,7 +413,9 @@ export default async function Page({
                 ))}
               </div>
             ))}
-          </div>
+          </div> */}
+
+
         </div>
       </div>
     </>

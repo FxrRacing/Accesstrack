@@ -1,9 +1,9 @@
 import { prisma } from "@/lib/prisma";
 
 
-import { Separator } from "@/components/ui/separator";
+//import { Separator } from "@/components/ui/separator";
 import OrgChart from "./org";
-import WorkOrgChart from "./work-org-chart";
+//import WorkOrgChart from "./work-org-chart";
 
 
 export default async function OrgChartPage() {
@@ -35,11 +35,11 @@ export default async function OrgChartPage() {
   return (
     <div>
       <OrgChart users={transformedData} />
-      <Separator />
-      <WorkOrgChart /> 
+      {/* <Separator />
+      <WorkOrgChart />  */}
       {/* <TwoNodeTest /> */}
       {/* <OrgChart /> */}
-      <pre>{JSON.stringify(transformedData, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(transformedData, null, 2)}</pre> */}
    {/* {JSON.stringify(data ,null, 2)} */}
       {/* <OrgChart data={data} /> */}
     </div>
