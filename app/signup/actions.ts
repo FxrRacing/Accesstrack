@@ -40,7 +40,7 @@ export async function signinWithAzure(){
   const supabase = await createClient()
   
   // Determine the redirect URL based on environment
-  const redirectUrl = 'https://fxr-access-track.vercel.app/auth/callback'
+ 
 
   //console.log("Using redirect URL:", redirectUrl)
   
@@ -48,7 +48,7 @@ export async function signinWithAzure(){
     provider: 'azure',
     options: {
       scopes: 'email profile',
-      redirectTo: redirectUrl,
+      redirectTo: 'https://fxr-access-track.vercel.app/auth/callback',
     }
   })
 
