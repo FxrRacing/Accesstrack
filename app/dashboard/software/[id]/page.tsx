@@ -27,8 +27,12 @@ import { formatDate } from "date-fns";
 import OwnerProfile, { SoftwareWithTeamOwner } from "./owner-profile";
 import { BillingTab } from "./tabs/billing";
 import Overview from "./tabs/overview";
-import { columns, SharedAccountSoftwareWithRelations } from "./components/shared-accounts-table/columns";
-import { DataTable } from "./components/shared-accounts-table/data-table";
+
+import PermissionsProvider from "@/utils/providers/permissions";
+import ClientPermissionsWrapper from "@/utils/client-permissions-wrapper";
+import AddSharedAccountsDialog from "./components/add-shared-accounts";
+import SharedAccountsTableClient  from './components/shared-accounts-table-client'
+import { SharedAccountSoftwareWithRelations } from "./components/shared-accounts-table/columns";
 
 export default async function Page({
   params,
@@ -97,6 +101,14 @@ export default async function Page({
      
     },
   });
+  const assignedSharedAccounts = sharedAccounts.map((sharedAccount) => sharedAccount.sharedAccountId);
+  const availableSharedAccounts = await prisma.sharedAccount.findMany({
+    where: {
+        id: {
+            notIn: assignedSharedAccounts
+        }
+    }
+   })
 
   return (
     <>
@@ -146,8 +158,9 @@ export default async function Page({
             </TabsTrigger>
           </TabsList>
           <TabsContent value="overview">
-            <Overview software={software} authId={data.user.id} />
-            <Card className=" border shadow-sm md:col-span-2 ">
+
+            <PermissionsProvider requiredPermission="edit" 
+            replaceWith={ <Card className=" border shadow-sm md:col-span-2 ">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-sm font-medium ">Overview</CardTitle>
@@ -224,32 +237,17 @@ export default async function Page({
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Card>}>
+            <Overview software={software} authId={data.user.id} />
+            </PermissionsProvider>
+           
 
             {editedBy && <p>Edited By: {editedBy.name}</p>}
           </TabsContent>
           <TabsContent value="billing">
-            <BillingTab software={software} authId={data.user.id} />
-
-            <Card className=" border shadow-sm md:col-span-2 ">
-            <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-medium ">Billing</CardTitle>
-                    <Button variant="ghost" size="sm" className="h-8 px-2  hover:bg-slate-50">
-                      <Settings className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardHeader>
-              <CardContent>
-               
-                <p>Amount: {software.amount}</p>
-                <p>
-                  Payment Due Date: {software.paymentDueDate?.toLocaleDateString()}
-                </p>
-                <p> License Type: {software.licenseType}</p>
-                <p> Currency: {software.currency}</p>
-              </CardContent>
-            </Card>
+            <BillingTab software={software} auth={data.user } />
+              
+            
            
           </TabsContent>
           <TabsContent value="users">
@@ -275,7 +273,9 @@ export default async function Page({
                   id={id}
                   availableUsers={availableUsers}
                   authId={data.user.id}
-                  trigger={<Button variant="outline" size="sm"> <Plus className="h-4 w-4 mr-2" />Add Users</Button>}
+                  trigger={ <ClientPermissionsWrapper requiredPermission="edit" replaceWith={null}>
+                    <Button variant="outline" size="sm"> <Plus className="h-4 w-4 mr-2" />Add Users</Button>
+                  </ClientPermissionsWrapper>}
                 />
               ) : (
                 <p>There are no available users to assign to this software</p>
@@ -308,20 +308,24 @@ export default async function Page({
             <div>
               <CardTitle className="text-lg font-semibold text-gray-900">Shared Accounts</CardTitle>
               <p className="text-sm text-gray-500 mt-1">
-                Manage shared accounts
+                Manage shared accountsss
               </p>
             </div>
           </div>
           <Suspense fallback={<div>Loading Users...</div>}>
               {/* Assign software */}
-            <p>Shared Accounts</p>
-            
+              <ClientPermissionsWrapper requiredPermission="edit" replaceWith={<div></div>}>
+           <AddSharedAccountsDialog software={software} availableSharedAccounts={availableSharedAccounts} data={data} />
+           </ClientPermissionsWrapper>
               </Suspense>
         </div>
       </CardHeader>
       <CardContent>
               <Suspense fallback={<div>Loading Shared Accounts...</div>}>
-              <DataTable columns={columns} data={sharedAccounts as unknown as SharedAccountSoftwareWithRelations[]} />
+              <SharedAccountsTableClient
+                data={sharedAccounts as unknown as SharedAccountSoftwareWithRelations[]}
+                authId={data.user.id}
+              />
 
 
              

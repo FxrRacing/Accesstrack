@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { PaymentFrequency, PaymentMethod } from "@prisma/client";
 import { SOFTWARE_STATUS_OPTIONS } from "@/utils/constants";
+import { redirect } from "next/navigation";
 
 interface SoftwareImport {
   id?: string;
@@ -382,3 +383,12 @@ export async function importSoftware(csvData: string, authId: string): Promise<I
   }
 }
 
+
+
+export async function deleteSoftware(id: string) {
+  await prisma.software.delete({
+    where: { id },
+  });
+  revalidatePath('/dashboard/software');
+  redirect('/dashboard/software');
+}

@@ -30,6 +30,8 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import DeleteButton from "../delete-button";
+import ClientPermissionsWrapper from "@/utils/client-permissions-wrapper";
 const initialState = {
   message: "",
   success: false,
@@ -248,6 +250,9 @@ export default function Overview({ software, authId }: OverviewTabProps) {
             </>
           )}
         </CardContent>
+        {isEditing && <ClientPermissionsWrapper requiredPermission="delete" replaceWith={null}>
+          <DeleteButton softwareId={software.id} />
+        </ClientPermissionsWrapper>}
       </Card>
     </>
   );

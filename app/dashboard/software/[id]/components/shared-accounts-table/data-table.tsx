@@ -27,13 +27,15 @@ import { useRouter } from "next/navigation"
 import { SharedAccountSoftwareWithRelations } from "./columns"
 
 interface DataTableProps<TData, TValue> {
-    columns: ColumnDef<TData, TValue>[]
-    data: TData[]
-  }
+    columns: (authId: string) => ColumnDef<TData, TValue>[];
+    data: TData[];
+    authId: string;
+}
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  authId
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -45,7 +47,7 @@ export function DataTable<TData, TValue>({
 
   const table = useReactTable({
     data,
-    columns,
+    columns: columns(authId),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -65,9 +67,9 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter emails..."
-          value={table.getColumn("email")?.getFilterValue() as string}
+          value={table.getColumn("name")?.getFilterValue() as string}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -138,7 +140,7 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell colSpan={columns(authId).length} className="h-24 text-center">
                 No results.
               </TableCell>
             </TableRow>

@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {  PaymentMethod, PaymentFrequency as PrismaPaymentFrequency } from "@prisma/client"
+import {  PaymentMethod, PaymentFrequency as PrismaPaymentFrequency} from "@prisma/client"
+import { User } from "@supabase/supabase-js"
 import { paymentFrequencyOptions,  currencyOptions, licenseTypeOptions, paymentFrequency } from "@/lib/constants"
 import { formatCurrency, formatPaymentFrequency, SupportedCurrency } from "@/lib/utils"
 import { Software } from "@prisma/client"
@@ -16,6 +17,10 @@ import { toast } from "sonner"
 import { updateSoftware } from "@/actions/software_actions"
 import { Badge } from "@/components/ui/badge"
 import { YearCalendar } from "../components/year-cal"
+//import PermissionsProviderClient from "@/utils/providers/client"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import ClientPermissionsWrapper from "@/utils/client-permissions-wrapper"
+
 const initialState = {
   message: '',
   success: false
@@ -23,10 +28,10 @@ const initialState = {
 
 interface BillingTabProps {
   software: Software
-  authId: string
+  auth: User
 }
 
-export function BillingTab({ software, authId }: BillingTabProps) {
+export function BillingTab({ software, auth }: BillingTabProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [state, formAction, pending] = useActionState(updateSoftware, initialState)
 
@@ -40,7 +45,7 @@ export function BillingTab({ software, authId }: BillingTabProps) {
       }
     }
   }, [state])
-
+//const meta = auth.user_metadata.
   return (
     <Card className="border shadow-sm md:col-span-2">
       <CardHeader className="pb-4 border-b border-gray-100">
@@ -56,14 +61,121 @@ export function BillingTab({ software, authId }: BillingTabProps) {
               </p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 px-2 hover:bg-slate-50"
-            onClick={() => setIsEditing(!isEditing)}
-          >
-            <Settings className="h-4 w-4" />
-          </Button>
+          
+         
+          {/*<PermissionsProviderClient requiredPermission="edit" replaceWith={null}>*/}
+            <Dialog>
+              <DialogTrigger asChild>
+              <ClientPermissionsWrapper requiredPermission="edit" replaceWith={null}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 hover:bg-slate-50"
+                  onClick={() => 
+                    setIsEditing(!isEditing)}
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+                </ClientPermissionsWrapper>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Edit Billing Details</DialogTitle>
+                  <DialogDescription>
+                    Edit the software billing details here.
+                  </DialogDescription>
+                </DialogHeader>
+                <form action={formAction} className="space-y-4 mt-4">
+                  <input type="hidden" name="id" value={software.id} />
+                  <input type="hidden" name="authId" value={auth.id} />
+                  <div className="grid grid-cols-2 gap-4 text-sm mb-4">
+                    <div className="flex flex-col gap-1">
+                      <Label>Amount <BadgeDollarSign className="h-4 w-4 mr-1.5" /></Label>
+                      <Input 
+                        type="number" 
+                        name="amount" 
+                        defaultValue={software.amount?.toString() || "0"} 
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <Label>Price Per User <BadgeDollarSign className="h-4 w-4 mr-1.5" /></Label>  
+                      <Input 
+                        type="number" 
+                        name="pricePerUser" 
+                        defaultValue={software.pricePerUser?.toString() || "0"} 
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                      <Label>Currency <Banknote className="h-4 w-4 mr-1.5" /></Label>
+                      <Select name="currency" defaultValue={software.currency || "USD"}>
+                        <SelectTrigger className="capitalize w-full">
+                          <SelectValue  />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {currencyOptions.map((currency) => (
+                            <SelectItem key={currency.value} value={currency.value}>{currency.label}</SelectItem>
+                           ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                      <Label>License Type <CreativeCommons className="h-4 w-4 mr-1.5" /></Label>
+                      <Select name="licenseType" defaultValue={software.licenseType || "Subscription"}>
+                        <SelectTrigger className="capitalize w-full">
+                          <SelectValue placeholder="Select License Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                           {licenseTypeOptions.map((license) => (
+                            <SelectItem key={license.value} value={license.value}>{license.label}</SelectItem>
+                           ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                      <Label>Payment Frequency</Label>
+                      <Select name="paymentFrequency" defaultValue={software.paymentFrequency || paymentFrequency.MONTHLY}>
+                        <SelectTrigger className="capitalize w-full">
+                          <SelectValue placeholder="Select Payment Frequency"  />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {paymentFrequencyOptions.map((frequency) => (
+                            <SelectItem key={frequency.value} value={frequency.value}>{frequency.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <Label>Payment Method</Label>
+                      <Select name="paymentMethod" defaultValue={software.paymentMethod || "CREDIT_CARD"}>
+                        <SelectTrigger className="capitalize w-full">
+                          <SelectValue placeholder="Select Payment Method"  />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.values(PaymentMethod).map((method) => (
+                            <SelectItem key={method} value={method}>{method}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <Label>Purchase Date <Calendar className="h-4 w-4 mr-1.5" /></Label>
+                      <YearCalendar 
+                        name="purchaseDate"
+                        defaultValue={software.purchaseDate ? new Date(software.purchaseDate) : undefined}
+                      />
+                    </div>
+                  </div>
+                  <Button type="submit" disabled={pending}>
+                    {pending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+          {/*</PermissionsProviderClient>*/}
         </div>
       </CardHeader>
 
@@ -72,7 +184,7 @@ export function BillingTab({ software, authId }: BillingTabProps) {
           <form action={formAction}>
             <div className="grid grid-cols-2 gap-4 text-sm mb-4">
               <input type="hidden" name="id" value={software.id} />
-              <input type="hidden" name="authId" value={authId} />
+              <input type="hidden" name="authId" value={auth.id} />
               <div className="flex flex-col gap-1">
                 <Label>Amount <BadgeDollarSign className="h-4 w-4 mr-1.5" /></Label>
                 <Input 
