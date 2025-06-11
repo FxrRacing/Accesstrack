@@ -85,7 +85,7 @@ export async function createInvite(prevState: {message: string}, formData: FormD
    
     
     const {data, error} = await serviceRoleClient.auth.admin.inviteUserByEmail(email, {
-        redirectTo: 'http://localhost:3000/dashboard/staff',
+        redirectTo: 'https://fxr-access-track.vercel.app/dashboard/staff',
         data: {
             fullName: fullName,
             role: role,

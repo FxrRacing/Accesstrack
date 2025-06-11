@@ -40,9 +40,7 @@ export async function signinWithAzure(){
   const supabase = await createClient()
   
   // Determine the redirect URL based on environment
-  const redirectUrl = process.env.NODE_ENV === "production" 
-    ? `${process.env.NEXT_PUBLIC_URL}/auth/callback`
-    : 'https://fxr-access-track.vercel.app/auth/callback'
+  const redirectUrl = 'https://fxr-access-track.vercel.app/auth/callback'
 
   //console.log("Using redirect URL:", redirectUrl)
   
