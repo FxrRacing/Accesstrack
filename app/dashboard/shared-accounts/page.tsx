@@ -11,6 +11,12 @@ import { Button } from "@/components/ui/button";
 import { FileUp,  UserPlus } from "lucide-react";
 import { GradientCard } from "@/components/ui/gradient-card";
 import CreateForm from "./create-form";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Access Track - Shared Accounts",
+  description: "View and manage shared accounts in Access Track.",
+}
 
 export default async function SharedAccountsPage() {
     const supabase = await createClient()

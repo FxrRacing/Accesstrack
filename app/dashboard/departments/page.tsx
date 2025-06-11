@@ -9,6 +9,12 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, } from "@/components/ui/avatar";
 import { ArrowRight, ArrowUpRight, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Access Track - Departments",
+  description: "View and manage departments in Access Track.",
+}
 
 export default async function DepartmentsPage() {
   const departments = await prisma.department.findMany(

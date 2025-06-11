@@ -12,7 +12,12 @@ import AddLocation from './addLocation'
 
 import LocationsMinimal from './test/locations'
 
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Access Track - Locations",
+  description: "View and manage locations in Access Track.",
+}
 
 
 export default async function LocationsPage() {

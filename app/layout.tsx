@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Access Track",
-  description: "A User Management System",
+  description: "Access Track is a user management system for FXR Factory Racing.",
 };
 
 export default async function RootLayout({

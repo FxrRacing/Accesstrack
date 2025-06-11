@@ -10,6 +10,11 @@ import ImportSoftware from "./import";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { Metadata } from "next";
+export const metadata: Metadata = {
+    title: "Access Track - Software",
+    description: "View and manage software in Access Track.",
+  }
 
 export default async function SoftwarePage( ) {  
     const supabase = await createClient()

@@ -8,10 +8,10 @@ import {  Toaster } from "sonner"
 
 
 
-export const metadata: Metadata = {
-  title: "Forms",
-  description: "Advanced form example using react-hook-form and Zod.",
-}
+  export const metadata: Metadata = {
+    title: "Access Track - Settings",
+    description: "Access Track is a user management system for FXR Factory Racing.",
+  }
 
 const sidebarNavItems = [
   // {
