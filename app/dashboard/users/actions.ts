@@ -120,6 +120,9 @@ export async function importUsers(csvData: string, authId: string): Promise<Impo
         } else {
           userData.status = statusValue;
         }
+      } else {
+        // Set default status to inactive if not provided
+        userData.status = 'inactive';
       }
 
       // Look up department if provided
