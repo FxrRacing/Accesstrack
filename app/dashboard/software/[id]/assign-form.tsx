@@ -51,9 +51,10 @@ import {
 } from "@/components/ui/dialog"
 import { Search, MoreHorizontal } from "lucide-react"
 import { toast } from "sonner";
+import  ClientSidePermissionsProvider from "@/utils/client-permissions-wrapper";
 
 
-interface UserAssignment {
+  interface UserAssignment {
   userId: string
   role: string
   accessLevel: string
@@ -223,7 +224,9 @@ export default function AssignForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      <ClientSidePermissionsProvider requiredPermission="edit" replaceWith={null}>  
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
+      </ClientSidePermissionsProvider>
       <DialogContent className="p-0 sm:p-6 w-[95vw] sm:max-w-[700px] max-h-[90vh] sm:max-h-[80vh]">
         <DialogHeader>
           <DialogTitle className="text-2xl">Add Users</DialogTitle>

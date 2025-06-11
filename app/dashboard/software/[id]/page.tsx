@@ -277,9 +277,9 @@ export default async function Page({
                   id={id}
                   availableUsers={availableUsers}
                   authId={data.user.id}
-                  trigger={ <ClientPermissionsWrapper requiredPermission="edit" replaceWith={null}>
+                  trigger={ 
                     <Button variant="outline" size="sm"> <Plus className="h-4 w-4 mr-2" />Add Users</Button>
-                  </ClientPermissionsWrapper>}
+                 }
                 />
               ) : (
                 <p>There are no available users to assign to this software</p>
