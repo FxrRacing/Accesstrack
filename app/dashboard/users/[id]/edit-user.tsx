@@ -6,30 +6,29 @@ import { useActionState, useEffect } from "react";
 import { Location } from "@prisma/client";
 import { toast } from "sonner";
 
-
+const initialState = {
+  message: '',
+  success: false
+}
 export default function EditUser({user, authId, users, locations, departments}: {user: User&{reportsTo: User}, authId: string, users: User[], locations: Location[], departments: Department[]}) {
     //providing total users temporarily
-    const initialState = {
-        message: '',
-      }
+    
       
     const [error, formAction, pending] = useActionState(editUser, initialState)
     useEffect(() => {
-
-      if(!pending) {
-        if(error && error.message){
-          toast.error(error.message)
-        } 
-        
-      }else{
-        toast.success('Updating user...')
-      }
+        if (error?.message) {
+            if (error.success) {
+                toast.success(error.message)
+            } else {
+                toast.error(error.message)
+            }
+        }
       
     }, [error, pending, user.id])
     return <div>
         <h1>Edit User</h1>
         <form action={formAction} className="flex flex-col gap-2 w-1/2 border-2 border-gray-300 p-4">
-
+    <input type="text" name="jacob" value="jacob"  readOnly hidden/>
             <input type="text" name="id" value={user.id} readOnly hidden  />
             <label htmlFor="name">Name</label>
             <input type="text" name="name" defaultValue={user.name} className="border-2 border-gray-300 p-2" />

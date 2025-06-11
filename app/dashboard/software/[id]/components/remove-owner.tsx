@@ -20,20 +20,21 @@ import {
 import { Software } from "@prisma/client"
 
 export default function RemoveOwner({software, authId}: {software: Software, authId: string}) {
-    const initialState = { message: "", success: false }
+    const initialState = { message: '', success: false }
     const [state, formAction, pending] = useActionState(removeOwner, initialState)
     useEffect(() => {
         if (state?.message) {
-            if (state.success) {
+            if (state.success && !software.teamOwnerId ) {
+
                 toast.success(state.message)
-                console.log(state.message)
+               
             } else {
                 toast.error(state.message)
             }
         }
-    }, [state])
+    }, [state,software])
     return (
-        <AlertDialog>
+        <AlertDialog >
   <AlertDialogTrigger asChild>
   <Button variant="ghost" className="justify-start text-sm text-destructive" >
           <UserMinus className="mr-2 h-4 w-4" />

@@ -6,11 +6,13 @@ import { revalidatePath } from 'next/cache';
 
 
 
-export async function editUser(prevState: {message: string}, formData: FormData) {
+export async function editUser(prevState: {message: string, success: boolean}, formData: FormData) {
   
+    const jacob = formData.get('jacob') as string | null;
+    console.log(jacob)
     // Mutate data
     const name = formData.get('name') as string | null;
-    const department = formData.get('department') as string | null;
+    const departmentId = formData.get('departmentId') as string | null;
     const jobTitle = formData.get('jobTitle') as string | null;
     const email = formData.get('email') as string | null;
     const locationId = formData.get('locationId') as string | null;
@@ -23,12 +25,12 @@ export async function editUser(prevState: {message: string}, formData: FormData)
     const personalEmail = formData.get('personalEmail') as string | null;
     
     if (!id || !authId) {
-        return {message: 'User or Auth ID is required.'}
+        return {message: 'User or Auth ID is required.', success: false}
     }
 
     const updates : Partial<User> = {
     }
-if (department != null)  updates.department  = department
+if (departmentId != null)  updates.departmentId  = departmentId
 if (email      != null)  updates.email       = email
 // if (location   != null)  updates.locationId    = location
 if (jobTitle   != null)  updates.jobTitle    = jobTitle
@@ -52,10 +54,10 @@ if (personalEmail != null)  updates.personalEmail  = personalEmail
         revalidatePath(`/dashboard/users/${user.id}`);
         revalidatePath(`/dashboard/org-chart`);
         revalidatePath(`/dashboard/users`);
-        return {message: 'User updated successfully'}
+        return {message: 'User updated successfully', success: true}
     } catch (error) {
         console.error('Error updating user:', error);
-        return {message: 'Failed to update user.'}
+        return {message: 'Failed to update user.', success: false}
     }
     
     //we are not logged in so we will use a default user id

@@ -10,6 +10,11 @@ import EmployeeProfile from '../employee-profile'
 import { Badge } from '@/components/ui/badge'
 import { User } from '@prisma/client'
 import EditUser from './edit-user'
+import { Avatar, AvatarFallback,  } from '@/components/ui/avatar'
+import { Sparkles } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { UserCircle, Clock } from 'lucide-react'
+
 export default async function Page({
     params,
   }: {
@@ -89,23 +94,77 @@ export default async function Page({
       //have software.grantedBy
       //if we have that we want to search our list of auth users for a match and show their details not current user
     
-    
-    return <>
-        <div>
+     // mn-h-screen
+    return( <>
+<div className=" vercel-gradient-subtlei">
+      <div className="max-w-6xl mx-auto p-6 space-y-6">
+        {/* Header Section */}
+        <div className={`flex items-center justify-between  animate-fade-in-up`}>
+          <div className="flex items-center gap-6">
+            <div className="relative group">
+              <Avatar className="h-16 w-16 border-2 border-white shadow-vercel-lg ring-1 ring-neutral-200 transition-all duration-500 group-hover:ring-blue-300 group-hover:shadow-vercel-xl hover-lift animate-pulse-glow"> 
+                
+                <AvatarFallback className="text-lg gradient-amber-subtle  font-medium">
+                  {user.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </AvatarFallback>
+              </Avatar>
+              <div className="absolute -top-1 -right-1 gradient-emerald-subtle rounded-full p-1 shadow-vercel animate-bounce-subtle">
+                <Sparkles className="h-3 w-3 text-black animate-rotate-gentle" />
+              </div>
+            </div>
+            <div className="animate-slide-in-right">
+              <div className="flex items-center gap-3 mb-1">
+                <h1 className="text-2xl font-semibold text-gradient-primary">{user.name}</h1>
+                <Badge className="bg-neutral-100 text-neutral-700 border border-neutral-200 hover:bg-neutral-200 transition-all duration-300 text-xs font-medium hover-scale">
+                  {user.id}
+                </Badge>
+              </div>
+              <p className="text-neutral-600 font-medium">{user.jobTitle}</p>
+              <p className="text-sm text-neutral-500">{user.Department?.name} sd</p>
+            </div>
+          </div>
+          <div className={`flex items-center gap-2 animate-fade-in-scale stagger-2`}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 transition-all duration-300 text-sm font-medium hover-lift micro-bounce"
+            >
+              <UserCircle className="h-4 w-4 mr-2" />
+              Add Owner
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 transition-all duration-300 text-sm font-medium hover-lift micro-bounce"
+            >
+              <Clock className="h-4 w-4 mr-2" />
+              History
+            </Button>
+         </div>
+         </div>
+         </div>
+        
+       </div>
+
+
+        
 
        
 
         ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             <h1 className='text-2xl font-bold'>{user.name}</h1>
             
-            <p className="text-green-700">Department: {user.department}</p>
+            <p className="text-green-700">Department: {user.Department?.name}</p>
             <p className="text-green-700">Job Title: {user.jobTitle}</p>
             <p className="text-green-700">Email: {user.email}</p>
             <p className="text-green-700">Location: {user.Location?.name}</p>
             <p className="text-green-700">Reports To: {user.reportsTo?.name}</p>
 
            <Badge>{user.status}</Badge>
-        </div>
+        
 
 <EditUser user={user as User & {reportsTo: User}}  authId={data.user.id} users={users} locations={locations} departments={departments} />
 
@@ -169,7 +228,8 @@ export default async function Page({
 
 
     </>
-  }
+  )
+}
 
 
 

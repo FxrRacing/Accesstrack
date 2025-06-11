@@ -1,5 +1,5 @@
 'use client'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { UserProfiles, Software } from "@prisma/client";
@@ -23,7 +23,7 @@ export function TeamOwnerDialog({
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [state, formAction, pending] = useActionState(assignOwner, initialState);
+  const [state, formAction, pending] = useActionState(assignOwner,initialState);
 
   // Filter owners by search
   const filteredOwners = potentialOwners.filter((user) =>
@@ -38,16 +38,18 @@ export function TeamOwnerDialog({
   }, [open]);
 
   // Show toast on result
+ 
   useEffect(() => {
     if (state?.message) {
-      if (state.success) {
-        toast.success(state.message);
-        setOpen(false);
-      } else {
-        toast.error(state.message);
-      }
+        if (state.success) {
+            toast.success(state.message)
+            
+        } else {
+            toast.error(state.message)
+        }
+        
     }
-  }, [state]);
+}, [state])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -68,6 +70,7 @@ export function TeamOwnerDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Select a new owner</DialogTitle>
+          <DialogDescription>Choose a team member to be the new owner of this software.</DialogDescription>
         </DialogHeader>
         <input
           type="text"
