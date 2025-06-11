@@ -25,7 +25,10 @@ export default async function SoftwarePage( ) {
       redirect('/login')
     }
    const software= await prisma.software.findMany({});
-   const teamOwners = await prisma.userProfiles.findMany({})
+   const teamOwners = await prisma.userProfiles.findMany({
+   
+   });
+   console.log(teamOwners)
    
     return (
         <>
