@@ -34,7 +34,7 @@ import { AdminNotesEditor } from "./admin-notes-editor";
 import { SaveChangesButton } from "./save-changes-buttons";
 import { User } from "@supabase/supabase-js";
 import GrantRole from "./grant-roles";
-import PermissionsProvider from "@/utils/providers/permissions";
+//import PermissionsProvider from "@/utils/providers/permissions";
 
 export default async function Page({
   params,
@@ -221,11 +221,11 @@ export default async function Page({
                 
                 
               
-                <PermissionsProvider requiredPermission="grant" replaceWith={<p>You are not authorized to grant roles</p>}>
+                {/* <PermissionsProvider requiredPermission="grant" replaceWith={<p>You are not authorized to grant roles</p>}> */}
           
           <GrantRole id={id} grantedById={authUser.id} initialRole={authUser.user_metadata?.role} />
        
-        </PermissionsProvider>
+        {/* </PermissionsProvider> */}
                 
              
               </div>
