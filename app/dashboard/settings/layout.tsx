@@ -14,13 +14,13 @@ export const metadata: Metadata = {
 }
 
 const sidebarNavItems = [
-  {
-    title: "Account",
-    href: "/dashboard/settings/account",
-  },
-    {title: "Invite Users", 
-        href: "/dashboard/settings"
-    },
+  // {
+  //   title: "Account",
+  //   href: "/dashboard/settings/account",
+  // },
+  //   {title: "Invite Users", 
+  //       href: "/dashboard/settings"
+  //   },
  
   
   {

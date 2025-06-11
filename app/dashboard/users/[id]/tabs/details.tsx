@@ -55,7 +55,7 @@ export default function Details({user, locations, departments, authId, users}: {
       
     }, [error, pending, user.id])
 
-    console.log(user)
+   
     if (!user.name || !user.email){
       console.error("User not Loaded properly", {user})
         return( <div className="flex items-center justify-center h-full">

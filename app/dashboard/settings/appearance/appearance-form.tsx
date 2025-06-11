@@ -7,8 +7,8 @@ import { z } from "zod"
 import { useState } from "react"
 
 
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
-import { Info } from "lucide-react"
+// import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
+// import { Info } from "lucide-react"
 import { Button,  } from "@/components/ui/button"
 import {
   Form,
@@ -20,7 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { toast } from "sonner"
+//import { toast } from "sonner"
 import { useTheme } from "next-themes"
 
 import { 
@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/dialog"
 
 const appearanceFormSchema = z.object({
-  theme: z.enum(["light", "dark", "zinc"], {
+  theme: z.enum(["light", "dark"], {
     required_error: "Please select a theme.",
   }),
   // font: z.enum(["inter", "manrope", "system"], {
@@ -60,20 +60,11 @@ export function AppearanceForm() {
   })
 
   function onSubmit(data: AppearanceFormValues) {
-    toast.success("You submitted the following values:", {
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
+   
     
-    if (data.theme === "zinc") {
-      setPendingTheme("zinc")
-      setShowZincWarning(true)
-    } else {
+   
       setTheme(data.theme)
-    }
+  
   }
 
   const handleConfirmZincTheme = () => {
@@ -192,7 +183,7 @@ export function AppearanceForm() {
                   {/* @experimental */}
                  
                  
-                  <FormItem>
+                  {/* <FormItem>
                     <FormLabel className="[&:has([data-state=checked])>div]:border-primary">
                       <FormControl>
                         <RadioGroupItem value="zinc" className="sr-only" />
@@ -226,7 +217,7 @@ export function AppearanceForm() {
                       </TooltipProvider>
                       </span>
                     </FormLabel>
-                  </FormItem>
+                  </FormItem> */}
                  
                 </RadioGroup>
               </FormItem>

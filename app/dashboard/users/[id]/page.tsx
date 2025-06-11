@@ -1,15 +1,14 @@
 import { notFound, redirect } from 'next/navigation'
 import {prisma} from '@/lib/prisma'
 import Software from './tabs/software'
-import Link from 'next/link'
-import { assignSoftware, removeAssignedSoftware } from '@/actions/user_actions'
+
 import { createClient } from '@/utils/supabase/server'
-import { findRealUser } from '@/lib/queries'
+
 import SharedAccounts from './tabs/shared-accounts'
-import EmployeeProfile from '../employee-profile'
+
 import { Badge } from '@/components/ui/badge'
-import { User } from '@prisma/client'
-import EditUser from './edit-user'
+
+
 import { Avatar, AvatarFallback,  } from '@/components/ui/avatar'
 import { Sparkles, Users, Monitor, Mail, Key , Briefcase , ChevronRight} from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -62,38 +61,15 @@ export default async function Page({
     }
  
 
-    const software = await prisma.userSoftware.findMany({
-      where: {
-        userId: id,
-      },
-      include: {
-        user: true,
-        grantedBy: true,
-        software: true,
-      },
-    })
+   
     const departments = await prisma.department.findMany({
       orderBy: {
         name: 'asc',
       },
     })
-    const assignedSoftware = software.map((s) => ({
-        id: s.software.id,
-      }));
-      const assignedSoftwareIds = assignedSoftware.map((s) => s.id);
+   
       
-      const availableSoftware = await prisma.software.findMany({
-         where: {
-             id: {
-                 notIn: assignedSoftwareIds,
-             },
-           },
-         orderBy: {
-             name: 'asc',
-         },
-        
- 
-      });
+      
       const users = await prisma.user.findMany({
         orderBy: {
             name: 'asc',
@@ -288,7 +264,20 @@ export default async function Page({
 
        
 
-        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      
+    </>
+  )
+}
+
+
+
+  //tablou fe769674-65d0-4528-92af-2f2df451164e
+  //derek 50313f26-7397-4d88-9e37-937c212d8eb2
+
+
+
+/**
+ *   ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             <h1 className='text-2xl font-bold'>{user.name}</h1>
             
             <p className="text-green-700">Department: {user.Department?.name}</p>
@@ -330,7 +319,7 @@ export default async function Page({
     </div>
 
         ============================
-        {/* Assign software */}
+       
        
 
         <h2>Assign Software</h2>
@@ -345,7 +334,8 @@ export default async function Page({
                 {users.map((user) => (
                     <option key={user.id} value={user.id}>{user.name}</option>
                 ))}
-            </select> */}
+            </select> 
+            *}
             
             <input type="text" name="accessLevel" placeholder="Access Level*" />
             <input type="text" name="role" placeholder="Role*" />
@@ -362,14 +352,4 @@ export default async function Page({
 
 
 
-    </>
-  )
-}
-
-
-
-  //tablou fe769674-65d0-4528-92af-2f2df451164e
-  //derek 50313f26-7397-4d88-9e37-937c212d8eb2
-
-
-
+ */

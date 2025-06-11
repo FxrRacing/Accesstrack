@@ -1,11 +1,11 @@
 'use client'
 
 import {
-  IconCreditCard,
+  //IconCreditCard,
   IconDotsVertical,
   IconLogout,
-  IconNotification,
-  IconUserCircle,
+ // IconNotification,
+ // IconUserCircle,
 } from "@tabler/icons-react"
 import { logout } from "@/app/login/actions"
 import {
@@ -16,7 +16,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
+//    DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -49,7 +49,7 @@ export function NavUser({
               
               <Avatar className="h-8 w-8 rounded-lg grayscale">
                
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg bg-gradient-to-r from-orange-300 to-orange-500 text-white font-medium   ">{user.user_metadata.full_name.split(" ").map((fullname: string) => fullname[0]).join("")}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.user_metadata.full_name}</span>
@@ -70,7 +70,7 @@ export function NavUser({
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.user_metadata.avatar_url} alt={user.user_metadata.full_name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg bg-gradient-to-r from-orange-300 to-orange-500 text-white font-medium ">{user.user_metadata.full_name.split(" ").map((fullname: string) => fullname[0]).join("")}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.user_metadata.full_name}</span>
@@ -80,8 +80,8 @@ export function NavUser({
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
+            {/* <DropdownMenuSeparator /> */}
+            {/* <DropdownMenuGroup>
               <DropdownMenuItem>
                 <IconUserCircle />
                 Account
@@ -94,7 +94,7 @@ export function NavUser({
                 <IconNotification />
                 Notifications
               </DropdownMenuItem>
-            </DropdownMenuGroup>
+            </DropdownMenuGroup> */}
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout} className="cursor-alias" variant="destructive">
               <IconLogout />

@@ -14,10 +14,10 @@ import {
  
   IconHelp,
   IconInnerShadowTop,
-  IconKey,
+  //IconKey,
   IconListDetails,
   //IconReport,
-  IconSearch,
+  //IconSearch,
   IconSettings,
   IconTournament,
   IconUsers,
@@ -71,11 +71,11 @@ const data = {
       url: "/dashboard/software",
       icon: IconListDetails,
     },
-    {
-      title: "Keys & Codes",
-      url: "/dashboard/keys&codes",
-      icon: IconKey,
-    },
+    // {
+    //   title: "Keys & Codes",
+    //   url: "/dashboard/keys&codes",
+    //   icon: IconKey,
+    // },
     {
       title: "Departments",
       url: "/dashboard/departments",
@@ -160,11 +160,11 @@ const data = {
       url: "mailto:itrequests@fxrracing.com?subject=Access%20Track%20Help%20Request&body=Hello,%0A%0A%20I%20need%20help%20with%20Access%20Track.%20I%20am%20trying%20to...",
       icon: IconHelp,
     },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
-    },
+    // {
+    //   title: "Search",
+    //   url: "#",
+    //   icon: IconSearch,
+    // },
   ],
   documents: [
     {
