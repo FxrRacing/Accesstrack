@@ -10,6 +10,8 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Briefcase, Mail, MapPin, Users } from "lucide-react";
 import EditDepartment from "./edit";
+import DeleteDepartment from "./delete-department";
+import PermissionsProvider from "@/utils/providers/permissions";
 
 export default async function Page({
     params,
@@ -149,6 +151,10 @@ export default async function Page({
           )}
         </CardContent>
       </Card>
+
+<PermissionsProvider requiredPermission="delete">
+      <DeleteDepartment departmentId={department.id} />
+</PermissionsProvider>
     </div>
         
         </>
