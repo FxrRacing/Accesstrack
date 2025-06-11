@@ -29,6 +29,7 @@ import { Card } from "@/components/ui/card";
 import { CardContent } from "@/components/ui/card";
 import PermissionsProvider from "@/utils/providers/permissions";
 import SoftwareTab from "./tabs/software";
+import { isValidUUID } from "@/lib/utils";
 
 
 
@@ -46,6 +47,9 @@ export default async function Page({
   }
 
   const { id } = await params;
+  if (!isValidUUID(id)) {
+    return notFound();
+  }
   const sharedAccount = await prisma.sharedAccount.findUnique({
     where: {
       id: id,

@@ -1,13 +1,13 @@
 'use client'
 import { Department, Location, User } from "@prisma/client";
 
-import { Building2, MapPin, BadgeCheck, Mail, Pencil, User as UserIcon, CalendarMinus, CalendarPlus } from "lucide-react";
+import { Building2, MapPin, BadgeCheck, Mail, Pencil, User as UserIcon, CalendarMinus, CalendarPlus, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { X, Save } from "lucide-react";
 import { useActionState, useState } from "react";
-import { editUser } from "@/actions/user_actions";
+import { deleteUser, editUser } from "@/actions/user_actions";
 import { toast } from "sonner";
 import {
     Select,
@@ -95,6 +95,18 @@ export default function Details({user, locations, departments, authId, users}: {
             </h2>
             <p className="text-neutral-500 text-sm mt-1">Employee profile information</p>
           </div>
+
+          <div className="flex justify-end gap-2 animate-slide-in-right mt-4">
+          <Button
+            variant="outline"
+            type="button"
+            onClick={() => deleteUser(user.id)}
+            className="border border-red-300  shadow-vercel hover:shadow-vercel-lg transition-all duration-300 hover-glow micro-bounce"
+          >
+            <Trash className="h-4 w-4 mr-2 text-red-500" />
+            Delete User
+          </Button>
+        </div>
           {!editingProfile && (
             <Button
               variant="ghost"
@@ -306,6 +318,9 @@ export default function Details({user, locations, departments, authId, users}: {
             </div>
           </form>
         )}
+
+        {/* delete user */}
+        
       </div>
     )
 }

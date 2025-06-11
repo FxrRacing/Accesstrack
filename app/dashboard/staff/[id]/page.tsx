@@ -1,20 +1,9 @@
 import { prisma } from "@/lib/prisma";
 
 import { notFound } from "next/navigation";
-import { banAccess, grantAccess } from "../actions";
-import { revokeAccess } from "../actions";
-import { deleteStaff } from "../actions";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectTrigger,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
 
-import { Suspense } from "react";
-import { SkeletonCard } from "@/components/skeleton-card";
+
+
 import { Label } from "@/components/ui/label";
 //import StaffDetails from "./staff-details";
 
@@ -67,34 +56,34 @@ export default async function Page({
     return notFound();
   }
 
-  const revokeAccessWithId = revokeAccess.bind(null, id);
-  const grantAccessWithId = grantAccess.bind(null, id);
-  const deleteStaffWithId = deleteStaff.bind(null, id);
-  const banAccessWithId = banAccess.bind(null, id);
+  // const revokeAccessWithId = revokeAccess.bind(null, id);
+  // const grantAccessWithId = grantAccess.bind(null, id);
+  // const deleteStaffWithId = deleteStaff.bind(null, id);
+
   const authUser = staffUser.data.user as User;
-  async function RevokeUser() {
-    //select a time frame to revoke the user for
-    return (
-      <Suspense fallback={<SkeletonCard />}>
-        <Label>Select a time frame to revoke the user for</Label>
-        <form action={banAccessWithId}>
-          <Select>
-            <SelectTrigger>
-              <SelectValue placeholder="Select time frame" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">1 Hour</SelectItem>
-              <SelectItem value="2">2 Hours</SelectItem>
-              <SelectItem value="3">3 Hours</SelectItem>
-              <SelectItem value="4">4 Hours</SelectItem>
-              <SelectItem value="5">5 Hours</SelectItem>
-            </SelectContent>
-          </Select>
-          <button type="submit">Revoke Access</button>
-        </form>
-      </Suspense>
-    );
-  }
+  // async function RevokeUser() {
+  //   //select a time frame to revoke the user for
+  //   return (
+  //     <Suspense fallback={<SkeletonCard />}>
+  //       <Label>Select a time frame to revoke the user for</Label>
+  //       <form action={banAccessWithId}>
+  //         <Select>
+  //           <SelectTrigger>
+  //             <SelectValue placeholder="Select time frame" />
+  //           </SelectTrigger>
+  //           <SelectContent>
+  //             <SelectItem value="1">1 Hour</SelectItem>
+  //             <SelectItem value="2">2 Hours</SelectItem>
+  //             <SelectItem value="3">3 Hours</SelectItem>
+  //             <SelectItem value="4">4 Hours</SelectItem>
+  //             <SelectItem value="5">5 Hours</SelectItem>
+  //           </SelectContent>
+  //         </Select>
+  //         <button type="submit">Revoke Access</button>
+  //       </form>
+  //     </Suspense>
+  //   );
+  // }
 
   const isActive = authUser.user_metadata?.is_active;
   const raw_user_meta_data = authUser.user_metadata as Record<string, string>;
@@ -124,7 +113,7 @@ export default async function Page({
   return (
     <div>
       <div className="flex flex-row gap-4">
-        <form action={revokeAccessWithId}>
+        {/* <form action={revokeAccessWithId}>
           <Button type="submit">Revoke Access</Button>
         </form>
         <form action={grantAccessWithId}>
@@ -133,14 +122,14 @@ export default async function Page({
         <p>Role: {raw_user_meta_data?.role}</p>
         <form action={deleteStaffWithId}>
           <Button type="submit">Delete Staff</Button>
-        </form>
+        </form> */}
 
        
-        <form action={banAccessWithId}>
+        {/* <form action={banAccessWithId}>
           <Button type="submit">Revoke/Ban Access</Button>
         </form>
         {/* <PermissionsProvider requiredPermission="view"> */}
-        <RevokeUser />
+        {/* <RevokeUser /> */} 
         {/* </PermissionsProvider> */}
       </div>
 

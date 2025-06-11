@@ -33,6 +33,7 @@ import ClientPermissionsWrapper from "@/utils/client-permissions-wrapper";
 import AddSharedAccountsDialog from "./components/add-shared-accounts";
 import SharedAccountsTableClient  from './components/shared-accounts-table-client'
 import { SharedAccountSoftwareWithRelations } from "./components/shared-accounts-table/columns";
+import { isValidUUID } from "@/lib/utils";
 
 export default async function Page({
   params,
@@ -48,6 +49,9 @@ export default async function Page({
   }
 
   const { id } = await params;
+  if (!isValidUUID(id)) {
+    return notFound();
+  }
   const software = await prisma.software.findUnique({
     where: {
       id: id,

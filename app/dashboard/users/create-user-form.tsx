@@ -17,15 +17,16 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Location, Department } from "@prisma/client";
 import { EMPLOYMENT_TYPE_OPTIONS, EMPLOYMENT_STATUS_OPTIONS } from "@/utils/constants";
-import { PlusCircle, X, UserPlus } from "lucide-react";
-import { useState } from "react";
+import { PlusCircle, X, UserPlus, Loader2 } from "lucide-react";
+import { useActionState, useState, useEffect } from "react";
+import { toast } from "sonner";
 
 
   
 
 
 
-export default function CreateUserForm({users, locations, departments}: {users: User[], locations: Location[], departments: Department[]} ) {
+export default function CreateUserForm({users, locations, departments,authId}: {users: User[], locations: Location[], departments: Department[],authId: string} ) {
     const [additionalEmails, setAdditionalEmails] = useState<string[]>([""])
 
     const addEmailField = () => {
@@ -44,6 +45,20 @@ export default function CreateUserForm({users, locations, departments}: {users: 
       setAdditionalEmails(newEmails)
     }
 
+
+    const [state, formAction, isPending] = useActionState(createUser, {
+        message: "",
+        success: false
+    })
+    useEffect(() => {
+        if (state.success && state.message) {
+            
+            toast.success(state.message)
+        }
+        if (!state.success && state.message) {
+            toast.error(state.message)
+        }
+    }, [state])
   return(<>
   <Dialog>
   <DialogTrigger asChild>
@@ -60,10 +75,11 @@ export default function CreateUserForm({users, locations, departments}: {users: 
       </DialogDescription>
 
     </DialogHeader>
-    <form action={createUser} className='flex flex-col gap-4'>
+    <form action={formAction} className='flex flex-col gap-4'>
     <div className="space-y-4">
             <h3 className="text-sm font-medium text-muted-foreground">Basic Information</h3>
             <div className="grid grid-cols-2 gap-4">
+              <input type="hidden" name="authId"  id="authId" value={authId} />
               <div className="space-y-2">
                 <Label htmlFor="name">Name*</Label>
                 <Input id="name" name="name" required />
@@ -222,7 +238,7 @@ export default function CreateUserForm({users, locations, departments}: {users: 
                
               
                 
-                <Button type="submit">Create User +</Button>
+                <Button type="submit" disabled={isPending}> {isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : ""} Create User +</Button>
             </form>
   </DialogContent>
 </Dialog>

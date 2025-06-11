@@ -2,6 +2,7 @@
 import { prisma } from '@/lib/prisma';
 import { User } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 
 
@@ -87,7 +88,7 @@ if (personalEmail != null)  updates.personalEmail  = personalEmail
    
     }
 
-export async function createUser(formData: FormData) {
+export async function createUser(prevState: {message: string, success: boolean}, formData: FormData) {
     'use server'
     // Mutate data
     const name = formData.get('name') as string | null;
@@ -101,25 +102,18 @@ export async function createUser(formData: FormData) {
     const type = formData.get('type') as string | null;
     const onboardingDate = formData.get('onboardingDate') as Date | null;
     const offboardingDate = formData.get('offboardingDate') as Date | null;
-//reports to can be null we just wont add it to the user
-console.table({
-    name,
-    departmentId,
-    jobTitle,
-    email,
-    personalEmail,
-    locationId,
-    reportsTo,
-    status,
-    type,
-    onboardingDate,
-    offboardingDate,
-});
-    if (!name || !departmentId || !jobTitle || !email || !locationId) {
-        throw new Error('All fields are required.');
+    const authId = formData.get('authId') as string | null;
+console.log(authId)
+    if (!authId) {
+        return {message: 'Auth ID is required.', success: false}
     }
+    if (!name || !departmentId || !jobTitle || !email || !locationId) {
+        return {message: 'All fields are required.', success: false}
+    }
+
+
    if (reportsTo === "N/A") {reportsTo = null}
-//let id = ''
+
     try {
         // Perform the edit user action here
         const user = await prisma.user.create({
@@ -145,7 +139,7 @@ console.table({
                 field: 'all',
                 oldValue: null,
                 newValue: 'User created',
-                updatedById: user.id, // or use authId if available
+                updatedById: authId,
             }
         });
         console.log('User created:', user);
@@ -153,15 +147,13 @@ console.table({
         revalidatePath(`/dashboard/users/${user.id}`);
         revalidatePath(`/dashboard/org-chart`);
         revalidatePath(`/dashboard/users`);
-       // id = user.id
-        return 
+        return {message: 'User created successfully', success: true}
     } catch (error) {
         console.error('Error creating user:', error);
-        throw new Error('Failed to create user.');
+        return {message: 'Failed to create user.', success: false}
     }
-    
 }
-export async function deleteUser(id: string) {
+export async function deleteUser(id: string ) {
     'use server'
     //we are not logged in so we will use a default user id
     try {
@@ -170,6 +162,7 @@ export async function deleteUser(id: string) {
         });
         console.log('User deleted:', user);
         revalidatePath(`/dashboard/users`);
+        redirect(`/dashboard/users`);
     } catch (error) {
         console.error('Error deleting user:', error);
         throw new Error('Failed to delete user.');

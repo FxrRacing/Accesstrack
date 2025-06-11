@@ -1,8 +1,9 @@
 "use client"
 import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage, BreadcrumbList } from "@/components/ui/breadcrumb";
 import { Loader2 } from "lucide-react";
+import React from "react";
 
 // Helper to fetch display name for a given segment (id)
 async function fetchDisplayName(segment: string, parent: string | null) {
@@ -44,12 +45,18 @@ async function fetchDisplayName(segment: string, parent: string | null) {
       return data.name || segment;
     }
   }
-  if (parent === "staff") {
-    const res = await fetch(`/api/staff/${segment}/name`);
-    if (res.ok) {
-      const data = await res.json();
-      return data.name || segment;
+  if (parent === "staff" || parent === "staffs") {
+    try {
+      const res = await fetch(`/api/staff/${segment}/name`);
+      if (res.ok) {
+        const data = await res.json();
+        return data.name || segment;
+      }
+      console.warn(`Failed to fetch staff name for ${segment}: ${res.status}`);
+    } catch (error) {
+      console.error(`Error fetching staff name for ${segment}:`, error);
     }
+    return segment;
   }
   // fallback
   return segment;
@@ -57,12 +64,17 @@ async function fetchDisplayName(segment: string, parent: string | null) {
 
 export default function PathCrumbs() {
   const pathname = usePathname();
-  const pathnames = pathname.split('/').filter(Boolean);
-  const [displayNames, setDisplayNames] = useState<(string | null)[]>(pathnames.map(() => null));
+  const [displayNames, setDisplayNames] = useState<(string | null)[]>([]);
+
+  const pathnames = useMemo(() => pathname.split('/').filter(Boolean), [pathname]);
 
   useEffect(() => {
     let ignore = false;
+    
     async function resolveNames() {
+      // Reset display names when path changes
+      setDisplayNames(pathnames.map(() => null));
+      
       const names = await Promise.all(
         pathnames.map(async (segment, idx) => {
           // If the segment is likely an id (uuid or number), try to fetch its display name
@@ -74,11 +86,14 @@ export default function PathCrumbs() {
           return segment.charAt(0).toUpperCase() + segment.slice(1);
         })
       );
-      if (!ignore) setDisplayNames(names);
+      if (!ignore) {
+        setDisplayNames(names);
+      }
     }
+    
     resolveNames();
     return () => { ignore = true; };
-  }, [pathname]);
+  }, [pathnames]);
 
   return (
     <Breadcrumb>
@@ -91,7 +106,7 @@ export default function PathCrumbs() {
           const isLast = idx === pathnames.length - 1;
           const name = displayNames[idx];
           return (
-            <>
+            <React.Fragment key={`crumb-${idx}`}>
               <BreadcrumbSeparator key={`sep-${idx}`} />
               <BreadcrumbItem key={href}>
                 {isLast ? (
@@ -104,7 +119,7 @@ export default function PathCrumbs() {
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
-            </>
+            </React.Fragment>
           );
         })}
       </BreadcrumbList>

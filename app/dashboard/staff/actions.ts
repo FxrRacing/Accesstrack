@@ -7,6 +7,7 @@ import {  serviceRoleClient } from '@/utils/supabase/admin';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { Role } from '@/types/permissions';
+import { banDurations } from './[id]/ban-access';
 
 
 
@@ -207,7 +208,67 @@ export async function revokeAccessForTimeFrame(id: string) {
 }
 
 
-export async function banAccess(id: string) {
+
+export async function banUserAction(prevState: {success: boolean, error: string, message: string}, formData: FormData) {
+    const userId = formData.get("userId") as string
+    const duration = formData.get("duration") as string
+    const reason = formData.get("reason") as string
+  
+    // Validation
+    if (!userId) {
+      return {
+        success: false,
+        error: "Please select a user to ban",
+        message: "Please try again"
+      }
+    }
+  
+    if (!duration) {
+      return {
+        success: false,
+        error: "Please select a ban duration",
+        message: "Please try again"
+      }
+    }
+  
+    // Find user data
+    const user = await serviceRoleClient.auth.admin.getUserById(userId)
+    const durationLabel = banDurations.find((d) => d.value === duration)?.label
+  
+    if (!user) {
+      return {
+        success: false,
+        error: "User not found",
+        message: "Please try again"
+      }
+    }
+  
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+    await serviceRoleClient.auth.admin.updateUserById(userId, {
+        ban_duration: duration,
+     
+       
+    })  
+    // Simulate random failure for demo purposes (10% chance)
+    if (Math.random() < 0.1) {
+      return {
+        success: false,
+        error: "Failed to ban user. Please try again.",
+        message: "Please try again"
+      }
+    }
+  
+    // Success response
+    return {
+      success: true,
+      error: "",
+      message: `${user.data?.user?.user_metadata?.fullName} has been banned for ${durationLabel?.toLowerCase()}${reason ? ` (Reason: ${reason})` : ""}`,
+    }
+  }
+
+
+export async function banAccess(id: string,banDuration: string) {
    
     const user = await serviceRoleClient.auth.admin.getUserById(id)
     console.log(user)
@@ -225,7 +286,7 @@ if (!user) {
 }
  
 await serviceRoleClient.auth.admin.updateUserById(id, {
-    ban_duration: '2h45m'
+    ban_duration: banDuration
 })
 
     console.log('revoked access for user', id)

@@ -7,11 +7,12 @@ import { CardHeader } from "@/components/ui/card";
 import { CardTitle } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Briefcase, Mail, MapPin, Users } from "lucide-react";
 import EditDepartment from "./edit";
 import DeleteDepartment from "./delete-department";
 import PermissionsProvider from "@/utils/providers/permissions";
+import { isValidUUID } from "@/lib/utils";
 
 export default async function Page({
     params,
@@ -27,6 +28,9 @@ export default async function Page({
     }
   
     const { id } = await params;
+    if (!isValidUUID(id)) {
+      return notFound();
+    }
     const department = await prisma.department.findUnique({
         where: {
             id: id,

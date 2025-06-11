@@ -13,7 +13,7 @@ import {
   //IconFileWord,
  
   IconHelp,
-  IconInnerShadowTop,
+  //IconInnerShadowTop,
   //IconKey,
   IconListDetails,
   //IconReport,
@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/sidebar"
 import Link from "next/link"
 import { User } from "@supabase/supabase-js"
+import Image from "next/image"
 interface AppSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   variant: "inset" | "sidebar" | "floating";
   user: User;
@@ -198,7 +199,8 @@ export function AppSidebar({ variant, user, ...props }: AppSidebarProps) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <Link href="/">
-                <IconInnerShadowTop className="!size-5" />
+                <Image src="/logo.png" alt="Access Track" width={32} height={32} />
+                {/* <IconInnerShadowTop className="!size-5" /> */}
                 <span className="text-base font-semibold">Access Track</span>
               </Link>
             </SidebarMenuButton>

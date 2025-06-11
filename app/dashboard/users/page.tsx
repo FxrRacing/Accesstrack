@@ -52,7 +52,7 @@ export default async function UsersPage() {
             gradientFrom="from-indigo-600"
             gradientTo="to-purple-700"
           >
-            <CreateUserForm users={users} locations={locations} departments={departments} />
+            <CreateUserForm users={users} locations={locations} departments={departments} authId={data.user.id} />
           </GradientCard>
 
           <GradientCard
