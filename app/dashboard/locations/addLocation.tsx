@@ -88,6 +88,7 @@ useEffect(() => {
                         <SelectItem value="warehouse">Warehouse</SelectItem>
                         <SelectItem value="store">Store</SelectItem>
                         <SelectItem value="headquarters">Headquarters</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                 </Select>
             </div>

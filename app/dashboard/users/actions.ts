@@ -159,7 +159,8 @@ export async function importUsers(csvData: string, authId: string): Promise<Impo
         if (location) {
           userData.locationId = location.id;
         } else {
-          rowErrors.push(`Location "${userData.location}" not found. Please create the location first.`);
+          // Instead of treating missing location as an error, we'll just skip setting the locationId
+          console.log(`Location "${userData.location}" not found. Skipping location assignment.`);
         }
       }
 

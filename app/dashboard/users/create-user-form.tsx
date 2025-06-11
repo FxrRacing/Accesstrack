@@ -107,21 +107,19 @@ export default function CreateUserForm({users, locations, departments,authId}: {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="location">Location</Label>
-                  
-                    <Select name="locationId" defaultValue={locations.length > 0 ? locations[0].id : ""}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select location" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {locations.map((location) => (
-                          <SelectItem key={location.id} value={location.id}>
-                            {location.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                
-                </div>
+                <Select name="locationId">
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select location (optional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {locations.map((location) => (
+                      <SelectItem key={location.id} value={location.id}>
+                        {location.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
           <Separator />
@@ -177,11 +175,12 @@ export default function CreateUserForm({users, locations, departments,authId}: {
             <div className="space-y-2">
               <Label htmlFor="onboardingDate">Onboarding Date</Label>
               <Input id="onboardingDate" name="onboardingDate" type="date" />
+              <p className="text-sm text-muted-foreground">Optional - Leave blank if not applicable</p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="offboardingDate">Offboarding Date</Label>
               <Input id="offboardingDate" name="offboardingDate" type="date" />
-              <p className="text-sm text-muted-foreground">Leave blank if the user is still active</p>
+              <p className="text-sm text-muted-foreground">Optional - Leave blank if the user is still active</p>
             </div>
           </div>
           <Separator />
