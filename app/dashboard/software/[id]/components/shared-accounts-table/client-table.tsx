@@ -11,7 +11,7 @@ export default function SharedAccountsTableClient({
 }) {
   return (
     <DataTable
-      columns={columns(authId)}
+      columns={columns}
       data={data}
       authId={authId}
     />

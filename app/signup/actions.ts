@@ -38,42 +38,33 @@ export async function signup(formData: FormData) {
 
 export async function signinWithAzure(){
   const supabase = await createClient()
-  if (process.env.NODE_ENV !== "production") {
-    const supabase = await createClient()
-    const {data, error} = await supabase.auth.signInWithOAuth({
-      provider: 'azure',
-      options: {
-       scopes: 'email profile',
-       redirectTo: 'http://localhost:3000/auth/callback',
-      }
-    })
-    if (data.url) {
-      redirect(data.url) // use the redirect API for your server framework
-    }
-    if (error) {
-      console.error('Error signing in with Azure:', error)
-      redirect('/error')
-    }
-  }
-  console.log("this should not be happening")
+  
+  // Determine the redirect URL based on environment
+  const redirectUrl = process.env.NODE_ENV === "production" 
+    ? `${process.env.NEXT_PUBLIC_URL}/auth/callback`
+    : 'http://localhost:3000/auth/callback'
+
+  //console.log("Using redirect URL:", redirectUrl)
+  
   const {data, error} = await supabase.auth.signInWithOAuth({
     provider: 'azure',
     options: {
-     scopes: 'email profile',
-     redirectTo: 'http://10.50.101.193:3000/auth/callback',
+      scopes: 'email profile',
+      redirectTo: redirectUrl,
     }
   })
 
-  console.log(data)
-  if (data.url) {
-    redirect(data.url) // use the redirect API for your server framework
-  }
-
-  if(error){
+  if (error) {
     console.error('Error signing in with Azure:', error)
     redirect('/error')
   }
 
-  revalidatePath('/dashboard', 'layout')
-  redirect('/dashboard')
+  if (data?.url) {
+    //console.log("Redirecting to:", data.url)
+    redirect(data.url)
+  }
+
+  // If we get here, something went wrong
+  console.error('No redirect URL received from Azure OAuth')
+  redirect('/error')
 }
