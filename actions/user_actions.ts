@@ -63,7 +63,15 @@ if (offboardingDate && offboardingDate.trim() !== '') {
 if (personalEmail != null)  updates.personalEmail  = personalEmail
 
     try {
-        if (reportsToId === "N/A" || reportsToId === null || reportsToId === "") {updates.reportsToId = null}
+        if (reportsToId === "N/A" || reportsToId === null || reportsToId === "") {
+          updates.reportsToId = null
+        }
+        if (departmentId === "N/A" || departmentId === null || departmentId === "") {
+          updates.departmentId = null
+        }
+        if (locationId === "N/A" || locationId === null || locationId === "") {
+          updates.locationId = null
+        }
         // Perform the edit user action here
         
        

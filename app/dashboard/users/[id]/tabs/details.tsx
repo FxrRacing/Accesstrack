@@ -119,6 +119,8 @@ export default function Details({
               </p>
             </div>
           </div>
+
+
           <div className="group animate-fade-in-up">
             <label className="text-xs font-medium text-neutral-500 uppercase tracking-wide">Location</label>
             <div className="flex items-center gap-2 mt-1 p-3 rounded-lg bg-blue-50 border border-blue-200 transition-all duration-300 group-hover:bg-blue-100 hover-lift">
@@ -201,11 +203,14 @@ export default function Details({
               <Label htmlFor="department" className="text-sm font-medium text-neutral-700">
                 Department
               </Label>
-              <Select defaultValue={user?.Department?.name} name="department">
+              <Select defaultValue={user?.Department?.id || "N/A"} name="departmentId">
                 <SelectTrigger className=" w-full border-neutral-200 focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 focus-ring">
                   <SelectValue placeholder="Select a department" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem key={`${user.id}-${user.name}`} value={"N/A"}>
+                    N/A
+                  </SelectItem>
                   {departments.map((department) => (
                     <SelectItem key={department.id} value={department.id}>
                       {department.name}
@@ -218,11 +223,14 @@ export default function Details({
               <Label htmlFor="location" className="text-sm font-medium text-neutral-700">
                 Location
               </Label>
-              <Select defaultValue={user?.Location?.name} name="locationId" >
+              <Select defaultValue={user?.Location?.id || "N/A"} name="locationId" >
                 <SelectTrigger className="w-full border-neutral-200 focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 focus-ring">
                   <SelectValue placeholder="Select a location" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem key={`${user.id}-${user.name}`} value={"N/A"}>
+                    N/A
+                  </SelectItem>
                   {locations.map((location) => (
                     <SelectItem key={location.id} value={location.id}>
                       {location.name}
@@ -272,7 +280,7 @@ export default function Details({
               <Label htmlFor="reportsToId" className="text-sm font-medium text-neutral-700">
                 Reports To
               </Label>
-              <Select defaultValue={user?.reportsToId || "N/A"} name="reportsToId">
+              <Select defaultValue={user?.reportsToId|| "N/A"} name="reportsToId">
                 <SelectTrigger className=" w-full border-neutral-200 focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 focus-ring">
                   <SelectValue placeholder="Select a reports to" />
                 </SelectTrigger>
