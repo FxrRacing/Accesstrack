@@ -8,7 +8,7 @@ import { redirect } from 'next/navigation';
 
 
 export async function editUser(prevState: {message: string, success: boolean}, formData: FormData) {
-  
+  'use server'
    
     // Mutate data
     const name = formData.get('name') as string | null;
@@ -21,16 +21,23 @@ export async function editUser(prevState: {message: string, success: boolean}, f
     const id = formData.get('id') as string | null;
     const reportsToId = formData.get('reportsToId') as string | null;
     const authId = formData.get('authId') as string | null;
-    const onboardingDate = formData.get('onboardingDate') as Date | null;
-    const offboardingDate = formData.get('offboardingDate') as Date | null;
+    const onboardingDate = formData.get('onboardingDate') as string | null;
+    const offboardingDate = formData.get('offboardingDate') as string | null;
     const personalEmail = formData.get('personalEmail') as string | null;
     
     if (!id || !authId) {
         return {message: 'User or Auth ID is required.', success: false}
     }
 
+    // Validate ID format
+   
+
     // Fetch the current user before update
     const currentUser = await prisma.user.findUnique({ where: { id: id! } });
+
+    if (!currentUser) {
+        return {message: 'User not found.', success: false}
+    }
 
     const updates : Partial<User> = {
     }
@@ -43,17 +50,27 @@ if (name       != null)  updates.name        = name
 if (status     != null)  updates.status      = status
 if (reportsToId != null)  updates.reportsToId = reportsToId
 if (locationId != null)  updates.locationId  = locationId
-if (onboardingDate != null)  updates.onboardingDate  = onboardingDate ? new Date(onboardingDate) : null
-if (offboardingDate != null)  updates.offboardingDate  = offboardingDate ? new Date(offboardingDate) : null
+if (onboardingDate && onboardingDate.trim() !== '') {
+    updates.onboardingDate = new Date(onboardingDate);
+} else {
+    updates.onboardingDate = null;
+}
+if (offboardingDate && offboardingDate.trim() !== '') {
+    updates.offboardingDate = new Date(offboardingDate);
+} else {
+    updates.offboardingDate = null;
+}
 if (personalEmail != null)  updates.personalEmail  = personalEmail
 
     try {
-        if (reportsToId === "N/A") {updates.reportsToId = null}
+        if (reportsToId === "N/A" || reportsToId === null || reportsToId === "") {updates.reportsToId = null}
         // Perform the edit user action here
+        
        
         console.table(updates)
+        
         const user = await prisma.user.update({
-            where: { id: id },
+            where: { id: currentUser.id },
             data: updates,
         });
       
@@ -100,8 +117,8 @@ export async function createUser(prevState: {message: string, success: boolean},
     let reportsTo = formData.get('reportsTo') as string | null;
     const status = formData.get('status') as string | null;
     const type = formData.get('type') as string | null;
-    const onboardingDate = formData.get('onboardingDate') as Date | null;
-    const offboardingDate = formData.get('offboardingDate') as Date | null;
+    const onboardingDate = formData.get('onboardingDate') as string | null;
+    const offboardingDate = formData.get('offboardingDate') as string | null;
     const authId = formData.get('authId') as string | null;
 console.log(authId)
     if (!authId) {

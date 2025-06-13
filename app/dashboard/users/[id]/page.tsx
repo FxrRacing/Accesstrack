@@ -11,12 +11,11 @@ import { Badge } from '@/components/ui/badge'
 
 import { Avatar, AvatarFallback,  } from '@/components/ui/avatar'
 import { Sparkles, Users, Monitor, Mail, Key , Briefcase , ChevronRight} from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { UserCircle} from 'lucide-react'
+
 import { Card, CardContent } from '@/components/ui/card'
-import Overview from './tabs/overview'
+
 import Details from './tabs/details'
-import PermissionsProvider from '@/utils/providers/permissions'
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Suspense } from 'react'
 import { StatusBadge } from '@/components/ui/status-badge'
@@ -120,14 +119,7 @@ export default async function Page({
             </div>
           </div>
           <div className={`flex items-center gap-2 animate-fade-in-scale stagger-2`}>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 transition-all duration-300 text-sm font-medium hover-lift micro-bounce"
-            >
-              <UserCircle className="h-4 w-4 mr-2" />
-              Add Owner
-            </Button>
+           
             {/* <Button
               variant="outline"
               size="sm"
@@ -149,9 +141,9 @@ export default async function Page({
           <div className="p-8">
             {/* Profile Overview Section */}
 <Suspense fallback={<div>Loading...</div>}>
-            <PermissionsProvider requiredPermission="edit" replaceWith={ <Overview user={user} />}>
+           
               <Details user={user} locations={locations} departments={departments} authId={data.user.id} users={users} />
-            </PermissionsProvider>
+            
             </Suspense>
             <Tabs defaultValue="reporting" className="space-y-6">
                <TabsList className="grid grid-cols-4 w-full max-w-2xl bg-neutral-100 p-0 border border-neutral-200 rounded-full mx-auto">
